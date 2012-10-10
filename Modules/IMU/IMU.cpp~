@@ -1,0 +1,98 @@
+/* 
+ * File:   Imu_main.cpp
+ * Author: Samuel, Nikunj, Atul
+ *
+ */
+
+#include <iostream>
+#include <fcntl.h>
+#include <stdio.h>
+#include <termios.h>
+#include <stdlib.h>
+#include <string.h>
+#include "IMU.h"
+#include "random.h"
+#include "serial_lnx.h"
+
+#define D 0.1
+#define WAIT 50
+#define VAR_X 5
+#define VAR_Y 7
+#define VAR_I 0.01
+
+#define VERBOSE false
+#define Lat_Dist 111119.99
+#define Long_Dist 102796.84                  // This distance is at ****IIT Kharagpur ****.. ****Please update before leaving for ***IGVC***  ****
+					     // for Oakland Universty : 
+#define REF_NORTH 22.31666666666667          // 37.7481 : Oakland University :- Michigan
+#define REF_EAST                             // -122.202 : Oakland University : Michigan
+
+namespace IMUspace
+{
+//Declarations for IMU
+//LPWSTR filename1 = L"COM9:";		///////IMU///////
+
+/* Change to the baud rate of the port B2400, B9600, B19200, etc */
+#define UART_BAUD_RATE  57600
+
+/* Change to the serial port you want to use /dev/ttyUSB0, /dev/ttyS0, etc. */
+#define UART_COMM_PORT 	"/dev/ttyUSB0"
+
+ 
+
+FILE *f1;
+volatile double yawIMU=0;
+ int time1=0;
+ int fd;
+struct termios options;
+ void IMUspace::IMU::initIMU()
+{
+   	
+   fd=open( UART_COMM_PORT , O_RDONLY | O_NOCTTY );
+    if (fd <0) 
+   {   
+        perror(UART_COMM_PORT );
+        exit(-1); 
+    }
+ 
+}
+
+float convertDataToVal(char *data)
+{
+	return ((data[2]-'0')*100) + ((data[3]-'0')*10) + (data[4]-'0') + ((data[6]-'0')/10.0) + ((data[7]-'0')/100.0);
+	
+}
+
+void IMUspace::IMU::getYaw(double *yawIMUc)
+{
+    printf("Beginning\n");
+    Tserial* p;
+    bzero(&p, 10);
+    p = new Tserial();
+    
+    p->connect(UART_COMM_PORT, UART_BAUD_RATE, spNONE,VERBOSE);
+
+    char data_in[10];
+    int flag=1,i;
+    char inp;
+    int linefeed_count=0;
+    int r;
+    int val = 0;
+    int count = 0;
+    while(flag)
+    {
+    	p->getArray(data_in,10);
+    	printf("\n read data : %s \n",data_in);
+    	//printf("%c || %c || %c || %c",data_in[2],data_in[3],data_in[4],data_in[5]);
+    	//printf("val : %f",convertDataToVal(data_in));
+    	tcflush(fd, TCIFLUSH);
+    	sleep(1);
+    	count++;
+    	if(count>5)
+    		break;
+     }
+     *yawIMUc = convertDataToVal(data_in);
+     printf("exiting imu lib \n");
+}
+}
+
