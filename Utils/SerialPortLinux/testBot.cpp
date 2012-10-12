@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include "serial_lnx.h"
-#define UART_COMM_PORT 	"/dev/ttyUSB0"
+#define UART_COMM_PORT 	"/dev/ttyUSB1"
 #define UART_BAUD_RATE  19200
 #define Sleep(i) usleep(i)
 

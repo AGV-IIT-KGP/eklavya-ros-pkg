@@ -2,9 +2,10 @@
 #sSRC = AGV.cpp ./Modules/Nav/PathPlanner.cpp ./Utils/SerialPortLinux/serial_lnx.cpp  ./Modules/Lane/Lane.cpp
 #SRC = AGV.cpp ./Modules/Nav/PathPlannerMod.cpp ./Utils/SerialPortLinux/serial_lnx.cpp  ./Modules/Lane/Lane.cpp ./Modules/GPS/GPS.cpp
 #SRC = AGV.cpp ./Modules/Nav/PathPlannerMod.cpp ./Utils/SerialPortLinux/serial_lnx.cpp  ./Modules/Lane/Lane.cpp
-SRC = AGV.cpp ./Modules/Lane/Lane.cpp ./Modules/IMU/IMU.cpp ./Modules/Nav/PathPlannerMod.cpp ./Utils/SerialPortLinux/serial_lnx.cpp ./Modules/Lidar/LidarData.cpp
+#SRC = AGV.cpp ./Modules/Nav/Planner.cpp ./Utils/SerialPortLinux/serial_lnx.cpp
+SRC = AGV.cpp ./Modules/Lane/Lane.cpp ./Modules/IMU/IMU.cpp ./Modules/Nav/Planner.cpp ./Utils/SerialPortLinux/serial_lnx.cpp ./Modules/Lidar/LidarData.cpp
 #SRC = ./Utils/SerialPortLinux/serial_lnx.cpp ./Utils/VehicleTest/vehicle.cpp
-#SRC = AGV.cpp ./Modules/IMU/IMU.cpp ./Modules/Nav/PathPlannerMod.cpp ./Utils/SerialPortLinux/serial_lnx.cpp
+#SRC = AGV.cpp ./Modules/IMU/IMU.cpp ./Modules/Nav/Planner.cpp ./Utils/SerialPortLinux/serial_lnx.cpp 
 TARG = eklavya
 
 CC = g++

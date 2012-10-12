@@ -1,9 +1,8 @@
-
 #include <stdio.h>
 #include <stdlib.h>
-//#include "opencv2/highgui/highgui.hpp"
-//#include "opencv2/imgproc/imgproc_c.h"
-#include "seeds.h"
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/imgproc/imgproc_c.h"
+//#include "seeds.h"
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -102,7 +101,7 @@ void printSeeds(FILE *fp, seed s[])
 
 int main()
 {
-	FILE *fp = fopen("seeds.txt", "w");
+	FILE *fp = fopen("seeds3.txt", "w");
 	//img = cvCreateImage(cvSize(500, 500), IPL_DEPTH_8U, 3);
 	//cvLine(img, cvPoint(250, 499), cvPoint(250+1, 498), CV_RGB(0, 0, 255), 3, CV_AA, 0);
 

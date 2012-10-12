@@ -1,7 +1,7 @@
-/* 
+/*
  * File:   LidarData.cpp
  * Author: bhuvnesh
- * 
+ *
  * Created on 18 September, 2012, 6:56 PM
  */
 
@@ -17,7 +17,7 @@
 #define MAP_Y 1000
 #define HOKUYO_SCALE 100
 #define VIEW_OBSTACLES 0
-#define RADIUS 50
+#define RADIUS 75
 using namespace mrpt;
 using namespace mrpt::hwdrivers;
 using namespace mrpt::slam;
@@ -65,7 +65,7 @@ void LidarData::plotLaserScan(char **localmap) {
     //Specific laser scanner "software drivers" must process here
     //new data from the I/O stream, and, if a whole scan has arrived
     //, return it. This method MUST BE CALLED in a timely fashion by
-    //the user to allow the proccessing of incoming data. It can be 
+    //the user to allow the proccessing of incoming data. It can be
     //run in a different thread safely.
     laser.doProcessSimple(thereIsObservation, obs, hardError);
 
@@ -94,7 +94,7 @@ void LidarData::plotLaserScan(char **localmap) {
                     if(k * k + j * j < RADIUS * RADIUS)
                       localmap[(int) (-1 * y * 200) + CENTERY + k][(int) (x * 200) + CENTERX + j] = 1;
                 }
-                
+
               }
             }
         }
