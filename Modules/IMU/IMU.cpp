@@ -44,6 +44,7 @@ namespace IMUspace
   int fd;
   struct termios options;
   Tserial* p;
+  int iteration;
   
   void IMUspace::IMU::initIMU()
   {
@@ -57,6 +58,9 @@ namespace IMUspace
 
     bzero(&p, 10);
     p = new Tserial();
+    p->connect(UART_COMM_PORT, UART_BAUD_RATE, spNONE,VERBOSE);
+    
+    iteration = 0;
     
     getYaw(&yaw);
   }
@@ -119,11 +123,9 @@ namespace IMUspace
     int val = 0;
     int count = 0;
 
-    p->connect(UART_COMM_PORT, UART_BAUD_RATE, spNONE,VERBOSE);
     while(p->getChar() != '!');
     p->getArray(data_in, 8);
     tcflush(fd, TCIFLUSH);
-    p->disconnect();
 /*
     while(flag)
     {
@@ -136,6 +138,7 @@ namespace IMUspace
     }
 */
     *yawIMUc = convertDataToVal2(data_in);
+    iteration++;
   }
 
   void IMUspace::IMU::closeIMU()
