@@ -28,3 +28,32 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 #rosbuild_link_boost(${PROJECT_NAME} thread)
 #rosbuild_add_executable(example examples/example.cpp)
 #target_link_libraries(example ${PROJECT_NAME})
+
+#find_package( OpenCV REQUIRED )
+#LINK_DIRECTORIES(${OpenCV_LIBRARY_DIRS})
+
+
+include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/Nav/")
+include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/IMU/")
+include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/GPS/")
+include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/Lane/")
+include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/Lidar")
+include_directories ("${PROJECT_SOURCE_DIR}/src/Utils/SerialPortLinux/")
+
+#find_package(MRPT REQUIRED base slam hwdrivers)# WARNING: Add all the MRPT libs used by your program: "gui", "obs", "slam",etc. 
+#LINK_DIRECTORIES(${MRPT_DIR}/lib)
+#LINK_DIRECTORIES(${MRPT_DIR}/lib/otherlibs)
+#LINK_DIRECTORIES(${MRPT_SOURCE_DIR}/lib/otherlibs)
+# Declare a program which uses MRPT: 
+# Since we declared a ROS dependencies to mrpt_libs, 
+# there's no need to add further header/lib deps at this point
+
+
+rosbuild_add_executable(eklavya src/AGV.cpp ./src/Modules/IMU/IMU.cpp ./src/Modules/Nav/Planner.cpp ./src/Utils/SerialPortLinux/serial_lnx.cpp ./src/Modules/Lidar/LidarData.cpp ./src/Modules/GPS/GPS.cpp ./src/Modules/Lane/Lane.cpp)
+
+
+find_package(OpenCV)
+target_link_libraries(eklavya ${OpenCV_LIBRARIES})
+#target_link_libraries (eklavya  ${EXTRA_LIBS})
+#target_link_libraries( eklavya ${OpenCV_LIBS} )
+#target_link_libraries( eklavya ${MRPT_LIBS} )
