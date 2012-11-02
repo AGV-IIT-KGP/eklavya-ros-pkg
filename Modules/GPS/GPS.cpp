@@ -14,10 +14,11 @@
 #include <mrpt/system/os.h>
 #include <string>
 #include <string.h>
+#include "../devices.h"
 #include "GPS.h"
 #define D 0.1
 #define WAIT 50
-#define VAR_X 5
+#define VAR_X 5 
 #define VAR_Y 7
 #define VAR_I 0.01
 
@@ -42,7 +43,7 @@ using namespace mrpt::utils;
 //#elif defined __unix__ /* __unix__ is usually defined by compilers targeting Unix systems */
   #include <unistd.h>
   //#include "serial_lnx.h"
-  #define GPS_COM "/dev/ttyUSB0"
+  #define GPS_COM GPS_COM_PORT
 #endif
 CGPSInterface   gps;
 
@@ -54,30 +55,39 @@ string SERIAL_NAME;
 
 namespace GPSspace
 {
-  void truncate(double xb, double yb, double xt, double yt, double *xtt, double **ytt)
+  void truncate(/*double xb, double yb, */double xt, double yt, int *xtt, int *ytt)
   {
+cout<<"\n000000\n"<<endl;
     double xp, yp;
     double A = MAP_MAX;
+    int xb=500;
+    int yb=100;
     
     // L1: y = 0.9A
     xp = xb + (0.9 * A - yb) * ((xt - xb) / (yt - yb));
     yp = 0.9 * A;
-
+cout<<"xp="<<xp<<" yp="<<yp;
     if(((0.1 * A <= xp) && (xp <= 0.9 * A)) &&
     ((yb - 0.9 * A) * (yt - 0.9 * A) <= 0))
     {
+cout<<"\n111111\n"<<endl;
       *xtt = xp;
       *ytt = yp;
       return;
     }
 
     // L2: y = 0.1A
-    xp = xb + (0.1 * A - yb) * ((xt - xb) / (yt - yb));
+    /*xp = xb + (0.1 * A - yb) * ((xt - xb) / (yt - yb));
     yp = 0.1 * A;
 
     if(((0.1 * A <= xp) && (xp <= 0.9 * A)) &&
-    ((yb - 0.1 * A) * (yt - 0.1 * A) <= 0))
+    ((yb - 0.1 * A) * (yt - 0.1 * A) <= 0))*/
+    xp= 0.9*A;
+    yp= yb + (0.9*A - xb) * ((yt - yb)/(xt - xb));
+cout<<"xp="<<xp<<" yp="<<yp;
+    if(yb>=0.1*A && yb >= 0.9*A)
     {
+cout<<"\n222222\n"<<endl;
       *xtt = xp;
       *ytt = yp;
       return;
@@ -86,10 +96,11 @@ namespace GPSspace
     // L3: x = 0.1A
     xp = 0.1 * A;
     yp = yb + (0.1 * A - xb) * ((yt - yb) / (xt - xb));
-
-    if(((0.1 * A <= xp) && (xp <= 0.9 * A)) &&
-    ((yb - 0.1 * A) * (yt - 0.1 * A) <= 0))
+cout<<"xp="<<xp<<" yp="<<yp;
+    if/*(((0.1 * A <= xp) && (xp <= 0.9 * A)) &&
+    ((yb - 0.1 * A) * (yt - 0.1 * A) <= 0))*/(yp>.1*A && yp<.9*A)
     {
+
       *xtt = xp;
       *ytt = yp;
       return;
@@ -101,7 +112,7 @@ namespace GPSspace
   {
     double y1 =(refN - north_d)*(Lat_Dist) ; 
     double x1 = (refE - east_d)*(Long_Dist); 
-    
+
     yaw_d = (3.142/180.0)*yaw_d;
     double x2 = x1*cos(yaw_d) -  y1*sin(yaw_d);
     double y2 = y1*cos(yaw_d) + x1*sin(yaw_d);
@@ -110,6 +121,8 @@ namespace GPSspace
     y2 *= -1;
 
     truncate(x2*100, y2*100, tx, ty);
+    //*tx=200;*ty=200;
+cout<<"cfyhgjvnmnfgd";
   }
 
 void GPSspace::GPS::GPS_Init()

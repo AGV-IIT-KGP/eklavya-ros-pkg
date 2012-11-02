@@ -36,7 +36,7 @@ namespace IMUspace
   #define UART_BAUD_RATE  57600
 
   /* Change to the serial port you want to use /dev/ttyUSB0, /dev/ttyS0, etc. */
-  #define UART_COMM_PORT IMU_PATH
+  #define UART_COMM_PORT IMU_COM_PORT
 
   FILE *f1;
   volatile double yawIMU=0;
@@ -44,7 +44,6 @@ namespace IMUspace
   int fd;
   struct termios options;
   Tserial* p;
-  int iteration;
   
   void IMUspace::IMU::initIMU()
   {
@@ -58,9 +57,6 @@ namespace IMUspace
 
     bzero(&p, 10);
     p = new Tserial();
-    p->connect(UART_COMM_PORT, UART_BAUD_RATE, spNONE,VERBOSE);
-    
-    iteration = 0;
     
     getYaw(&yaw);
   }
@@ -123,9 +119,11 @@ namespace IMUspace
     int val = 0;
     int count = 0;
 
+    p->connect(UART_COMM_PORT, UART_BAUD_RATE, spNONE,VERBOSE);
+    tcflush(fd, TCIFLUSH);
     while(p->getChar() != '!');
     p->getArray(data_in, 8);
-    tcflush(fd, TCIFLUSH);
+    p->disconnect();
 /*
     while(flag)
     {
@@ -138,7 +136,6 @@ namespace IMUspace
     }
 */
     *yawIMUc = convertDataToVal2(data_in);
-    iteration++;
   }
 
   void IMUspace::IMU::closeIMU()

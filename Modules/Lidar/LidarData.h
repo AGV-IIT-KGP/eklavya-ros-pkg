@@ -27,13 +27,13 @@ class LidarData
 {
 public:
     LidarData(string serial_name);
-    void plotLaserScan(char **localmap);
+    char **plotLaserScan(char **localmap);
     virtual ~LidarData();
 private:
-//    mrpt::gui::CDisplayWindow3D win3D;
-//    mrpt::opengl::CPointCloudPtr gl_points;
+    char **checkObstacles(char **localmap);
+    char **expandObstacles(char **localmap);
+    void createCircle(char **localmap, int x, int y, int R);
     CHokuyoURG laser;
-//    CTicTac tictac;
 };
 
 #endif	/* LIDARDATA_H */

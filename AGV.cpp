@@ -4,398 +4,426 @@
 #include "opencv2/highgui/highgui.hpp"
 #include <sys/stat.h>
 #include <sys/types.h>
+//#include "AGV.h"
 
-// **********comment to disable the following features.. do not change the value 1**********
-//#define _SON 1
-//#define _GPSF 1   comment to disable
-//#define _LANE 1
-#define _NAV 1
-//#define _STRO 1
-#define _IMU 1
-#define _LDR 1
 #define MAP_MAX 1000
-//*************************
+
+/// Comment to disable the following modules. Do not change the value 1
+
+//#define _SON 1
+//#define _GPSF 1
+//#define _NAV 1
+//#define _STRO 1
+//#define _IMU 1
+#define _LDR 1
+//#define _LANE 1
+
+/// Don't modify the code below this line
 
 #ifdef _LANE
-#include "Lane.h"
-#define LANE_CHOICE 1 // 0 FOR HOUGH_LANES ONLY; 1 FOR COLOR_LANES ONLY; 2 FOR BOTH COLOR AND HOUGH LANES
+  #include "Lane.h"
+  #define LANE_CHOICE 1 // 0 FOR HOUGH_LANES ONLY; 1 FOR COLOR_LANES ONLY; 2 FOR BOTH COLOR AND HOUGH LANES
 #endif
 
 #ifdef _IMU
-#include "IMU.h"
+  #include "IMU.h"
 #endif
 
 #ifdef _GPSF
-#include "GPS.h"
+  #include "GPS.h"
 #endif
 
 #ifdef _NAV
-#include "PathPlanner.h"
+  #include "PathPlanner.h"
 #endif
 
 #ifdef _SON
 #endif
 
 #ifdef _STRO
-#include "Stereo.h"
+  #include "Stereo.h"
 #endif
 
 #ifdef _LDR
-#include "LidarData.h"
+  #include "LidarData.h"
 #endif
 
 using namespace cv;
-#ifndef _WIN32
-#include <unistd.h>
-#define Sleep(i) usleep(i)
-#endif
 
+bool loggerActive = false;
+char *logDirectory;
+FILE *logFileHandle;
 char **local_map;
-CvPoint bot_loc, local_target;
-double yaw5;
-CvCapture *capture;
-IplImage* frame_in;
+CvPoint bot_loc;
+
+#ifdef _LANE
+  CvCapture *capture;
+  IplImage* frame_in;
+#endif
 
 #ifdef _LDR
-LidarData *laser;
+  LidarData *laser;
 #endif
 
-double tCal = 0;
-
-void initializeAGV()
-{
+void initializeAGV() {
   printf("Initializing Eklavya\n");
 
-  //Initializing the position of the vehicle
-  bot_loc.x = int(0.5*MAP_MAX);
-  bot_loc.y = int(0.1*MAP_MAX);
+  bot_loc.x = int(0.5 * MAP_MAX);
+  bot_loc.y = int(0.1 * MAP_MAX);
 
-  //Allocating memory for the local_map
-  local_map = (char**)malloc(MAP_MAX*sizeof(char*));
-  for(int i=0; i<MAP_MAX; i++)
-  {
+  local_map = (char**)malloc(MAP_MAX * sizeof(char*));
+  for(int i = 0; i < MAP_MAX; i++) {
     local_map[i] = (char*)calloc(MAP_MAX, sizeof(char));
   }
 
-  //Initializing the various modules of the vehicle
+  #ifdef _LANE
+    capture = cvCreateFileCapture("clip0.avi");// From File
+    //capture = cvCaptureFromCAM(0);//From Camera.
+    if(capture == NULL) {
+      printf("[ERROR] Unable to capture frame \n");
+    }
+    frame_in = cvQueryFrame(capture);
+    Lanespace::LaneDetection::initializeLaneVariables(frame_in);
+  #endif
 
-#ifdef _LANE
-  capture = cvCreateFileCapture("clip0.avi");// From File
-  //capture = cvCaptureFromCAM(0);//From Camera.
-  if(capture == NULL)
-  {
-    printf("\n \t\terror in capturing frame from video \n");
-  }
-  frame_in = cvQueryFrame(capture);
-  Lanespace::LaneDetection::initializeLaneVariables(frame_in);
-#endif
+  #ifdef _IMU
+    printf("Initiating IMU\n");
+    IMUspace::IMU::initIMU();
+    printf("IMU Initiated\n");
+  #endif
 
-#ifdef _IMU
-  printf("Initiating IMU\n");
-  IMUspace::IMU::initIMU();
-  printf("IMU Initiated\n");
-#endif
+  #ifdef _GPSF
+    GPSspace::GPS::GPS_Init();
+  #endif
 
-#ifdef _GPSF
-  GPSspace::GPS::GPS_Init();
-#endif
+  #ifdef _NAV
+    printf("Initiating Navigator\n");
+    Nav::NavCore::loadNavigator();
+    printf("Navigator Initiated\n");
+  #endif
 
-#ifdef _NAV
-  printf("Initiating Navigator\n");
-  Nav::NavCore::loadNavigator();
-  printf("Navigator Initiated\n");
-#endif
+  #ifdef _SON
+    Sonarspace::Sonar::loadSonar("COM5", 19200);
+  #endif
 
-#ifdef _SON
-  Sonarspace::Sonar::loadSonar("COM5",19200);
-#endif
+  #ifdef _STRO
+    Stereospace::Stereo::initializeStereo();
+  #endif
 
-#ifdef _STRO
-  Stereospace::Stereo::initializeStereo();
-#endif
+  #ifdef _LDR
+    printf("Initializing Lidar\n");
+    laser = new LidarData("ttyACM0");
+    printf("Lidar Initiated\n");
+  #endif
 
-#ifdef _LDR
-  printf("Initializing Lidar\n");
-  laser = new LidarData("ttyACM0");
-  printf("Lidar Initiated\n");
-#endif
-
+  cvNamedWindow("Global Map", 0);
+  
   printf("Eklavya Initiated\n");
   printf("=================\n");
 }
 
-void plotMap()
-{
+void plotMap() {
   IplImage *mapImg = cvCreateImage(cvSize(MAP_MAX, MAP_MAX), IPL_DEPTH_8U, 1);
-  int i=0,j_0=0,j_1=1000;
-  int thickness=1,lineType=8,shift=0;
 
-  for(int i=0; i<MAP_MAX; i++)
-  {
-    uchar* ptr = (uchar *)(mapImg->imageData + i*mapImg->widthStep);
-    for(int j=0; j<MAP_MAX; j++)
-    {
-      if(local_map[j][MAP_MAX-i-1] == 0)
+  for(int i = 0; i < MAP_MAX; i++) {
+    uchar* ptr = (uchar *)(mapImg->imageData + i * mapImg->widthStep);
+    for(int j = 0; j < MAP_MAX; j++) {
+      if(local_map[j][MAP_MAX - i - 1] == 0) {
         ptr[j] = 0;
-      else
+      }
+      else {
         ptr[j] = 200;
+      }
     }
   }
-  /*
-  for(i=0;i<1000;i+=50)
-    {
-      CvPoint pt1= cvPoint(i,j_0);
-            CvPoint pt2= cvPoint(i,j_1);
-      cvLine(mapImg,pt1,pt2,cvScalar(255,0,0),thickness,lineType,shift);
-    }
 
-    for(i=0;i<1000;i+=50)
-    {
-      CvPoint pt1= cvPoint(j_0,i);
-            CvPoint pt2= cvPoint(j_1,i);
-      cvLine(mapImg,pt1,pt2,cvScalar(255,0,0),thickness,lineType,shift);
-    }
-*/
-  cvNamedWindow("Global Map",0);
   cvShowImage("Global Map", mapImg);
+  cvWaitKey(100);
   //cvSaveImage("map.png", mapImg);
   cvReleaseImage(&mapImg);
 }
 
-void refreshMap()
-{
-  for(int i=0; i<MAP_MAX; i++)
-  {
-    for(int j=0; j<MAP_MAX; j++)
-    {
+void refreshMap() {
+  for(int i = 0; i < MAP_MAX; i++) {
+    for(int j = 0; j < MAP_MAX; j++) {
       local_map[i][j] = 0;
     }
   }
 }
 
-void closeAGV()
-{
-#ifdef _GPSF
-  //GPSspace::GPS::closeGPS();
-#endif
+void closeAGV() {
+  #ifdef _GPSF
+    //GPSspace::GPS::closeGPS();
+  #endif
 
-#ifdef _LDR
-  laser->~LidarData();
-#endif
+  #ifdef _LDR
+    laser->~LidarData();
+  #endif
 
-#ifdef _IMU
-  IMUspace::IMU::closeIMU();
-#endif
+  #ifdef _IMU
+    IMUspace::IMU::closeIMU();
+  #endif
 
-#ifdef _NAV
-  Nav::NavCore::closeNav();
-#endif
+  #ifdef _NAV
+    Nav::NavCore::closeNav();
+  #endif
 
-#ifdef _STRO
-  Stereospace::Stereo::closeStereo();
-#endif
+  #ifdef _STRO
+    Stereospace::Stereo::closeStereo();
+  #endif
+
+  if(loggerActive) {
+    fclose(logFileHandle);
+  }
 }
 
-int main(int argc, char **argv)
-{
-  time_t start,finish;
-  int frame_count=0, c;
-  double tx1, ty1;
-  int tx, ty;
-  IplImage *frame_in = NULL;
+int main(int argc, char **argv) {
+  int iterations = 0, c;
   int scale;
   int calib = 1;
-  FILE *logFile;
-  bool loggerActive = false;
+  int count = 0;
+  double latitude, longitude;
+  double mapHeight = 0.875 * MAP_MAX;;
+  double heading = 0;
+  double referenceHeading = 0;
+  time_t start, finish;
+  IplImage *frame_in = NULL;
+/*
+  if(argc == 2) {
+    logDirectory = (char *)malloc(20 * sizeof(char));
+    sprintf(logDirectory, "Logs/[%02d]Log", atoi(argv[1]));
+    mkdir(logDirectory, 0777);
 
-  if(argc == 2)
-  {
-    //mkdir("Logs", 0777);
-
-    char dirName[20];
-    sprintf(dirName, "Logs/[%02d]Log", atoi(argv[1]));
-    //sprintf(dirName, "[%02d]Log", atoi(argv[1]));
-    mkdir(dirName, 0777);
-
-    char fileName[30];
-    sprintf(fileName, "Logs/[%02d]Log/text.log", atoi(argv[1]));
-    //sprintf(fileName, "[%02d]Log/text.log", atoi(argv[1]));
-    logFile = fopen(fileName, "w");
+    char logFileName[30];
+    strcpy(logFileName, "");
+    strcat(logFileName, logDirectory);
+    strcat(logFileName, "/text.log");
+    logFileHandle = fopen(logFileName, "w");
     loggerActive = true;
     printf("Logging Active\n");
   }
-  else
+  else {
     loggerActive = false;
-
-#ifdef _LANE
-  if(argc==1)
-  {
-    printf("provide the commandline - scale parameter \n");
-    exit(1);
   }
-  else
-  {
-    scale = atoi(argv[1]);
-  }
-#endif
+*/
+  #ifdef _LANE
+    if(argc==1) {
+      printf("[PARAM] Please provide the scale parameter\n");
+      exit(1);
+    }
+    else {
+      scale = atoi(argv[1]);
+    }
+  #endif
 
-  //Initializing the various modules of Vehicle
   initializeAGV();
-  int li=0, target_set =1;
-  local_target = cvPoint(500, 900);
+
   time(&start);
-  int count = 0;
-  while(1)
-  {
-    if(loggerActive)
-    {
-      fprintf(logFile, "[%4d]: ", frame_count);
+  while(1) {
+    if(loggerActive) {
+      fprintf(logFileHandle, "[%4d]: ", iterations);
     }
 
-    //Cleaning the previous history present in the local map
-    //Initializing each block to value 0
-    //printf("map refreshing \n");
     refreshMap();
-    //printf("map refreshed \n");
-#ifdef _STRO
-    Stereospace::Stereo::runStereo(local_map);
-#endif
 
-#ifdef _LDR
-    //printf("loop %d inside lidar \n",count);
-    laser->plotLaserScan(local_map);
-    //printf("loop %d outside lidar \n",count++);
-#endif
+    /// Data Acquisition
+    /// Stereo, Lidar: Depth Map
+    /// Lane: Lanes
+    /// IMU: Heading
+    /// GPS: Latitude and Longitude
 
-#ifdef _LANE
-    frame_in = cvQueryFrame(capture);
-    if(frame_in == NULL)
-    {
-        printf("\n \t\t End of Input Stream \n");
+    #ifdef _STRO
+      Stereospace::Stereo::runStereo(local_map);
+    #endif
+
+    #ifdef _LDR
+      local_map = laser->plotLaserScan(local_map);
+    #endif
+
+    #ifdef _LANE
+      frame_in = cvQueryFrame(capture);
+      if(frame_in == NULL) {
+        printf("End of Input Stream\n");
         break;
-    }
-    Lanespace::LaneDetection::markLane(frame_in, local_map, LANE_CHOICE, scale);
-#endif
+      }
+      Lanespace::LaneDetection::markLane(frame_in, local_map, LANE_CHOICE, scale);
+    #endif
 
-#ifdef _SON
-    //  Sonarspace::Sonar::runSonar(local_map,int(0.5*MAP_MAX),int(0.1*MAP_MAX));
-#endif
+    #ifdef _SON
+    #endif
 
-#ifdef _IMU
-    IMUspace::IMU::getYaw(&yaw5);
-    if(loggerActive)
-    {
-      fprintf(logFile, "Yaw: %lf | ", yaw5);
-    }
-    //printf("yaw: %lf\n", yaw5);
-#endif
+    #ifdef _IMU
+      IMUspace::IMU::getYaw(&heading);
+      printf("Heading: %f\n", heading);
 
-#ifdef _GPSF
-    double yaw_copy=yaw5;
-    GPSspace::GPS::_GPS(&tx1, &ty1);
-    GPSspace::GPS::Local_Map_Coordinate(tx1,ty1,yaw_copy,&tx,&ty);
+      if(iterations < 5) {
+        usleep(200 * 1000);
+        referenceHeading = heading;
+        iterations++;
 
-    printf("\t\t\ttarget: (%d, %d)\n", tx, ty);
+        if(loggerActive) {
+          fprintf(logFileHandle, "\n");
+        }
 
-    if(li < 35)
-        li++;
-    else
-    {
-        local_target = cvPoint(tx, ty);
-        target_set = 1;
-    }
-#else
-    local_target = cvPoint(500, 600);
-    target_set = 1;
-#endif
-
-#ifdef _NAV
-#ifdef _IMU
-    double t = yaw5, a;
-
-    if(frame_count < 5)
-    {
-      usleep(200 * 1000);
-      tCal = yaw5;
-      frame_count++;
-
-      if(loggerActive)
-      {
-        fprintf(logFile, "\n");
+        continue;
       }
 
-      continue;
-    }
+      if(iterations == 5) {
+        printf("Reference Heading: %lf\n", referenceHeading);
+      }
 
-    if(frame_count == 5)
-      printf("tCal: %lf\n", tCal);
+      if(loggerActive) {
+        fprintf(logFileHandle, "Heading: %lf | ", heading);
+      }
+    #endif
 
-    if(t * tCal > 0)
-    {
-      a = tCal - t;
-    }
-    else
-    {
-      if(t - tCal > 180)
-        a = 360 + tCal - t;
-      else if(tCal - t > 180)
-        a = tCal - t - 360;
-      else
-        a = tCal - t;
-    }
+    #ifdef _GPSF
+      GPSspace::GPS::_GPS(&latitude, &longitude);
 
-    a *= 3.14 / 180;
+      if(iterations < 35) {
+        iterations++;
 
-    double h = 0.8 * MAP_MAX;
-    double a1 = atan(0.4 * MAP_MAX / h);
-    if((-a1 <= a) && (a <= a1))
-    {
-      tx = h * tan(a) + 0.5 * MAP_MAX;
-      ty = h + 0.1 * MAP_MAX;
-    }
-    else if(a > a1)
-    {
-      tx = 0.9 * MAP_MAX;
-      ty = 0.4 * MAP_MAX / tan(a) + 0.1 * MAP_MAX;
-    }
-    else if(a < -a1)
-    {
-      tx = 0.1 * MAP_MAX;
-      ty = 0.1 * MAP_MAX - 0.4 * MAP_MAX / tan(a);
-    }
-    else
-    {
-      tx = 0.5 * MAP_MAX;
-      ty = 0.1 * MAP_MAX;
-    }
-    local_target = cvPoint(tx, ty);
-    target_set = 1;
-#endif
-    if(loggerActive)
-      Nav::NavCore::navigate(local_map, local_target, argv[1], logFile, frame_count);
-    else
-      Nav::NavCore::navigate(local_map, local_target);
-#endif
+        if(loggerActive) {
+          fprintf(logFileHandle, "\n");
+        }
 
-    if(loggerActive)
-    {
-      fprintf(logFile, "\n");
-    }
+        continue;
+      }
+    #endif
 
     plotMap();
-    frame_count++;
-    if((c = cvWaitKey(1)) == 27)
-    {
+    
+    /// Target Acquisition
+
+    int gps = 0, imu = 0, lane = 0;
+
+    #ifdef _GPSF
+      gps = 1;
+    #endif
+
+    #ifdef _IMU
+      imu = 1;
+    #endif
+
+    #ifdef _LANE
+      lane = 1;
+    #endif
+
+    int targetId = gps * (1 << 2) + lane * (1 << 1) + imu;
+    CvPoint targetLocation;
+
+    switch(targetId) {
+      case 0:
+        // Dummy Target
+        //targetLocation = cvPoint(0.5 * MAP_MAX, 0.95 * MAP_MAX);
+        srand(time(0));
+        targetLocation = cvPoint(100 + rand() % 700, 200 + rand() % 700);
+        break;
+
+      case 1: {
+        // Target from IMU
+        double alpha;
+
+        if(heading * referenceHeading > 0) {
+          alpha = referenceHeading - heading;
+        }
+        else {
+          if(heading - referenceHeading > 180) {
+            alpha = 360 + referenceHeading - heading;
+          }
+          else if(referenceHeading - heading > 180) {
+            alpha = referenceHeading - heading - 360;
+          }
+          else {
+            alpha = referenceHeading - heading;
+          }
+        }
+
+        alpha *= 3.14 / 180;
+
+        double beta = atan(0.4 * MAP_MAX / mapHeight);
+
+        if((-beta <= alpha) && (alpha <= beta)) {
+          targetLocation.x = mapHeight * tan(alpha) + 0.5 * MAP_MAX;
+          targetLocation.y = mapHeight + 0.1 * MAP_MAX;
+        }
+        else if(alpha > beta) {
+          targetLocation.x = 0.9 * MAP_MAX;
+          targetLocation.y = 0.4 * MAP_MAX / tan(alpha) + 0.1 * MAP_MAX;
+        }
+        else if(alpha < -beta) {
+          targetLocation.x = 0.1 * MAP_MAX;
+          targetLocation.y = 0.1 * MAP_MAX - 0.4 * MAP_MAX / tan(alpha);
+        }
+        else {
+          targetLocation.x = 0.5 * MAP_MAX;
+          targetLocation.y = 0.1 * MAP_MAX;
+        }
+
+        break;
+      }
+
+      case 2:
+        // Target from Lane
+        break;
+
+      case 3:
+        // Target from Lane and IMU
+        break;
+
+      case 4:
+        // Dummy Target
+        //GPSspace::GPS::Local_Map_Coordinate(/*(double)latitude, (double)longitude, /*(double)heading*/19756.0, 142250,0.0, &targetLocation.x, &targetLocation.y);
+        break;
+
+      case 5:
+        // Target from GPS and IMU
+        //GPSspace::GPS::Local_Map_Coordinate(/*(double)latitude, (double)longitude, /*(double)heading*/22.322091,87.306429,90.0, &targetLocation.x, &targetLocation.y);
+
+        break;
+
+      case 6:
+        // Target from GPS and Lane
+        break;
+
+      case 7:
+        // Target from GPS, IMU and Lane
+        break;
+
+      default:
+        // Error
+        printf("[ERROR]: Target not set\n");
+        exit(0);
+    }
+
+    printf("[%d] : Target: (%d, %d)\n", iterations, targetLocation.x, targetLocation.y);
+
+    /// Planning and Navigation
+
+    #ifdef _NAV
+      if(Nav::NavCore::navigate(local_map, targetLocation, iterations, heading) == 1) {
+        //mapHeight -= 0.25 * MAP_MAX;
+      }
+      else {
+        mapHeight = 0.875 * MAP_MAX;
+      }
+    #endif
+
+    if(loggerActive) {
+      fprintf(logFileHandle, "\n");
+    }
+
+    iterations++;
+
+    if((c = cvWaitKey(1)) == 27) {
       break;
     }
   }
 
-if(loggerActive)
-    fclose(logFile);
-
   time(&finish);
-  printf("%d\n\n",frame_count);
+  printf("Number of iterations: %d\n",iterations);
   closeAGV();
-  printf("fps: %f\n", frame_count / difftime(finish, start));
+  printf("FPS: %f\n", iterations / difftime(finish, start));
+
   return 0;
 }
