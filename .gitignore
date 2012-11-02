@@ -13,3 +13,4 @@ testBot
 *.opensdf
 /build/
 /Logs/
+/nbproject/
