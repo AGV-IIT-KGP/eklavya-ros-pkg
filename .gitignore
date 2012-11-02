@@ -11,3 +11,4 @@ testBot
 *.ncb
 *.aps
 *.opensdf
+/build/
