@@ -17,3 +17,5 @@ testBot
 /CMakeFiles/
 CMakeCache.txt
 Makefile
+.gitignore~
+cmake_install.cmake
