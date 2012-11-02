@@ -8,14 +8,10 @@
   <license>BSD</license>
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/eklavya1</url>
-  <depend package="roscpp"/>
-  
-  <depend package="mrpt_libs"/>
- <depend package="mrpt_hokuyo"/>
-  
+  <depend package="roscpp"/>  
+ <!-- <depend package="mrpt_libs"/>
+  <depend package="mrpt_hokuyo"/>  -->
   <rosdep name="opencv2"/>
-
-
 </package>
 
 
