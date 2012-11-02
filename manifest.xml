@@ -9,6 +9,9 @@
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/eklavya1</url>
   <depend package="roscpp"/>
+  <rosdep name="mrpt_libs"/>
+  <rosdep name="opencv2"/>
+
 
 </package>
 
