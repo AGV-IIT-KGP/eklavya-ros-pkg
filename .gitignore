@@ -12,3 +12,4 @@ testBot
 *.aps
 *.opensdf
 /build/
+/Logs/
