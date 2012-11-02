@@ -1,4 +1,8 @@
+ROS
 
+mrpt in ros
+http://www.mrpt.org/mrpt-ros-pkg
+http://code.google.com/p/mrpt-ros-pkg/
 
 *************Libraries used***************
 

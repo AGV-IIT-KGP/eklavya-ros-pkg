@@ -23,17 +23,17 @@ using namespace std;
 #ifndef LIDARDATA_H
 #define	LIDARDATA_H
 
-class LidarData 
-{
+class LidarData {
 public:
     LidarData(string serial_name);
-    char **plotLaserScan(char **localmap);
+    char** plotLaserScan(char **localmap);
     virtual ~LidarData();
 private:
-    char **checkObstacles(char **localmap);
-    char **expandObstacles(char **localmap);
-    void createCircle(char **localmap, int x, int y, int R);
+    char **checkObstacles(char **localmap, CSimplePointsMap map);
     CHokuyoURG laser;
+    char **expandObstacles(char **localmap, CSimplePointsMap map);
+    void createCircle(char **localmap, int x, int y, int R);
 };
 
 #endif	/* LIDARDATA_H */
+
