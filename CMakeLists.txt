@@ -8,6 +8,14 @@ include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
 #  RelWithDebInfo : w/ debug symbols, w/ optimization
 #  MinSizeRel     : w/o debug symbols, w/ optimization, stripped binaries
 #set(ROS_BUILD_TYPE RelWithDebInfo)
+# --------------------------------------------------------------
+# Indicate CMake 2.7 and above that we don't want to mix relative
+# and absolute paths in linker lib lists.
+# Run "cmake --help-policy CMP0003" for more information.
+# --------------------------------------------------------------
+if(COMMAND cmake_policy)
+	cmake_policy(SET CMP0003 NEW)
+endif(COMMAND cmake_policy)
 
 rosbuild_init()
 
@@ -29,14 +37,33 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 #rosbuild_add_executable(example examples/example.cpp)
 #target_link_libraries(example ${PROJECT_NAME})
 
-#find_package( OpenCV REQUIRED )
+find_package(OpenCV REQUIRED)
 #LINK_DIRECTORIES(${OpenCV_LIBRARY_DIRS})
 
+#Options
+option (USE_LANE  "Use LANE" ON) 
+option (USE_NAV  "Use Nav" ON) 
+option (USE_IMU  "Use IMU" ON) 
+option (USE_GPS  "Use GPS" ON) 
+option (USE_LIDAR  "Use Lidar" ON) 
+option (USE_SERIAL_PORT  "Use SerialPortLinux" ON) 
 
-include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/Nav/")
+# add the LANE library?
+if (USE_LANE)
+ # include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/Lane")
+  add_subdirectory ("${PROJECT_SOURCE_DIR}/src/Modules/Lane") 
+  #set (EXTRA_LIBS ${EXTRA_LIBS} lane)
+  #message(STATUS "EXTRA_LIBS: ${EXTRA_LIBS}")
+endif (USE_LANE)
+
+if (USE_NAV)
+  add_subdirectory ("${PROJECT_SOURCE_DIR}/src/Modules/Nav") 
+endif (USE_NAV)
+
+
 include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/IMU/")
 include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/GPS/")
-include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/Lane/")
+
 include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/Lidar")
 include_directories ("${PROJECT_SOURCE_DIR}/src/Utils/SerialPortLinux/")
 
@@ -44,18 +71,15 @@ find_package(MRPT REQUIRED base slam hwdrivers)# WARNING: Add all the MRPT libs 
 LINK_DIRECTORIES(${MRPT_DIR}/lib)
 LINK_DIRECTORIES(${MRPT_DIR}/lib/otherlibs)
 LINK_DIRECTORIES(${MRPT_SOURCE_DIR}/lib/otherlibs)
-# Declare a program which uses MRPT: 
-# Since we declared a ROS dependencies to mrpt_libs, 
-# there's no need to add further header/lib deps at this point
 
 
-rosbuild_add_executable(eklavya src/AGV.cpp ./src/Modules/IMU/IMU.cpp ./src/Modules/Nav/Planner.cpp ./src/Utils/SerialPortLinux/serial_lnx.cpp ./src/Modules/Lidar/LidarData.cpp ./src/Modules/GPS/GPS.cpp ./src/Modules/Lane/Lane.cpp)
+
+rosbuild_add_executable(${PROJECT_NAME} src/AGV.cpp ./src/Modules/IMU/IMU.cpp  ./src/Utils/SerialPortLinux/serial_lnx.cpp ./src/Modules/Lidar/LidarData.cpp ./src/Modules/GPS/GPS.cpp )
 
 
-#rosbuild_add_executable(eklavya src/AGV.cpp )
+#rosbuild_add_executable(${PROJECT_NAME} src/AGV.cpp )
 
-find_package(OpenCV)
-target_link_libraries(eklavya ${OpenCV_LIBRARIES})
-#target_link_libraries (eklavya  ${EXTRA_LIBS})
-#target_link_libraries( eklavya ${OpenCV_LIBS} )
-target_link_libraries( eklavya ${MRPT_LIBS} )
+
+#target_link_libraries (${PROJECT_NAME}  ${EXTRA_LIBS})
+target_link_libraries( ${PROJECT_NAME} ${OpenCV_LIBS} )
+target_link_libraries( ${PROJECT_NAME} ${MRPT_LIBS} )
