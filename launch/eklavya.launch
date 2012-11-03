@@ -1,0 +1,5 @@
+<launch>
+  <master auto="start"/>
+  <!--<node pkg="image_view" type="image_view" args="image:=/opencv_tests/images" respawn="false" output="screen"/>-->
+  <node name="eklavya_main" pkg="eklavya1" type="eklavya" respawn="false" />
+</launch>
