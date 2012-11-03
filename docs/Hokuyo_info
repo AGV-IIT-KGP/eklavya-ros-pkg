@@ -1,0 +1,47 @@
+http://www.isep.ipp.pt/roswiki/hokuyo_node.html
+svn https://code.ros.org/svn/ros-pkg/stacks/laser_drivers/trunk/hokuyo_node
+
+sudo apt-get install ros-fuerte-laser-drivers
+roslaunch hokuyo_node hokuyo_test.launch
+
+
+Published Topics
+
+scan (sensor_msgs/LaserScan)
+Scan data from the laser.
+diagnostics (diagnostic_msgs/DiagnosticStatus)
+Diagnostic status information.
+
+Services
+
+~self_test (diagnostic_msgs/SelfTest)
+Starts the Hokuyo self test, which runs a series of tests on the device. The laser stops publishing scans during the test, which takes about a minute. The result of the test is in the response returned by this service. At the conclusion of the test, the laser is returned to its normal operating mode.
+
+Dynamically Reconfigurable Parameters
+----
+Command-Line Tools
+rosrun hokuyo_node getID /dev/ttyACM0
+rosrun hokuyo_node getID /dev/ttyACM0 --
+SUBSYSTEMS=="usb", KERNEL=="ttyACM[0-9]*", ATTRS{manufacturer}=="Hokuyo Data Flex for USB", ATTRS{product}=="URG-Series USB Driver", PROGRAM=="/etc/ros/run.sh hokuyo_node getID %N q", SYMLINK+="sensors/hokuyo_%c"
+
+/etc/udev/rules.d/
+
+
+
+http://www.ros.org/wiki/hokuyo_node/Tutorials/UsingReconfigureGUIToChangeHokuyoLaserParameters
+rosdep install dynamic_reconfigure 
+rosmake dynamic_reconfigure 
+rosrun dynamic_reconfigure reconfigure_gui 
+
+
+http://www.ros.org/wiki/hokuyo_node/Tutorials/UsingTheHokuyoNode
+sudo chmod a+rw /dev/ttyACM0
+roscore
+rosparam set hokuyo_node/calibrate_time false
+rosparam set hokuyo_node/port /dev/ttyACM0 
+rosrun hokuyo_node hokuyo_node
+rosrun rviz rviz -d `rospack find hokuyo_node`/hokuyo_test.vcg
+
+http://www.ros.org/wiki/hokuyo_node/Tutorials/UsingDynparamToChangeHokuyoLaserParameters
+
+
