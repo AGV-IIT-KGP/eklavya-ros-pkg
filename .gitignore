@@ -23,3 +23,6 @@ cmake_install.cmake
 Makefile
 *.*~
 CMakeFiles
+.project
+.cproject
+.settings
