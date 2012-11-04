@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<model>
+  <name>Eklavya Robot</name>
+  <version>1.0</version>
+  <sdf>model.sdf</sdf>
+
+  <author>
+   <name>Jit Ray Chowdhury</name>
+   <email>jit.ray.c@gmail.com</email>
+  </author>
+
+  <description>
+    Robot used for simulation of Eklvya project (ugv) by AGV team of IIT Kharagpur.
+  </description>
+</model>
