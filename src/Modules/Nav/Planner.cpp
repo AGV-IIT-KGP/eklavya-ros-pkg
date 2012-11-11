@@ -18,17 +18,20 @@
 #define OPEN 1
 #define MAXMIN 999999
 #define MAP_MAX 1000
+#define L 35
+#define R 27
 
 //#define VIS
 #define SIMCTL
-//#define SIMOBS
-//#define SIMSEEDS
-#define YAWPID
+#define SIMOBS
+#define SIMSEEDS
+//#define YAWPID
+#define DTRANS
 
 #ifdef SIMSEEDS
-#define BPS_SOURCE "Modules/Nav/seeds.txt"
+#define BPS_SOURCE "../Modules/Nav/seeds.txt"
 #else
-#define BPS_SOURCE "Modules/Nav/seeds3.txt"
+#define BPS_SOURCE "../Modules/Nav/seeds3.txt"
 #endif
 
 using namespace std;
@@ -65,6 +68,7 @@ namespace Nav {
     int x, y;
   } seedPath;
 
+  int **cost_field;
   int nSeeds;
   state map[MAP_MAX][MAP_MAX];
   list *cl, *ol, *path;
@@ -91,18 +95,14 @@ namespace Nav {
     double targetVelocityRatio = (double)leftVelocity / rightVelocity;
     double targetCurvature = 2 * (targetVelocityRatio - 1) / (targetVelocityRatio + 1);
 
-    cout<<"Allow1 ("<<leftVelocity<<","<<rightVelocity<<") "<<targetCurvature<<","<<currentCurvature<<endl;
-
     for (int i = 0; i < 8; i++) {
       if (targetVelocityRatio < velocityRatioAt[8 - i]) {
         mode--;
       }
       else {
-    break;
+				break;
+			}
     }
-    }
-
-    cout<<"Allow2 "<<mode<<" "<<targetVelocityRatio<<" "<<velocityRatioAt[8]<<endl;
 
     mode += (int) (Kp * (targetCurvature - currentCurvature));
 
@@ -115,14 +115,17 @@ namespace Nav {
   }
 
   void sendCommand(int leftVelocityIn, int rightVelocityIn, double omega) {
-    int leftSpeedAt[9]  = {18, 19, 20, 21, 18, 26, 30, 34, 38};
-    int rightSpeedAt[9] = {38, 34, 30, 26, 21, 22, 21, 20, 19};
-
-    for (int i = 0; i < 9; i++) {
-      leftSpeedAt[i] = (int) leftSpeedAt[i] * 1;
-      rightSpeedAt[i] = (int) rightSpeedAt[i] * 1;
-    }
-
+    int offset = 3;
+    int leftSpeedAt[9] = {9, 12, 15, 20, 25, 30, 35, 38, 41};
+    int rightSpeedAt[9]= {41, 38, 35, 30, 25, 20, 15, 12, 9};
+    for(int i=-4;i<=4;i++)
+    {
+			leftSpeedAt[i+4] += offset;
+			leftSpeedAt[i+4] = (int) leftSpeedAt[i+4] * 1.5;
+			rightSpeedAt[i+4] -= offset;
+			rightSpeedAt[i+4] = (int) rightSpeedAt[i+4] * 1.5;
+		}
+    
     int leftVelocity, rightVelocity, mode = 4;
     double curvature = omega / 10;  // Should be replaced by angular velocity/speed.
 
@@ -131,8 +134,8 @@ namespace Nav {
     leftVelocity = leftSpeedAt[mode];
     rightVelocity = rightSpeedAt[mode];
 
-    cout<<"Exact\t("<<leftVelocity<<","<<rightVelocity<<")\t---->\t"<<mode<<"\t"<<omega<<endl;
-
+    cout << "Command Sent: (" << leftVelocity << ", " << rightVelocity << ") ";
+    
     #ifndef SIMCTL
       p->sendChar('w');
       usleep(100);
@@ -155,16 +158,18 @@ namespace Nav {
   void sendCommand(int leftVelocity, int rightVelocity) {
   int leftVel=0,rightVel=0;
     if (leftVelocity > rightVelocity) {
-      leftVel = 34;
-      rightVel = 22;
+      leftVel = 35;
+      rightVel = 23;
     } else if (leftVelocity < rightVelocity) {
-      leftVel = 20;
-      rightVel = 35;
-    } else if ((leftVelocity != 0) || (rightVelocity != 0)) {
       leftVel = 22;
-      rightVel = 25;
+      rightVel = 34;
+    } else if ((leftVelocity != 0) || (rightVelocity != 0)) {
+      leftVel = 25;
+      rightVel = 22;
     }
 
+    cout << "Command Sent: " << leftVelocity << ", " << rightVelocity << endl;
+    
     #ifndef SIMCTL
       p->sendChar('w');
       usleep(100);
@@ -558,6 +563,11 @@ namespace Nav {
 
     cvNamedWindow("GMap", CV_WINDOW_NORMAL);
     mapImg = cvCreateImage(cvSize(MAP_MAX, MAP_MAX), IPL_DEPTH_8U, 3);
+    
+    cost_field = (int **) malloc(MAP_MAX * sizeof(int *));
+    for (int i = 0; i < MAP_MAX; i++) {
+        cost_field[i] = (int *) malloc(MAP_MAX * sizeof(int));
+    }
   }
 
   double max(double a, double b) {
@@ -567,6 +577,41 @@ namespace Nav {
       return b;
     }
   }
+  
+  
+  void transform() {
+		IplImage* image = cvCreateImage(cvSize(MAP_MAX, MAP_MAX), IPL_DEPTH_8U, 1);
+		//IplImage* out = cvCreateImage(cvSize(MAP_MAX, MAP_MAX), IPL_DEPTH_32F, 1);
+		IplImage* out = cvCreateImage(cvSize(MAP_MAX, MAP_MAX), IPL_DEPTH_8U, 1);
+		
+		for (int i = 0; i < MAP_MAX; i++) {
+			uchar* ptr = (uchar *) (image->imageData + i * image->widthStep);
+			for (int j = 0; j < MAP_MAX; j++) {
+				if (map[j][MAP_MAX - i - 1].wFlag == false) {
+					ptr[j] = 0;
+				} else {
+					ptr[j] = 255;
+				}
+			}
+		}
+		cvDistTransform(image, out, CV_DIST_L1, 3, NULL, NULL);
+		//out = normalizeImage(out);
+		
+		for (int i = 0; i < MAP_MAX; i++) {
+			uchar* ptr = (uchar *) (out->imageData + i * out->widthStep);
+			for (int j = 0; j < MAP_MAX; j++) {
+				cost_field[i][j] = ptr[j] > 255 ? 255 : (int) ptr[j];
+				cost_field[i][j] = cost_field[i][j] < 0 ? 0 : cost_field[i][j];
+			}
+		}
+		
+		cvNamedWindow("Transform", CV_WINDOW_NORMAL);
+		cvShowImage("Transform", out);
+		cvWaitKey(1);
+		cvReleaseImage(&image);
+		cvReleaseImage(&out);
+	}
+
 
   int Nav::NavCore::navigate(char **gMap, CvPoint target, int frame_count, double yaw) {
     #ifdef VIS
@@ -579,7 +624,7 @@ namespace Nav {
         initState(map[i] + j);
       }
     }
-
+    
     loadMap(gMap);
 
     if (loggerActive) {
@@ -596,8 +641,10 @@ namespace Nav {
 
     #ifdef SIMOBS
       srand(time(0));
-      for (int i = 0; i < 15; i++) {
-        addObstacle(cvPoint(200 + rand() % 700, 200 + rand() % 700), 10 + rand() % 90);
+      for (int i = 0; i < 5; i++) {
+        addObstacle(cvPoint(200 + rand() % 500, 200 + rand() % 500), 30);
+        //addObstacle(cvPoint(300, 500), 10);
+        //addObstacle(cvPoint(500, 300), 10);
       }
     #endif
 
@@ -634,8 +681,13 @@ namespace Nav {
     map[s.x][s.y] = s;
 
     #ifdef SIMSEEDS
-      nSeeds = 36;
+      nSeeds = 9;
     #endif
+    
+#ifdef DTRANS
+    // Distance Transform
+    transform();
+#endif
 
     int count = 0;
     static double previousYaw = 0;
@@ -661,13 +713,26 @@ namespace Nav {
               ol = append(ol, N[i]);
               map[N[i].x][N[i].y] = N[i];
               map[N[i].x][N[i].y].listType = OPEN;
-              map[N[i].x][N[i].y].g = map[s.x][s.y].g + N[i].g;
+              
+#ifdef DTRANS
+              double k = 0, m = 250 * .5;
+              double g_cost_only = map[s.x][s.y].g + N[i].g;
+              double extra_cost = (k + m*(255.0 - cost_field[MAP_MAX - 1 - N[i].y][N[i].x]) / 255.0);
+              map[N[i].x][N[i].y].g = g_cost_only + extra_cost;
+#else
+							map[N[i].x][N[i].y].g = map[s.x][s.y].g + N[i].g;
+#endif
               map[N[i].x][N[i].y].h = sqrt(pow(N[i].x - t.x + 0.0, 2) + pow(N[i].y - t.y + 0.0, 2));
               map[N[i].x][N[i].y].h = max(map[N[i].x][N[i].y].h, map[s.x][s.y].h - N[i].g); // Consistent Heuristic
               map[N[i].x][N[i].y].l = ol;
-
+              
               #ifdef VIS
-                cvLine(vis, cvPoint(N[i].x, N[i].y), cvPoint(N[i].x + 3, N[i].y), CV_RGB(0, 255, 0), 3, CV_AA, 0);
+#ifdef DTRANS
+							cout << "F Cost Only: " << g_cost_only + map[N[i].x][N[i].y].h << " ";
+							cout << "Cost Field: " << cost_field[MAP_MAX - 1 - N[i].y][N[i].x] << " ";
+							cout << "Extra Cost: " << extra_cost << " Total: " << map[N[i].x][N[i].y].g + map[N[i].x][N[i].y].h << endl;
+#endif 
+								cvLine(vis, cvPoint(N[i].x, N[i].y), cvPoint(N[i].x + 3, N[i].y), CV_RGB(0, 255, 0), 3, CV_AA, 0);
               #endif
             }
           }
@@ -675,6 +740,10 @@ namespace Nav {
       }
 
       #ifdef VIS
+#ifdef DTRANS
+			cout << endl;
+			//getchar();
+#endif
         cvShowImage("Visualization", vis);
         static int visFlag = 0;
         cvWaitKey(0);
@@ -713,7 +782,7 @@ namespace Nav {
       map[s.x][s.y].l = NULL;
 
       count++;
-      if (count % 5000 == 0) {
+      if (count % 10000 == 0) {
         if (count != 0) {
           printf("Counter Overflow\n");
           sendCommand(0, 0);
@@ -766,7 +835,6 @@ namespace Nav {
       #endif
 
       #ifdef YAWPID
-    cout<<"Yaw="<<yaw<<" Previous Yaw="<<previousYaw<<endl;
         sendCommand(lVel, rVel, yaw - previousYaw);
         previousYaw = yaw;
       #else

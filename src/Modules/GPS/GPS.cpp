@@ -25,9 +25,13 @@
 #define Lat_Dist 111119.99
 #define Long_Dist 102796.84                                     // This distance is at ****IIT Kharagpur ****.. ****Please update before leaving for ***IGVC***  ****
                                 // for Oakland Universty : 
+//#define Lat_Dist 1119.99
+//#define Long_Dist 1096.84
 #define REF_NORTH 22.31666666666667                                        // 37.7481 : Oakland University :- Michigan
 #define REF_EAST 87.3                      // -122.202 : Oakland University : Michigan
 #define MAP_MAX 1000
+#define A 1000
+
 
 using namespace mrpt;
 using namespace mrpt::slam;
@@ -47,8 +51,8 @@ using namespace mrpt::utils;
 #endif
 CGPSInterface   gps;
 
-double refN = 22.322091;
-double refE = 87.306429;
+double refN = 22.319575;
+double refE = 87.298412;
   
 //Declarations for IMU
 string SERIAL_NAME;
@@ -57,37 +61,37 @@ namespace GPSspace
 {
   void truncate(/*double xb, double yb, */double xt, double yt, int *xtt, int *ytt)
   {
-cout<<"\n000000\n"<<endl;
+
+    if((yt<=0.9*A && yt>=0.1*A) && (xt<=0.9*A && xt>=0.1*A))
+     {  //cout<<" target is in the box ";
+             *xtt = xt;
+             *ytt = yt;
+             return;
+     }
+
     double xp, yp;
-    double A = MAP_MAX;
     int xb=500;
-    int yb=100;
+    int yb=200;
     
     // L1: y = 0.9A
     xp = xb + (0.9 * A - yb) * ((xt - xb) / (yt - yb));
     yp = 0.9 * A;
-cout<<"xp="<<xp<<" yp="<<yp;
     if(((0.1 * A <= xp) && (xp <= 0.9 * A)) &&
-    ((yb - 0.9 * A) * (yt - 0.9 * A) <= 0))
-    {
-cout<<"\n111111\n"<<endl;
+    ((yb - 0.9 * A) * (yt - 0.9 * A) <= 0) && (yt>=0.9*A))
+    {//cout<<" y=0.9A xp,yp= "<< xp<<","<<  yp;
       *xtt = xp;
       *ytt = yp;
       return;
     }
 
     // L2: y = 0.1A
-    /*xp = xb + (0.1 * A - yb) * ((xt - xb) / (yt - yb));
+    xp = xb + (0.1 * A - yb) * ((xt - xb) / (yt - yb));
     yp = 0.1 * A;
 
     if(((0.1 * A <= xp) && (xp <= 0.9 * A)) &&
-    ((yb - 0.1 * A) * (yt - 0.1 * A) <= 0))*/
-    xp= 0.9*A;
-    yp= yb + (0.9*A - xb) * ((yt - yb)/(xt - xb));
-cout<<"xp="<<xp<<" yp="<<yp;
-    if(yb>=0.1*A && yb >= 0.9*A)
-    {
-cout<<"\n222222\n"<<endl;
+    ((yb - 0.1 * A) * (yt - 0.1 * A) <= 0) && (yt<=0.1*A))
+    {//cout<<" y=0.1A  xp,yp= "<< xp<<","<<  yp;
+
       *xtt = xp;
       *ytt = yp;
       return;
@@ -96,11 +100,21 @@ cout<<"\n222222\n"<<endl;
     // L3: x = 0.1A
     xp = 0.1 * A;
     yp = yb + (0.1 * A - xb) * ((yt - yb) / (xt - xb));
-cout<<"xp="<<xp<<" yp="<<yp;
     if/*(((0.1 * A <= xp) && (xp <= 0.9 * A)) &&
-    ((yb - 0.1 * A) * (yt - 0.1 * A) <= 0))*/(yp>.1*A && yp<.9*A)
-    {
+    ((yb - 0.1 * A) * (yt - 0.1 * A) <= 0))*/(yp>.1*A && yp<.9*A && (xt<0.1*A))
+    {//cout<<" x=0.1A  xp,yp= "<< xp<<","<<  yp;
 
+      *xtt = xp;
+      *ytt = yp;
+      return;
+    }
+
+    // L4: x = 0.9A
+    xp = 0.9 * A;
+    yp = yb + (0.9 * A - xb) * ((yt - yb) / (xt - xb));
+//cout<<"xp="<<xp<<" yp="<<yp;
+    if(yp>.1*A && yp<.9*A && xt>0.9*A)
+    {//cout<<"x=0.9A xp,yp= "<< xp<<","<<  yp;
       *xtt = xp;
       *ytt = yp;
       return;
@@ -110,10 +124,12 @@ cout<<"xp="<<xp<<" yp="<<yp;
 
   void GPSspace::GPS::Local_Map_Coordinate(double north_d,double east_d,double yaw_d, int *tx, int *ty)
   {
-    double y1 =(refN - north_d)*(Lat_Dist) ; 
-    double x1 = (refE - east_d)*(Long_Dist); 
+     
 
-    yaw_d = (3.142/180.0)*yaw_d;
+    double y1 =((double)refN - (double)north_d)*((double)Lat_Dist) ; 
+    double x1 = ((double)refE - (double)east_d)*((double)Long_Dist); 
+    	printf("x %lf  y %lf",x1,y1);
+    yaw_d = -(3.142/180.0)*yaw_d;
     double x2 = x1*cos(yaw_d) -  y1*sin(yaw_d);
     double y2 = y1*cos(yaw_d) + x1*sin(yaw_d);
 
@@ -122,7 +138,7 @@ cout<<"xp="<<xp<<" yp="<<yp;
 
     truncate(x2*100, y2*100, tx, ty);
     //*tx=200;*ty=200;
-cout<<"cfyhgjvnmnfgd";
+//cout<<"north "<<north_d<<"east"<<east_d<<" ";
   }
 
 void GPSspace::GPS::GPS_Init()
@@ -187,14 +203,14 @@ void GPSspace::GPS::_GPS(double *north_d , double *east_d)
                               //gpsData->dumpToConsole();
                               a_file.precision(12);   
                               a_file<<"  "<< gpsData->GGA_datum.latitude_degrees <<setprecision(12)<<"     "<<  gpsData->GGA_datum.longitude_degrees <<setprecision(12)<<endl;                       
-                              //cout<<"DATA WRITTEN";
-                              ///printf("Longitude_degrees-- %7.9lf\n",gpsData->GGA_datum.longitude_degrees);
+                           //   cout<<gpsData->GGA_datum.latitude_degrees <<setprecision(12)<<"     "<<  gpsData->GGA_datum.longitude_degrees <<setprecision(12)<<endl;
+                              //printf("Longitude_degrees-- %7.9lf\n",gpsData->GGA_datum.longitude_degrees);
                               //os::fprintf(f,byRows ? "%u ":"%u\n",static_cast<unsigned int>(*it));
                              
                                                               
                                //vectorToTextFile(gpsData->GGA_datum.latitude_degrees,"test_txt.txt",1,1);
                               *north_d = gpsData->GGA_datum.latitude_degrees;
-                *east_d =  gpsData->GGA_datum.longitude_degrees;
+                              *east_d =  gpsData->GGA_datum.longitude_degrees;
                                
                 break;
                           

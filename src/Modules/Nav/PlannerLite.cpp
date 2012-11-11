@@ -22,30 +22,55 @@
 
 #define SEEDS_PATH "seeds.txt"
 
-typedef struct pose {
+typedef struct Pose {
   double x, y, theta;
-}
+} Pose;
 
-typedef struct state {
+typedef struct State {
   int seed_index;
   double f_cost, g_cost, h_cost;
-  pose current, parent;
-} state;
+  Pose curr_pose, prev_pose;
+} State;
 
-typedef struct seed {
+typedef struct Seed {
+  int index;
   int left_velocity, right_velocity;
   double g_cost;
   double velocity_ratio;
-  pose current;
-  std::vector<pose> seed_points;
-} seed;
+  Pose dest_pose;
+  std::vector<Pose> seed_poses;
+} Seed;
+
+class ComparePoses {
+  public:
+    bool operator()(Pose pose_1, Pose pose_2) const {
+      if ((pose_1.x < pose_2.x) && (pose_1.y < pose_2.y) && (pose_1.theta < pose_2.theta)) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+};
+
+class CompareStates {
+  public:
+    bool operator()(State state_1, State state_2) const {
+      if ((state_1.curr_pose.x < state_2.curr_pose.x) && 
+              (state_1.curr_pose.y < state_2.curr_pose.y) && 
+              (state_1.curr_pose.theta < state_2.curr_pose.theta)) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+};
 
 char map[MAP_SIZE_X][MAP_SIZE_Y];
-state target, start;
-std::vector<state> path;
-std::vector<seed> seeds;
-std::map<pose, int> membership;
-std::map<pose, state> parentship;
+State target, start;
+std::vector<State> path;
+std::vector<Seed> seeds;
+std::map<Pose, int, ComparePoses> membership;
+std::map<Pose, State, ComparePoses> parentship;
 
 void loadSeeds() {
   int number_of_seeds;
@@ -55,28 +80,29 @@ void loadSeeds() {
   for (int i = 0; i < number_of_seeds; i++) {
     double temp_x, temp_y;
     double offset;
-    seed temp_seed;
+    Seed temp_seed;
 
     temp_seed.index = i;
     fscanf(fp, "%d %d %lf %lf %lf %lf\n", &temp_seed.left_velocity, &temp_seed.right_velocity, 
-                                          &temp_x, &temp_y, &temp_seed.theta, &temp_seed.g_cost);
+                                          &temp_x, &temp_y, &temp_seed.dest_pose.theta, &temp_seed.g_cost);
 
-    temp_seed.x < 0 ? offset = -1.5 : offset = 0.5;
-    temp_seed.x = (int) (temp_x + offset);
-    temp_seed.y = (int) (temp_y + offset);
+    temp_x < 0 ? offset = -1.5 : offset = 0.5;
+    temp_seed.dest_pose.x = (int) (temp_x + offset);
+    temp_seed.dest_pose.y = (int) (temp_y + offset);
 
     int number_of_seed_points;
     fscanf(fp, "%d\n", &number_of_seed_points);
 
     for (int j = 0; j < number_of_seed_points; j++) {
       double temp_x, temp_y;
-      state temp_state;
+      Pose temp_pose;
 
       fscanf(fp, "%lf %lf\n", &temp_x, &temp_y);
-      temp_state.x = (int) (temp_x + offset);
-      temp_state.y = (int) (temp_y + offset);
-
-      temp_seed.seed_points.insert(temp_seed.seed_points.begin(), temp_state);
+      temp_pose.x = (int) (temp_x + offset);
+      temp_pose.y = (int) (temp_y + offset);
+      temp_pose.theta = 0;
+      
+      temp_seed.seed_poses.insert(temp_seed.seed_poses.begin(), temp_pose);
     }
 
     seeds.insert(seeds.begin(), temp_seed);
@@ -88,66 +114,52 @@ void initPlanner(int argc, char **argv) {
   for (int i = 0; i < STATE_X; i++) {
     for (int j = 0; j < STATE_Y; j++) {
       map[i][j] = 0;
-      for (int k = 0; k < STATE_T; k++) {
-        membership[i][j][k] = UNASSIGNED;
-        parents[i][j][k] = std::numeric_limits<int>::max();
-      }
     }
   }
 
-  target.x = BOT_X;
-  target.y = BOT_Y + 0.5 * MAP_SIZE;
-  target.theta = 90;
+  target.curr_pose.x = BOT_X;
+  target.curr_pose.y = BOT_Y + 0.5 * MAP_SIZE_Y;
+  target.curr_pose.theta = 90;
   target.g_cost = 0;
   target.h_cost = 0; 
   target.f_cost = target.g_cost + target.h_cost;
 
-  start.x = BOT_X;
-  start.y = BOT_Y;
-  start.theta = 90;
+  start.curr_pose.x = BOT_X;
+  start.curr_pose.y = BOT_Y;
+  start.curr_pose.theta = 90;
   start.g_cost = 0;
   start.h_cost = 0; 
   start.f_cost = start.g_cost + start.h_cost;
 
+  
+  
   loadSeeds();
 }
 
-bool isTargetReached(state current) {
-  if (((current.x - target.x) * (current.x - target.x) +
-      (current.y - target.y) * (current.y - target.y) < TARGET_RADIUS * TARGET_RADIUS) && ()) {
+bool isTargetReached(State current) {
+  if ((current.curr_pose.x - target.curr_pose.x) * (current.curr_pose.x - target.curr_pose.x) +
+      (current.curr_pose.y - target.curr_pose.y) * (current.curr_pose.y - target.curr_pose.y) < 
+          TARGET_RADIUS * TARGET_RADIUS) {
     return true;
   } else {
     return false;
   }
 }
 
-class CompareStates {
-  public:
-    bool operator()(state& state_1, state& state_2) {
-      if (state_1.f_cost < state_2.f_cost) {
-        return true;
-      } else if (state_1.f_cost == state_2.f_cost) {
-        return state_1.g_cost < state_2.g_cost;
-      } else {
-        return false;
-      }
-    }
-};
-
-double heuristicCostEstimate(state state_1, state state_2) {
-  return sqrt((state_1.x - state_2.x) * (state_1.x - state_2.x) +
-              (state_1.y - state_2.y) * (state_1.y - state_2.y));
+double heuristicCostEstimate(State state_1, State state_2) {
+  return sqrt((state_1.curr_pose.x - state_2.curr_pose.x) * (state_1.curr_pose.x - state_2.curr_pose.x) +
+              (state_1.curr_pose.y - state_2.curr_pose.y) * (state_1.curr_pose.y - state_2.curr_pose.y));
 }
 
-bool hasValidParent(state current) {
-  return parents[current.x][current.y] != std::numeric_limits<int>::max();
+bool hasValidParent(State current) {
+  return parentship.count(current.curr_pose) == 1;
 }
 
-state getParent(state current) {
-  return parents[current.x][current.y];
+State getParent(State current) {
+  return parentship[current.curr_pose];
 }
 
-void reconstructPath(state current) {
+void reconstructPath(State current) {
   while (hasValidParent(current)) {
     path.insert(path.begin(), current);
     current = getParent(current);
@@ -155,35 +167,37 @@ void reconstructPath(state current) {
 }
 
 void getCommand(int *left_velocity, int *right_velocity) {
-  if (path[1].left_velocity > path[1].right_velocity) {
+  Seed command = seeds[path[1].seed_index];
+  
+  if (command.left_velocity > command.right_velocity) {
     *left_velocity = 30;
     *right_velocity = 22;
-  } else if (path[1].left_velocity < path[1].right_velocity) {
+  } else if (command.left_velocity < command.right_velocity) {
     *left_velocity = 18;
     *right_velocity = 30;
-  } else if ((path[1].left_velocity != 0) || (path[1].right_velocity != 0)) {
+  } else if ((command.left_velocity != 0) || (command.right_velocity != 0)) {
     *left_velocity = 22;
     *right_velocity = 25;
   }
 }
 
-bool isWalkable(state current) {
-  double alpha = getParent(current).theta;
-  std::vector<state> seed_points = seeds[current.seed_index].seed_points;
+bool isWalkable(State current) {
+  double alpha = getParent(current).curr_pose.theta;
+  std::vector<Pose> seed_poses = seeds[current.seed_index].seed_poses;
 
-  for (int i = 0; i < seed_points.size(); i++) {
+  for (int i = 0; i < seed_poses.size(); i++) {
     int original_x, original_y;
     int transformed_x, transformed_y;
 
-    original_x = seed_points[i].x;
-    original_y = seed_points[i].y;
+    original_x = seed_poses[i].x;
+    original_y = seed_poses[i].y;
 
     transformed_x = (int) (original_x * sin(alpha * (CV_PI / 180)) +
-                           original_y * cos(alpha * (CV_PI / 180)) + getParent(current).x);
+                           original_y * cos(alpha * (CV_PI / 180)) + getParent(current).curr_pose.x);
     transformed_y = (int) (-original_x * cos(alpha * (CV_PI / 180)) +
-                           original_y * sin(alpha * (CV_PI / 180)) + getParent(current).y);
+                           original_y * sin(alpha * (CV_PI / 180)) + getParent(current).curr_pose.y);
 
-    if (((0 <= transformed_x) && (transformed_x < MAP_SIZE)) && ((0 <= transformed_y) && (transformed_y < MAP_SIZE))) {
+    if (((0 <= transformed_x) && (transformed_x < MAP_SIZE_X)) && ((0 <= transformed_y) && (transformed_y < MAP_SIZE_Y))) {
       if (map[transformed_x][transformed_y] != 0) {
         return false;
       }
@@ -195,20 +209,21 @@ bool isWalkable(state current) {
   return true;
 }
 
-std::vector<state> getNeighbours(state current) {
-  std::vector<state> neighbours;
+std::vector<State> getNeighbours(State current) {
+  std::vector<State> neighbours;
 
   for (int i = 0; i < seeds.size(); i++) {
-    state temp;
+    State temp;
 
     temp.seed_index = seeds[i].index;
-    temp.x = (int)(seeds[i].x * sin(current.theta * (CV_PI / 180)) +
-                    seeds[i].y * cos(current.theta * (CV_PI / 180)) + current.x);
-    temp.y = (int)(-seeds[i].x * cos(current.theta * (CV_PI / 180)) +
-                    seeds[i].y * sin(current.theta * (CV_PI / 180)) + current.y);
-    temp.theta = seeds[i].theta - (90 - current.theta);
+    temp.curr_pose.x = (int)(seeds[i].dest_pose.x * sin(current.curr_pose.theta * (CV_PI / 180)) +
+                    seeds[i].dest_pose.y * cos(current.curr_pose.theta * (CV_PI / 180)) + current.curr_pose.x);
+    temp.curr_pose.y = (int)(-seeds[i].dest_pose.x * cos(current.curr_pose.theta * (CV_PI / 180)) +
+                    seeds[i].dest_pose.y * sin(current.curr_pose.theta * (CV_PI / 180)) + current.curr_pose.y);
+    temp.curr_pose.theta = seeds[i].dest_pose.theta - (90 - current.curr_pose.theta);
 
-    if ((0 <= temp.x) && (temp.x <= MAP_SIZE - 1) && (0 <= temp.y) && (temp.y <= MAP_SIZE - 1)) {
+    if ((0 <= temp.curr_pose.x) && (temp.curr_pose.x <= MAP_SIZE_X - 1) && (0 <= temp.curr_pose.y) && 
+            (temp.curr_pose.y <= MAP_SIZE_Y - 1)) {
       if (isWalkable(temp)) {
         neighbours.insert(neighbours.begin(), temp);
       }
@@ -218,20 +233,20 @@ std::vector<state> getNeighbours(state current) {
   return neighbours;
 }
 
-int getMembership(state current) {
-  return membership[current.x][current.y];
+int getMembership(State current) {
+  return membership.count(current.curr_pose) == 1 ? membership[current.curr_pose] : UNASSIGNED;
 }
 
-void setMembership(state current, int membership_status) {
-  membership[current.x][current.y] = membership_status;
+void setMembership(State current, int membership_status) {
+  membership[current.curr_pose] = membership_status;
 }
 
-double distanceBetween(state state_1, state state_2) {
+double distanceBetween(State state_1, State state_2) {
   return sqrt((state_1.g_cost - state_2.g_cost) * (state_1.g_cost - state_2.g_cost));
 }
 
-void setParent(state current, state parent) {
-  parents[current.x][current.y] = parent;
+void setParent(State current, State parent) {
+  parentship[current.curr_pose] = parent;
 }
 
 int main(int argc, char **argv) {
@@ -244,21 +259,21 @@ int main(int argc, char **argv) {
   while (1) {
     if (isTargetReached(start) == true) {
       printf("Target Reached\n");
-      return;
+      return 0;
     }
 
-    std::priority_queue<state, std::vector<state>, CompareStates> open_list;
+    std::priority_queue<State, std::vector<State>, CompareStates> open_list;
 
     start.g_cost = 0;
     start.f_cost = start.g_cost + heuristicCostEstimate(start, target);
 
     open_list.push(start);
     setMembership(start, OPEN_LIST);
-    printf("> Pushing (%d, %d, %lf)\n", start.x, start.y, start.theta);
+    printf("> Pushing (%lf, %lf, %lf)\n", start.curr_pose.x, start.curr_pose.y, start.curr_pose.theta);
 
     while (open_list.size() != 0) {
-      state current = open_list.top();
-      printf(">> Current (%d, %d, %lf)\n", current.x, current.y, current.theta);
+      State current = open_list.top();
+      printf(">> Current (%lf, %lf, %lf)\n", current.curr_pose.x, current.curr_pose.y, current.curr_pose.theta);
 
       if (isTargetReached(current)) {
         reconstructPath(current);
@@ -276,7 +291,7 @@ int main(int argc, char **argv) {
         continue;
       }
       
-      std::vector<state> neighbours = getNeighbours(current);
+      std::vector<State> neighbours = getNeighbours(current);
       for (int i = 0; i < neighbours.size(); i++) {
         if (getMembership(neighbours[i]) == CLOSED_LIST) {
           continue;

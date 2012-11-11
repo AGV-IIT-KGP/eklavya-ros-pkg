@@ -18,7 +18,7 @@
 #define MAP_Y 1000
 #define HOKUYO_SCALE 100
 #define VIEW_OBSTACLES 0
-#define RADIUS 45
+#define RADIUS 100
 
 using namespace mrpt;
 using namespace mrpt::hwdrivers;
@@ -69,8 +69,14 @@ char **LidarData::checkObstacles(char** localmap, CSimplePointsMap map) {
         map.getPoint((size_t)k,x,y);
         i = (int)((-1 * y * 200) + CENTERY);
         j = (int)((x * 200) + CENTERX);
+        if (i < 900 - RADIUS && i > RADIUS + 50 && j > RADIUS && j < 700 - RADIUS &&
+                    !(i < 560 && i > 440 && j < 150)) {
+                if (j > CENTERX + 5) {
+            
         if (checksum(localmap, i, j))
                 obstacle_map[i][j] = 1;
+            }
+        }
     }
     return obstacle_map;
 }
@@ -101,8 +107,12 @@ char **LidarData::expandObstacles(char** localmap, CSimplePointsMap map) {
         map.getPoint((size_t)k,x,y);
         i = (int)((-1 * y * 200) + CENTERY);
         j = (int)((x * 200) + CENTERX);
-        if (i>2 * RADIUS && i<MAP_X - (2 * RADIUS) && j>2 * RADIUS && j<MAP_Y - (2 * RADIUS))
+        if (i < 900 - RADIUS && i > RADIUS + 50 && j > RADIUS && j < 800 - RADIUS &&
+                    !(i < 560 && i > 440 && j < 150)) {
+                if (j > CENTERX + 5) {
                 createCircle(obstacle_map, i, j, R);
+            }
+        }
     }
 
     for (int i = 0; i < 1000; i++) {
@@ -139,12 +149,13 @@ void plotMap(char **local_map) {
 }
 
 char** LidarData::plotLaserScan(char **localmap) {
-    bool thereIsObservation, hardError;
+    bool thereIsObservation=false, hardError;
     CObservation2DRangeScan obs;
     float x, y;
     int points_count;
-
-    laser.doProcessSimple(thereIsObservation, obs, hardError);
+	//laser.purgeBuffers();
+	//while(!thereIsObservation)
+		laser.doProcessSimple(thereIsObservation, obs, hardError);
 
     if (hardError) {
         printf("[TEST] Hardware error=true!!\n");
@@ -164,7 +175,7 @@ char** LidarData::plotLaserScan(char **localmap) {
             double center_y = (x * 200) + CENTERX;
 
             //Rotate(center_x, center_y, &center_x, &center_y, 85);
-            if (center_x < 950 - RADIUS && center_x > RADIUS + 50 && center_y > RADIUS && center_y < 875 - RADIUS &&
+            if (center_x < 900 - RADIUS && center_x > RADIUS + 50 && center_y > RADIUS && center_y < 700 - RADIUS &&
                     !(center_x < 560 && center_x > 440 && center_y < 150)) {
                 if (center_y > CENTERX + 5) {
                     localmap[(int) center_x][(int) center_y] = 1;
@@ -172,9 +183,9 @@ char** LidarData::plotLaserScan(char **localmap) {
             }
         }
         //got points    
-        localmap = LidarData::checkObstacles(localmap, theMap);
+        //localmap = LidarData::checkObstacles(localmap, theMap);
         localmap = LidarData::expandObstacles(localmap, theMap);
-        plotMap(localmap);
+        //plotMap(localmap);
         return localmap;
     }
 }
