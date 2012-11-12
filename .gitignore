@@ -18,8 +18,8 @@ testBot
 CMakeCache.txt
 .gitignore~
 cmake_install.cmake
-/bin/
-/lib/
+bin
+lib
 Makefile
 *.*~
 CMakeFiles
