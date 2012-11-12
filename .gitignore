@@ -1,16 +1,9 @@
-*.suo
-*.sdf
-*.pdb
-*.idb
+
 /AGV 5.2/AGV/ipch
 x64
 Debug
 eklavya
 testBot
-*.vcproj.*.user
-*.ncb
-*.aps
-*.opensdf
 /build/
 /Logs/
 /nbproject/
