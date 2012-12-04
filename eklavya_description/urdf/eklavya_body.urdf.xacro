@@ -25,8 +25,7 @@
       <geometry>
         <box size="0.001 0.001 0.001"/>
       </geometry>
-      <material name="Red"/>
-      
+      <material name="Green"/>      
     </visual>
     <collision>
       <origin rpy="0 0 0" xyz="0 0 0.017"/>
@@ -53,7 +52,7 @@
       <geometry>
         <box size=".55 .55 .55"/>
       </geometry>
-      <material name="Blue"/>     
+      <material name="GunMetalBrushedAluminum"/>     
     </visual>
     
   </link>
