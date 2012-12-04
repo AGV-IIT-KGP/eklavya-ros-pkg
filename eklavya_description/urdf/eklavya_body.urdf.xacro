@@ -8,13 +8,40 @@
  <xacro:macro name="eklavya_body">
     <!--  INSERT YOU MODEL HERE -->
   
-  <link name='base_link'>
-    <origin rpy="0 0 3.14" xyz="0 0 .375"/>
+  <material name="Green">
+    <color rgba="0.0 0.8 0.0 1.0"/>
+  </material>
+  <link name="base_footprint">
+    <!--
     <inertial>
       <mass value="0.0001" />
+      <origin xyz="0 0 0" />
       <inertia ixx="0.0001" ixy="0.0" ixz="0.0"
               iyy="0.0001" iyz="0.0" 
               izz="0.0001" />
+    </inertial>
+-->
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <box size="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="Green"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0.017"/>
+      <geometry>
+        <box size="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+  </link>
+  
+  
+  <link name='base_link'>
+   <origin rpy="0 0 3.14" xyz="0 0 .375"/>
+    <inertial>
+      <mass value="2.0001" />
+      <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.5"/>
     </inertial>    
     <collision name='collision'>
       <geometry>
@@ -131,11 +158,8 @@
   <link name="left_wheel">
      <origin rpy="1.5707 0 1.5707" xyz="0 1.275 0.1"/>
     <inertial>
-      <mass value="0.0001" />
-     
-      <inertia ixx="0.0001" ixy="0.0" ixz="0.0"
-              iyy="0.0001" iyz="0.0" 
-              izz="0.0001" />
+      <mass value="0.2001" />
+      <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.5"/>
     </inertial>
     <collision name='left_wheel_collision'>
       <geometry>
@@ -167,11 +191,8 @@
   <link name="right_wheel">
     <origin rpy="1.5707 0 1.5707" xyz="0 0.275 0.1"/>
     <inertial>
-      <mass value="0.0001" />
-      
-      <inertia ixx="0.0001" ixy="0.0" ixz="0.0"
-              iyy="0.0001" iyz="0.0" 
-              izz="0.0001" />
+      <mass value="0.2001" />
+      <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.5"/>
     </inertial>
     <collision name='right_wheel_collision'>
       <geometry>
@@ -199,21 +220,27 @@
       </material>
     </visual>
   </link> 
+  
+  <joint name="base_footprint_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0.017"/>
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+  </joint>
+  
+  
   <!--Creating hinge joints for the wheels-->
-  <joint type="revolute" name="left_wheel_hinge">
+  <joint type="continuous" name="left_wheel_hinge">
     <origin xyz="0.278 0.275 0.1 " rpy="1.5707 0 1.5707"/>
     <child link="left_wheel"/>
     <parent link="base_link"/>
     <axis xyz="0 0 1"/>
-    <limit effort="30" velocity="1.0" lower="-2.2" upper="0.7" /> 
   </joint>
 
-  <joint type="revolute" name="right_wheel_hinge">
+  <joint type="continuous" name="right_wheel_hinge">
     <origin xyz="-0.278 0.275 0.1" rpy="1.5707 0 1.5707"/>
     <child link="right_wheel"/>
     <parent link="base_link"/>
     <axis xyz="0 0 1"/>
-    <limit effort="30" velocity="1.0" lower="-2.2" upper="0.7" />
   </joint>
   
   <!--  INSERT YOU MODEL HERE -->
