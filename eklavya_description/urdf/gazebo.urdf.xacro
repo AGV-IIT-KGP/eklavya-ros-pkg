@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+
+<robot xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller" xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface" xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor" xmlns:xacro="http://ros.org/wiki/xacro" name="eklavya_gazebo">
+
+
+
+  <gazebo reference="left_wheel">
+    <mu1 value="10"/>
+    <mu2 value="10"/>
+    <kp value="100000000.0"/>
+    <kd value="10000.0"/>
+    <fdir value="1 0 0"/>
+  </gazebo>
+
+  <gazebo reference="right_wheel">
+    <mu1 value="10"/>
+    <mu2 value="10"/>
+    <kp value="100000000.0"/>
+    <kd value="10000.0"/>
+    <fdir value="1 0 0"/>
+  </gazebo>
+</robot>
+
