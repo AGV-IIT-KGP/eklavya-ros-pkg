@@ -1,13 +1,7 @@
-
-/AGV 5.2/AGV/ipch
-x64
 Debug
 eklavya
-testBot
-/build/
-/Logs/
-/nbproject/
-/CMakeFiles/
+build
+nbproject
 CMakeCache.txt
 .gitignore~
 cmake_install.cmake
