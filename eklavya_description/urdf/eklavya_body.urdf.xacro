@@ -16,7 +16,7 @@
   <!-- base_footprint is a fictitious link(frame) that is on the ground right below base_link origin, navigation stack depends on this frame -->
 
   <link name="base_footprint">
-<!--
+
     <inertial>
       <mass value="0.0001" />
       <origin xyz="0 0 0" />
@@ -24,7 +24,7 @@
               iyy="0.0001" iyz="0.0" 
               izz="0.0001" />
     </inertial>
--->
+
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0" />
       <geometry>
@@ -52,7 +52,7 @@
     <visual>
       <origin xyz=" 0 0 0.0308" rpy="0 0 0" />
       <geometry>
-        <mesh filename="package://eklvya_description/meshes/create_body.dae"/>
+        <mesh filename="package://eklavya_description/meshes/create_body.dae"/>
       </geometry>
     </visual>
 
@@ -63,7 +63,7 @@
       </geometry>
     </collision>
   </link>
-<!--
+
   <link name="wall_sensor_link">
     <inertial>
       <mass value="0.01" />
@@ -148,7 +148,7 @@
     <parent link="base_link"/>
     <child link="rightfront_cliff_sensor_link" />
   </joint>
--->
+
   <link name="left_wheel_link">
     <inertial>
       <origin xyz="0 0 0"/>
@@ -209,7 +209,7 @@
     <axis xyz="0 1 0"/>
   </joint>
 
-<!--  <link name="rear_wheel_link">
+ <link name="rear_wheel_link">
     <inertial>
       <origin xyz="0 0 0"/>
       <mass value="0.001" />
@@ -231,7 +231,7 @@
       </geometry>
     </collision>
   </link>
--->
+
   <!-- fixed because there's no transmission -->
   <joint name="rear_castor_joint" type="fixed">
     <origin xyz="-0.13 0 0.0" rpy="0 0 0"/>
@@ -240,7 +240,7 @@
     <axis xyz="0 1 0"/>
   </joint>
 
-<!--  <link name="front_wheel_link">
+ <link name="front_wheel_link">
     <inertial>
       <origin xyz="0 0 0" />
       <mass value="0.01" />
@@ -262,7 +262,7 @@
       </geometry>
     </collision>
   </link>
--->
+
   <!-- fixed because there's no transmission -->
   <joint name="front_castor_joint" type="fixed">
     <origin xyz="0.13 0 0.0" rpy="0 0 0"/>
@@ -276,7 +276,7 @@
   <eklavya_spacer parent="base_link" number="2" x_loc="-0.07239" y_loc="-0.1114679" z_loc="0.062992"/>
   <eklavya_spacer parent="base_link" number="3" x_loc="-0.07239" y_loc="0.1114679" z_loc="0.062992"/>
 
-<!--  <joint name="gyro_joint" type="fixed">
+ <joint name="gyro_joint" type="fixed">
     <axis xyz="0 1 0" />
     <origin xyz="0 0 0.04" rpy="0 0 0" />
     <parent link="base_link"/>
@@ -288,7 +288,7 @@
       <origin xyz="0 0 0" rpy="0 0 0" />
       <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.0001" />
     </inertial>
-  </link>-->
+  </link>
 
   <joint name="laser_joint" type="fixed">
     <origin xyz="-0.065 0 0.075" rpy="0 0 0" />
@@ -312,7 +312,7 @@
     </inertial>
   </link>
 
-<!--
+
   <joint name="plate_0_joint" type="fixed">
     <origin xyz="-0.04334 0  0.06775704" rpy="0 0 0" />
     <parent link="base_link"/>
@@ -343,14 +343,14 @@
       </geometry>
     </collision>
   </link>
--->
+
 
 
   <eklavya_standoff_2in parent="base_link" number="0" x_loc="0.0676402" y_loc="0.1314196" z_loc="0.0709803"/>
   <eklavya_standoff_2in parent="base_link" number="1" x_loc="0.0676402" y_loc="-0.1314196" z_loc="0.0709803"/>
   <eklavya_standoff_2in parent="base_link" number="2" x_loc="-0.052832" y_loc="-0.1314196" z_loc="0.0709803"/>
   <eklavya_standoff_2in parent="base_link" number="3" x_loc="-0.052832" y_loc="0.1314196" z_loc="0.0709803"/>
-<!--
+
   <joint name="plate_1_joint" type="fixed">
     <origin xyz="0.04068 0 0.05715" rpy="0 0 0" />
     <parent link="plate_0_link"/>
@@ -380,12 +380,12 @@
       </geometry>
     </collision>
   </link>
--->
+
   <eklavya_standoff_2in parent="standoff_2in_0_link" number="4" x_loc="0" y_loc="0" z_loc="0.05715"/>
   <eklavya_standoff_2in parent="standoff_2in_1_link" number="5" x_loc="0" y_loc="0" z_loc="0.05715"/>
   <eklavya_standoff_2in parent="standoff_2in_2_link" number="6" x_loc="0" y_loc="0" z_loc="0.05715"/>
   <eklavya_standoff_2in parent="standoff_2in_3_link" number="7" x_loc="0" y_loc="0" z_loc="0.05715"/>
-<!--
+
   <joint name="plate_2_joint" type="fixed">
     <origin xyz="0 0 0.0572008" rpy="0 0 0" />
     <parent link="plate_1_link"/>
@@ -415,7 +415,7 @@
       </geometry>
     </collision>
   </link>
--->
+
 
 
   <eklavya_standoff_kinect parent="plate_2_link" number="0" x_loc="-0.1024382" y_loc="0.098" z_loc="0.0032004"/>
