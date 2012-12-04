@@ -8,453 +8,227 @@
   <property name="base_x" value="0.33" />
   <property name="base_y" value="0.33" />
 
-  <xacro:macro name="eklavya_body">
-    <material name="Green">
-      <color rgba="0.0 0.8 0.0 1.0"/>
-    </material>
-
-  <!-- base_footprint is a fictitious link(frame) that is on the ground right below base_link origin, navigation stack depends on this frame -->
-
-  <link name="base_footprint">
-
+ <xacro:macro name="eklavya_body">
+    <!--  INSERT YOU MODEL HERE -->
+  
+  <link name='base_link'>
+    <pose>0 0 .375 0 0 3.14</pose>
     <inertial>
       <mass value="0.0001" />
-      <origin xyz="0 0 0" />
+     
       <inertia ixx="0.0001" ixy="0.0" ixz="0.0"
               iyy="0.0001" iyz="0.0" 
               izz="0.0001" />
     </inertial>
-
-    <visual>
-      <origin xyz="0 0 0" rpy="0 0 0" />
+    
+    <collision name='collision'>
       <geometry>
-        <box size="0.001 0.001 0.001" />
-      </geometry>
-      <material name="Green" />
-    </visual>
-
-    <collision>
-      <origin xyz="0 0 0.017" rpy="0 0 0" />
-      <geometry>
-       <box size="0.001 0.001 0.001" />
+        <box size=".55 .55 .55"/>
       </geometry>
     </collision>
-  </link>
 
-  <link name="base_link">
-    <inertial>
-      <mass value="2" />
-      <origin xyz="0 0 0.0" />
-      <inertia ixx="0.01" ixy="0.0" ixz="0.0"
-        iyy="0.01" iyz="0.0" izz="0.5" />
-    </inertial>
-
-    <visual>
-      <origin xyz=" 0 0 0.0308" rpy="0 0 0" />
+    <visual name='visual'>
       <geometry>
-        <mesh filename="package://eklavya_description/meshes/create_body.dae"/>
+        <box size=".55 .55 .55"/>
       </geometry>
+      <material name="red">
+        <color rgba=".8 0 0 1"/>
+      </material>
     </visual>
-
-    <collision>
-      <origin xyz="0.0 0.0 0.0308" rpy="0 0 0" />
+  </link>
+  <!--Top of base_link support-->
+  <!--<link name="sc1">  
+    <collision name='sc1'>
+      <pose>0.26 0.26 0.575 0 0 0</pose>
       <geometry>
-        <cylinder length="0.0611632" radius="0.016495"/>
+        <box size=".03 .03 .6"/>
       </geometry>
     </collision>
-  </link>
 
-  <link name="wall_sensor_link">
-    <inertial>
-      <mass value="0.01" />
-      <origin xyz="0 0 0"/>
-      <inertia ixx="0.001" ixy="0.0" ixz="0.0"
-        iyy="0.001" iyz="0.0" izz="0.001" />
-    </inertial>
-  </link>
-
-
-  <link name="left_cliff_sensor_link">
-    <inertial>
-      <mass value="0.01" />
-      <origin xyz="0 0 0"/>
-      <inertia ixx="0.001" ixy="0.0" ixz="0.0"
-        iyy="0.001" iyz="0.0" izz="0.001" />
-    </inertial>
-  </link>
-
-  <link name="right_cliff_sensor_link">
-    <inertial>
-      <mass value="0.01" />
-      <origin xyz="0 0 0"/>
-      <inertia ixx="0.001" ixy="0.0" ixz="0.0"
-        iyy="0.001" iyz="0.0" izz="0.001" />
-    </inertial>
-  </link>
-
-
-
-  <link name="leftfront_cliff_sensor_link">
-    <inertial>
-      <mass value="0.01" />
-      <origin xyz="0 0 0"/>
-      <inertia ixx="1.0" ixy="0.0" ixz="0.0"
-        iyy="0.01" iyz="0.0" izz="0.01" />
-    </inertial>
-  </link>
-
-  <link name="rightfront_cliff_sensor_link">
-    <inertial>
-      <mass value="0.01" />
-      <origin xyz="0 0 0"/>
-      <inertia ixx="0.001" ixy="0.0" ixz="0.0"
-        iyy="0.001" iyz="0.0" izz="0.001" />
-    </inertial>
-  </link>
-
-
-  <joint name="base_footprint_joint" type="fixed">
-    <origin xyz="0 0 0.017" rpy="0 0 0" />        
-    <parent link="base_footprint"/>
-    <child link="base_link" />
-  </joint>
-
-  <joint name="base_wall_sensor_joint" type="fixed">
-    <origin xyz="0.09 -0.120 0.042" rpy="0 0 -1.0" />        
-    <parent link="base_link"/>
-    <child link="wall_sensor_link" />
-  </joint>
-
-  <joint name="base_left_cliff_sensor_joint" type="fixed">
-    <origin xyz="0.07 0.14 0.01" rpy="0 1.57079 0" />        
-    <parent link="base_link"/>
-    <child link="left_cliff_sensor_link" />
-  </joint>
-
-  <joint name="base_right_cliff_sensor_joint" type="fixed">
-    <origin xyz="0.07 -0.14 0.01" rpy="0 1.57079 0" />        
-    <parent link="base_link"/>
-    <child link="right_cliff_sensor_link" />
-  </joint>
-
-  <joint name="base_leftfront_cliff_sensor_joint" type="fixed">
-    <origin xyz="0.15 0.04 0.01" rpy="0 1.57079 0" />        
-    <parent link="base_link"/>
-    <child link="leftfront_cliff_sensor_link" />
-  </joint>
-
-  <joint name="base_rightfront_cliff_sensor_joint" type="fixed">
-    <origin xyz="0.15 -0.04 0.01" rpy="0 1.57079 0" />        
-    <parent link="base_link"/>
-    <child link="rightfront_cliff_sensor_link" />
-  </joint>
-
-  <link name="left_wheel_link">
-    <inertial>
-      <origin xyz="0 0 0"/>
-      <mass value="0.01" />
-      <inertia ixx="0.001" ixy="0.0" ixz="0.0"
-        iyy="0.001" iyz="0.0" izz="0.001" />
-    </inertial>
-
-    <visual>
-      <origin xyz="0 0 0" rpy="0 1.5707 1.5707" />
+    <visual name='sv1'>
+      <pose>0.26 0.26 0.575 0 0 0</pose>
       <geometry>
-        <cylinder radius="0.033" length = "0.023"/>
+        <box size=".03 .03 .6"/>
       </geometry>
     </visual>
-
-    <collision>
-      <origin xyz="0 0 0" rpy="0 1.5707 1.5707" />
-      <geometry>
-        <cylinder radius="0.033" length = "0.023"/>
-      </geometry>
-    </collision>
   </link>
 
-  <joint name="left_wheel_joint" type="continuous">
-    <origin xyz="0 0.13 0.015" rpy="0 0 0"/>
-    <parent link="base_link"/>
-    <child link="left_wheel_link"/>
-    <axis xyz="0 1 0"/>
-  </joint>
-
-  <link name="right_wheel_link">
-    <inertial>
-      <origin xyz="0 0 0"/>
-      <mass value="0.01" />
-      <inertia ixx="0.001" ixy="0.0" ixz="0.0"
-        iyy="0.001" iyz="0.0" izz="0.001" />
-    </inertial>
-
-    <visual>
-      <origin xyz="0 0 0" rpy="0 1.5707 1.5707" />
+  <link name="sc2">
+    <collision name='sc2'>
+      <pose>-0.26 0.26 0.575 0 0 0</pose>
       <geometry>
-        <cylinder radius="0.033" length = "0.023"/>
+        <box size=".03 .03 .6"/>
+      </geometry>
+    </collision>
+
+    <visual name='sv2'>
+      <pose>-0.26 0.26 0.575 0 0 0</pose>
+      <geometry>
+        <box size=".03 .03 .6"/>
       </geometry>
     </visual>
-
-    <collision>
-      <origin xyz="0 0 0" rpy="0 1.5707 1.5707" />
+  </link>
+  
+  <link name="sc3">  
+    <collision name='sc3'>
+      <pose>0 0.26 0.89 0 0 0</pose>
       <geometry>
-        <cylinder radius="0.033" length = "0.023"/>
+        <box size=".55 .03 .03"/>
       </geometry>
     </collision>
+
+    <visual name='sv3'>
+      <pose>0 0.26 0.89 0 0 0</pose>
+      <geometry>
+        <box size=".55 .03 .03"/>
+      </geometry>
+    </visual>
   </link>
+  
+  <link name="castor_support">
+ --> <!--Castor Support-->
+<!--    <collision name='extrusion_collision'>
+      <pose>0 0.375 -0.275 0 0 0</pose>
+      <geometry>
+        <box size=".1 .2 .02"/>
+      </geometry>
+    </collision>
 
-  <joint name="right_wheel_joint" type="continuous">
-    <origin xyz="0 -0.13 0.015" rpy="0 0 0"/>
-    <parent link="base_link"/>
-    <child link="right_wheel_link"/>
-    <axis xyz="0 1 0"/>
-  </joint>
+    <visual name='extrusion_visual'>
+      <pose>0 0.375 -0.275 0 0 0</pose>
+      <geometry>
+        <box size=".1 .2 .02"/>
+      </geometry>
+    </visual>
+  </link>
+ 
+  <link name="castor">
+  --><!--Castor-->
+<!-- 	<collision name='caster_collision'>
+      <pose>0 0.375 -0.325 0 0 0</pose>
+      <geometry>
+        <sphere radius=".05"/>
+      </geometry>
 
- <link name="rear_wheel_link">
+      <surface>
+        <friction>
+          <ode>
+            <mu>0</mu>
+            <mu2>0</mu2>
+            <slip1>1.0</slip1>
+            <slip2>1.0</slip2>
+          </ode>
+        </friction>
+      </surface>
+    </collision>
+
+    <visual name='caster_visual'>
+      <pose>0 0.375 -0.325 0 0 0</pose>
+      <geometry>
+        <sphere radius=".05"/>
+      </geometry>
+    </visual>
+  </link>
+  -->
+  
+  <!--Left_Wheel-->
+  <link name="left_wheel">
+    <pose>0.278 0.275 0.1 1.5707 0 1.5707</pose>
+    
     <inertial>
-      <origin xyz="0 0 0"/>
-      <mass value="0.001" />
+      <mass value="0.0001" />
+     
       <inertia ixx="0.0001" ixy="0.0" ixz="0.0"
-        iyy="0.0001" iyz="0.0" izz="0.0001" />
+              iyy="0.0001" iyz="0.0" 
+              izz="0.0001" />
     </inertial>
-
-    <visual>
-      <origin xyz="0 0 0" rpy="0 1.5707 1.5707"/>
+    <collision name='left_wheel_collision'>
       <geometry>
-        <sphere radius="0.015" />
+        <cylinder radius=".1" length="0.06"/>
       </geometry>
-    </visual>
 
-    <collision>
-      <origin xyz="0 0 0" rpy="0 1.5707 1.5707" />
-      <geometry>
-        <sphere radius="0.015" />
-      </geometry>
+      <surface>
+        <friction>
+          <ode>
+            <mu>0</mu>
+            <mu2>0</mu2>
+            <slip1>1.0</slip1>
+            <slip2>1.0</slip2>
+          </ode>
+        </friction>
+      </surface>
     </collision>
-  </link>
 
-  <!-- fixed because there's no transmission -->
-  <joint name="rear_castor_joint" type="fixed">
-    <origin xyz="-0.13 0 0.0" rpy="0 0 0"/>
-    <parent link="base_link"/>
-    <child link="rear_wheel_link"/>
-    <axis xyz="0 1 0"/>
-  </joint>
-
- <link name="front_wheel_link">
-    <inertial>
-      <origin xyz="0 0 0" />
-      <mass value="0.01" />
-      <inertia ixx="0.001" ixy="0.0" ixz="0.0"
-        iyy="0.001" iyz="0.0" izz="0.001" />
-    </inertial>
-
-    <visual>
-      <origin xyz="0 0 0" rpy="0 1.5707 1.5707"/>
+    <visual name='left_wheel_visual'>
       <geometry>
-        <sphere radius="0.018" />
+        <cylinder radius=".1" length="0.06"/>
       </geometry>
+      <material name="red">
+        <color rgba=".8 0 0 1"/>
+      </material>
     </visual>
-
-    <collision>
-      <origin xyz="0 0 0" rpy="0 1.5707 1.5707" />
-      <geometry>
-        <sphere radius="0.018" />
-      </geometry>
-    </collision>
   </link>
 
-  <!-- fixed because there's no transmission -->
-  <joint name="front_castor_joint" type="fixed">
-    <origin xyz="0.13 0 0.0" rpy="0 0 0"/>
-    <parent link="base_link"/>
-    <child link="front_wheel_link"/>
-    <axis xyz="0 1 0"/>
-  </joint>
 
-  <eklavya_spacer parent="base_link" number="0" x_loc="-0.00254" y_loc="0.1114679" z_loc="0.062992"/>
-  <eklavya_spacer parent="base_link" number="1" x_loc="-0.00254" y_loc="-0.1114679" z_loc="0.062992"/>
-  <eklavya_spacer parent="base_link" number="2" x_loc="-0.07239" y_loc="-0.1114679" z_loc="0.062992"/>
-  <eklavya_spacer parent="base_link" number="3" x_loc="-0.07239" y_loc="0.1114679" z_loc="0.062992"/>
-
- <joint name="gyro_joint" type="fixed">
-    <axis xyz="0 1 0" />
-    <origin xyz="0 0 0.04" rpy="0 0 0" />
-    <parent link="base_link"/>
-    <child link="gyro_link"/>
-  </joint>
-  <link name="gyro_link">
+  <!--Right_Wheel-->
+  <link name="right_wheel">
+    <pose>-0.278 0.275 0.1 1.5707 0 1.5707</pose>
+    
     <inertial>
-      <mass value="0.001" />
-      <origin xyz="0 0 0" rpy="0 0 0" />
-      <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.0001" />
-    </inertial>
-  </link>
-
-  <joint name="laser_joint" type="fixed">
-    <origin xyz="-0.065 0 0.075" rpy="0 0 0" />
-    <parent link="base_link" />
-    <child link="laser" />
-  </joint>
-
-  <link name="laser">
-    <visual>
-      <geometry>
-        <box size="0.02 0.035 0.002" />
-      </geometry>
-      <material name="Green" />
-    </visual>
-    <inertial>
-      <mass value="0.001" />
-      <origin xyz="0 0 0" />
+      <mass value="0.0001" />
+      
       <inertia ixx="0.0001" ixy="0.0" ixz="0.0"
-        iyy="0.0001" iyz="0.0"
-        izz="0.0001" />
+              iyy="0.0001" iyz="0.0" 
+              izz="0.0001" />
     </inertial>
-  </link>
+    <collision name='right_wheel_collision'>
+      <geometry>
+        <cylinder radius=".1" length="0.06"/>
+      </geometry>
+
+      <surface>
+        <friction>
+          <ode>
+            <mu>0</mu>
+            <mu2>0</mu2>
+            <slip1>1.0</slip1>
+            <slip2>1.0</slip2>
+          </ode>
+        </friction>
+      </surface>
+    </collision>
+
+    <visual name='right_wheel_visual'>
+      <geometry>
+        <cylinder radius=".1" length="0.06"/>
+      </geometry>
+      <material name="red">
+        <color rgba=".8 0 0 1"/>
+      </material>
+    </visual>
+  </link> 
 
 
-  <joint name="plate_0_joint" type="fixed">
-    <origin xyz="-0.04334 0  0.06775704" rpy="0 0 0" />
+ 
+  
+  <!--Creating hinge joints for the wheels-->
+  <joint type="revolute" name="left_wheel_hinge">
+    <origin xyz="0 0.275" rpy="0.1 0 0 0"/>
+    <child link="left_wheel"/>
     <parent link="base_link"/>
-    <child link="plate_0_link" />
+    <axis xyz="0 1 0"/>
+    <limit effort="30" velocity="1.0"/> <!--lower="-2.2" upper="0.7"--> 
   </joint>
 
-
-  <link name="plate_0_link">
-    <inertial>
-      <mass value="0.01" />
-      <origin xyz="0 0 0" />
-      <inertia ixx="0.01" ixy="0.0" ixz="0.0"
-        iyy="0.01" iyz="0.0"
-        izz="0.01" />
-    </inertial>
-
-    <visual>
-      <origin xyz=" 0 0 0 " rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://eklavya_description/meshes/plate_0_logo.dae"/>
-      </geometry>
-    </visual>
-
-    <collision>
-      <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
-      <geometry>
-        <box size="0.233502 0.314845 0.006401"/>
-      </geometry>
-    </collision>
-  </link>
-
-
-
-  <eklavya_standoff_2in parent="base_link" number="0" x_loc="0.0676402" y_loc="0.1314196" z_loc="0.0709803"/>
-  <eklavya_standoff_2in parent="base_link" number="1" x_loc="0.0676402" y_loc="-0.1314196" z_loc="0.0709803"/>
-  <eklavya_standoff_2in parent="base_link" number="2" x_loc="-0.052832" y_loc="-0.1314196" z_loc="0.0709803"/>
-  <eklavya_standoff_2in parent="base_link" number="3" x_loc="-0.052832" y_loc="0.1314196" z_loc="0.0709803"/>
-
-  <joint name="plate_1_joint" type="fixed">
-    <origin xyz="0.04068 0 0.05715" rpy="0 0 0" />
-    <parent link="plate_0_link"/>
-    <child link="plate_1_link" />
+  <joint type="revolute" name="right_wheel_hinge">
+    <origin xyz="0 0.275 0.1" rpy="0 0 0"/>
+    <child link="right_wheel"/>
+    <parent link="base_link"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="30" velocity="1.0"/> <!--lower="-2.2" upper="0.7"-->
   </joint>
-
-  <link name="plate_1_link">
-    <inertial>
-      <mass value="0.1" />
-      <origin xyz="0 0 0" />
-      <inertia ixx="0.01" ixy="0.0" ixz="0.0"
-        iyy="0.01" iyz="0.0"
-        izz="0.01" />
-    </inertial>
-
-    <visual>
-      <origin xyz=" 0 0 0 " rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://eklavya_description/meshes/plate_1_logo.dae"/>
-      </geometry>
-    </visual>
-
-    <collision>
-      <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
-      <geometry>
-        <box size="0.314856 0.314856 0.006401"/>
-      </geometry>
-    </collision>
-  </link>
-
-  <eklavya_standoff_2in parent="standoff_2in_0_link" number="4" x_loc="0" y_loc="0" z_loc="0.05715"/>
-  <eklavya_standoff_2in parent="standoff_2in_1_link" number="5" x_loc="0" y_loc="0" z_loc="0.05715"/>
-  <eklavya_standoff_2in parent="standoff_2in_2_link" number="6" x_loc="0" y_loc="0" z_loc="0.05715"/>
-  <eklavya_standoff_2in parent="standoff_2in_3_link" number="7" x_loc="0" y_loc="0" z_loc="0.05715"/>
-
-  <joint name="plate_2_joint" type="fixed">
-    <origin xyz="0 0 0.0572008" rpy="0 0 0" />
-    <parent link="plate_1_link"/>
-    <child link="plate_2_link" />
-  </joint>
-
-  <link name="plate_2_link">
-    <inertial>
-      <mass value="0.01" />
-      <origin xyz="0 0 0" />
-      <inertia ixx="0.001" ixy="0.0" ixz="0.0"
-        iyy="0.001" iyz="0.0"
-        izz="0.001" />
-    </inertial>
-
-    <visual>
-      <origin xyz=" 0 0 0 " rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://eklavya_description/meshes/plate_1_logo.dae"/>
-      </geometry>
-    </visual>
-
-    <collision>
-      <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
-      <geometry>
-        <box size="0.314856 0.314856 0.006401"/>
-      </geometry>
-    </collision>
-  </link>
-
-
-
-  <eklavya_standoff_kinect parent="plate_2_link" number="0" x_loc="-0.1024382" y_loc="0.098" z_loc="0.0032004"/>
-  <eklavya_standoff_kinect parent="plate_2_link" number="1" x_loc="-0.1024382" y_loc="-0.098" z_loc="0.0032004"/>
-
-  <eklavya_standoff_8in parent="standoff_2in_4_link" number="0" x_loc="0" y_loc="0" z_loc="0.05715"/>
-  <eklavya_standoff_8in parent="standoff_2in_5_link" number="1" x_loc="0" y_loc="0" z_loc="0.05715"/>
-  <eklavya_standoff_8in parent="standoff_2in_6_link" number="2" x_loc="0" y_loc="0" z_loc="0.05715"/>
-  <eklavya_standoff_8in parent="standoff_2in_7_link" number="3" x_loc="0" y_loc="0" z_loc="0.05715"/>
-
-  <joint name="plate_3_joint" type="fixed">
-    <origin xyz="-0.01316 0 0.2063496" rpy="0 0 0" />
-    <parent link="plate_2_link"/>
-    <child link="plate_3_link" />
-  </joint>
-
-  <link name="plate_3_link">
-    <inertial>
-      <mass value="0.01" />
-      <origin xyz="0 0 0" />
-      <inertia ixx="0.0001" ixy="0.0" ixz="0.0"
-        iyy="0.0001" iyz="0.0"
-        izz="0.0001" />
-    </inertial>
-
-    <visual>
-      <origin xyz=" 0 0 0 " rpy="0 0 0" />
-      <geometry>
-        <mesh filename="package://eklavya_description/meshes/plate_2_logo.dae"/>
-      </geometry>
-    </visual>
-
-    <collision>
-      <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
-      <geometry>
-        <box size="0.288 0.315 0.006401"/>
-      </geometry>
-    </collision>
-  </link>
+  
+  <!--  INSERT YOU MODEL HERE -->
   
   <!-- Simulation sensors -->
   <!--  <eklavya_sim_imu/>
