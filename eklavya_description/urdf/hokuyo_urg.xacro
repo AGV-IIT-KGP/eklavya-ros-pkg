@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+
+<robot xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+       xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+       xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface">
+
+    <macro name="hokuyo_urg" params="name parent *origin" >
+        <joint name="${name}_mount_joint" type="fixed">
+            <insert_block name="origin" /> 
+            <parent link="${parent}"/>
+            <child link="${name}_mount_link"/>
+        </joint>
+        
+        <link name="${name}_mount_link">
+            <inertial>
+                <mass value="0.160" />
+                <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+                <inertia ixx="1.0" ixy="0.0" ixz="0.0"
+                         iyy="1.0" iyz="0.0" 
+                         izz="1.0" />
+            </inertial>
+            
+            <visual>
+                <origin xyz="0.0 0.0 0.0" rpy="${M_PI/2} 0 ${M_PI/2}" />
+                <geometry>
+                    <mesh filename="package://eklavya_description/meshes/collada/hokuyo_urg.dae"/>
+                </geometry>
+                <material name="Black" />
+            </visual>
+            
+            <collision>
+                <origin xyz="0.0 0.0 0.0" rpy="${M_PI/2} 0 ${M_PI/2}" />
+                <geometry>
+                    <mesh filename="package://eklavya_description/meshes/collada/hokuyo_urg.dae"/>
+                </geometry>
+            </collision>
+        </link>
+        
+        <joint name="${name}_joint" type="fixed">
+            <origin xyz="0 0 0.06" rpy="0 0 0" />
+            <parent link="${name}_mount_link" />
+            <child link="${name}_link" />
+        </joint>
+        
+        <link name="${name}_link" type="laser">
+            <inertial>
+                <mass value="0.001" />
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <inertia ixx="0.0001" ixy="0" ixz="0"
+                         iyy="0.000001" iyz="0"
+                         izz="0.0001" />
+            </inertial>
+            
+            <visual name="laser_visual">
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry name="laser_visual_geom">
+                    <box size="0.001 0.001 0.001" />
+                </geometry>
+                <material name="Red" />
+            </visual>
+            
+            <collision name="laser_collision">
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <geometry name="laser_collision_geom" >
+                    <box size=".001 .001 .001" />
+                </geometry>
+            </collision>
+        </link>
+        
+        <gazebo reference="${name}_mount_link">
+            <material value="Erratic/Black" />
+        </gazebo>
+        
+        <gazebo reference="${name}_link">
+            <material value="Erratic/Black" />
+        </gazebo>
+        
+        <gazebo reference="${name}_link">
+            <sensor:ray name="laser">
+                <rayCount>683</rayCount>
+                <rangeCount>683</rangeCount>
+                <laserCount>1</laserCount>
+                
+                <origin>0.0 0.0 0.0</origin>
+                <displayRays>false</displayRays>
+                
+                <minAngle>-90</minAngle>
+                <maxAngle> 90</maxAngle>
+                
+                <minRange>0.06</minRange>
+                <maxRange>4.0</maxRange>
+                <resRange>0.001</resRange>
+                <updateRate>10.0</updateRate>
+                
+                <controller:gazebo_ros_laser name="gazebo_ros_${name}_laser_controller" plugin="libgazebo_ros_laser.so">
+                    <gaussianNoise>0.005</gaussianNoise>
+                    <alwaysOn>true</alwaysOn>
+                    <updateRate>10.0</updateRate>
+                    <topicName>${name}/scan</topicName>
+                    <frameName>${name}_link</frameName>
+                    <interface:laser name="gazebo_ros_${name}_laser_iface" />
+                </controller:gazebo_ros_laser>
+            </sensor:ray>
+        </gazebo>
+    </macro>
+</robot>
+
