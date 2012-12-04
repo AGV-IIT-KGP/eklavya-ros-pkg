@@ -8,6 +8,8 @@
 
  <param name="robot_description" command="$(find xacro)/xacro.py '$(find eklavya_description)/urdf/eklavya.urdf.xacro'"/>
 
+<!-- <param name="robot_description" textfile="$(find eklavya_description)/urdf/model.urdf"/>-->
+
 <node name="spawn_eklavya_model" pkg="gazebo" type="spawn_model" args="$(optenv ROBOT_INSTALL_POSE) -unpause -urdf -param robot_description -model eklavya_robot" respawn="false" output="screen"/>
  
 
