@@ -1,21 +1,17 @@
 <?xml version="1.0"?>
 <robot name="eklavya_hardware" xmlns:xacro="http://ros.org/wiki/xacro">
-  <property name="M_PI" value="3.14159"/>
+
 
   <!-- Macro for eklavya body. Including Gazebo extensions, but does not include Kinect -->
   <!--<include filename="$(find eklavya_description)/urdf/gazebo.urdf.xacro"/>-->
-
-  <property name="base_x" value="0.33" />
-  <property name="base_y" value="0.33" />
 
  <xacro:macro name="eklavya_body">
     <!--  INSERT YOU MODEL HERE -->
   
   <link name='base_link'>
-    <pose>0 0 .375 0 0 3.14</pose>
+    <origin rpy="0 0 3.14" xyz="0 0 .375"/>
     <inertial>
       <mass value="0.0001" />
-     
       <inertia ixx="0.0001" ixy="0.0" ixz="0.0"
               iyy="0.0001" iyz="0.0" 
               izz="0.0001" />
@@ -35,6 +31,7 @@
         <color rgba=".8 0 0 1"/>
       </material>
     </visual>
+    
   </link>
   <!--Top of base_link support-->
   <!--<link name="sc1">  
@@ -133,8 +130,7 @@
   
   <!--Left_Wheel-->
   <link name="left_wheel">
-    <pose>0.278 0.275 0.1 1.5707 0 1.5707</pose>
-    
+     <origin rpy="1.5707 0 1.5707" xyz="0 1.275 0.1"/>
     <inertial>
       <mass value="0.0001" />
      
@@ -158,22 +154,19 @@
         </friction>
       </surface>
     </collision>
-
     <visual name='left_wheel_visual'>
       <geometry>
         <cylinder radius=".1" length="0.06"/>
       </geometry>
-      <material name="red">
-        <color rgba=".8 0 0 1"/>
+      <material name="green">
+        <color rgba="0 .8 0 1"/>
       </material>
     </visual>
   </link>
 
-
   <!--Right_Wheel-->
   <link name="right_wheel">
-    <pose>-0.278 0.275 0.1 1.5707 0 1.5707</pose>
-    
+    <origin rpy="1.5707 0 1.5707" xyz="0 0.275 0.1"/>
     <inertial>
       <mass value="0.0001" />
       
@@ -202,30 +195,26 @@
       <geometry>
         <cylinder radius=".1" length="0.06"/>
       </geometry>
-      <material name="red">
-        <color rgba=".8 0 0 1"/>
+      <material name="blue">
+        <color rgba="0 0 .8 1"/>
       </material>
     </visual>
   </link> 
-
-
- 
-  
   <!--Creating hinge joints for the wheels-->
   <joint type="revolute" name="left_wheel_hinge">
-    <origin xyz="0 0.275" rpy="0.1 0 0 0"/>
+    <origin xyz="0.278 0.275 0.1 " rpy="0 0 0"/>
     <child link="left_wheel"/>
     <parent link="base_link"/>
     <axis xyz="0 1 0"/>
-    <limit effort="30" velocity="1.0"/> <!--lower="-2.2" upper="0.7"--> 
+    <limit effort="30" velocity="1.0" lower="-2.2" upper="0.7" /> 
   </joint>
 
   <joint type="revolute" name="right_wheel_hinge">
-    <origin xyz="0 0.275 0.1" rpy="0 0 0"/>
+    <origin xyz="-0.278 0.275 0.1" rpy="0 0 0"/>
     <child link="right_wheel"/>
     <parent link="base_link"/>
     <axis xyz="0 1 0"/>
-    <limit effort="30" velocity="1.0"/> <!--lower="-2.2" upper="0.7"-->
+    <limit effort="30" velocity="1.0" lower="-2.2" upper="0.7" />
   </joint>
   
   <!--  INSERT YOU MODEL HERE -->
