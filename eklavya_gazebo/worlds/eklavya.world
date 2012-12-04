@@ -27,9 +27,9 @@
     <include>
       <uri>model://ground_plane</uri>
     </include>
-    <include>
-      <uri>model://eklavya_robot</uri>
+   <!-- <include>
+       <uri>model://eklavya_robot</uri> 
       <pose>0 0 1 0 0 0</pose>
-    </include>
+    </include> -->
   </world>
 </gazebo>
