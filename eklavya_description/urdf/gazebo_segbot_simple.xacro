@@ -6,11 +6,11 @@
   <include filename="$(find eklavya_description)/urdf/gazebo_common.xacro" />
 
   <macro name="segbot_base_link_visual" >
-    <segbot_base_link_mesh />
+    <eklavya_base_link_mesh />
   </macro>
 
   <macro name="segbot_base_link_collision" >
-    <segbot_base_link_cylinder />
+    <eklavya_base_link_mesh />
   </macro>
 
   <macro name="segbot_castor_support_link_visual" >
