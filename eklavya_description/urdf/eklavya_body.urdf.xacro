@@ -5,7 +5,7 @@
   <!-- Macro for eklavya body. Including Gazebo extensions, but does not include Kinect -->
   <include filename="$(find eklavya_description)/urdf/gazebo.urdf.xacro"/>
   <include filename="$(find eklavya_description)/urdf/materials.urdf.xacro"/>
-
+  <include filename="$(find eklavya_description)/urdf/eklavya_wheel.xacro"/>
   <xacro:macro name="eklavya_body">
     <!--  INSERT YOU MODEL HERE -->
       
@@ -51,11 +51,22 @@
       <visual name='visual'>
         <geometry>
           <box size=".55 .55 .55"/>
-        </geometry>
+         </geometry>
         <material name="GunMetalBrushedAluminum"/>     
       </visual>
     </link>
   
+  
+     <!-- left wheel -->
+    <eklavya_wheel suffix="left" parent="base_link">
+     <origin rpy="1.5707 0 1.5707" xyz="-.375 -.275 -0.2"/>
+    </eklavya_wheel>
+
+    <!-- right wheel -->
+    <eklavya_wheel suffix="right" parent="base_link">
+      <origin rpy="1.5707 0 1.5707" xyz=".375 -.275 -.2"/>
+    </eklavya_wheel>
+
     <!--Top of base_link supports-->
     <link name="base_link_support_1">  
       <origin rpy="0 0 0" xyz="0.26 0.26 0.575"/>
@@ -164,46 +175,48 @@
       </visual>
     </link>
   
-    <!--Link for Left_Wheel-->
-    <link name="left_wheel">
-      <origin rpy="0 1.5707 0" xyz="0 1.275 0.1"/>
+    
+    <!--Links for sensor integration-->
+    <!--IMU link-->
+   <!-- <link name="IMU_sensor_link">
       <inertial>
-        <mass value="0.2001" />
-        <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.5"/>
+        <mass value="0.01" />
+        <origin xyz="0 0 0"/>
+        <inertia ixx="0.001" ixy="0.0" ixz="0.0"
+                  iyy="0.001" iyz="0.0" izz="0.001" />
       </inertial>
-      <collision name='left_wheel_collision'>
-        <geometry>
-          <cylinder radius=".1" length="0.06"/>
-        </geometry>
-      </collision>
-      <visual name='left_wheel_visual'>
-        <geometry>
-          <cylinder radius=".1" length="0.06"/>
-        </geometry>
-        <material name="Grey"/>       
-      </visual>
     </link>
-
-    <!--Link for Right_Wheel-->
-    <link name="right_wheel">
-      <origin rpy="0 1.5707 0" xyz="0 0.275 0.1"/>
+-->
+    <!--BumbleBee link-->
+   <!-- <link name="BumbleBee_sensor_link">
       <inertial>
-        <mass value="0.2001" />
-        <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.5"/>
+        <mass value="0.01" />
+        <origin xyz="0 0 0"/>
+        <inertia ixx="0.001" ixy="0.0" ixz="0.0"
+                 iyy="0.001" iyz="0.0" izz="0.001" />
       </inertial>
-      <collision name='right_wheel_collision'>
-        <geometry>
-          <cylinder radius=".1" length="0.06"/>
-        </geometry>
-      </collision>
-      <visual name='right_wheel_visual'>
-        <geometry>
-          <cylinder radius=".1" length="0.06"/>
-        </geometry>
-        <material name="Grey2"/>
-      </visual>
-    </link> 
-
+    </link>
+ -->
+    <!--LIDAR link-->
+    <!--<link name="LIDAR_sensor_link">
+      <inertial>
+        <mass value="0.01" />
+        <origin xyz="0 0 0"/>
+        <inertia ixx="0.001" ixy="0.0" ixz="0.0"
+                 iyy="0.001" iyz="0.0" izz="0.001" />
+      </inertial>
+    </link>
+-->
+    <!--GPS link-->
+   <!-- <link name="GPS_sensor_link">
+      <inertial>
+        <mass value="0.01" />
+        <origin xyz="0 0 0"/>
+        <inertia ixx="0.001" ixy="0.0" ixz="0.0"
+                 iyy="0.001" iyz="0.0" izz="0.001" />
+      </inertial>
+    </link>
+-->
     <!--JOINTS-->
     
     <!--Joining base_link and dummy base-->
@@ -211,22 +224,6 @@
       <origin rpy="0 0 0" xyz="0 0 0.017"/>
       <parent link="base_footprint"/>
       <child link="base_link"/>
-    </joint>
-    
-    <!--Creating hinge joints for the LEFT wheel-->
-    <joint type="continuous" name="left_wheel_hinge">
-      <origin rpy="1.5707 0 1.5707" xyz="-.375 -.275 -0.2"/>
-      <child link="left_wheel"/>
-      <parent link="base_link"/>
-      <axis xyz="0 0 1"/>
-    </joint>
-    
-    <!--Creating hinge joints for the RIGHT wheel-->
-    <joint type="continuous" name="right_wheel_hinge">
-      <origin rpy="1.5707 0 1.5707" xyz=".375 -.275 -.2"/>
-      <child link="right_wheel"/>
-      <parent link="base_link"/>
-      <axis xyz="0 0 1"/>
     </joint>
     
     <!--Creating fixed joints for base link supports-->
@@ -261,12 +258,83 @@
       <parent link="base_link"/>
       <child link="castor"/>
     </joint>
-  
+    
+
+    
+    <!--Joint for IMU-->
+   <!-- <joint name="IMU_sensor_joint" type="fixed">
+      <origin xyz="0.26 0.26 0.275" rpy="0 0 -1.0" />        
+      <parent link="base_link"/>
+      <child link="IMU_sensor_link" />
+    </joint>
+-->
+    <!--Joint for BumbleBee Sterio Camera-->
+   <!-- <joint name="BumbleBee_sensor_joint" type="fixed">
+      <origin rpy="0 0 0" xyz="0 0.26 0.89"/>        
+      <parent link="base_link"/>
+      <child link="BumbleBee_sensor_link" />
+    </joint>
+-->
+    <!--Joint for LIDAR-->
+   <!-- <joint name="LIDAR_sensor_joint" type="fixed">
+      <origin xyz="0 0.375 -0.3" rpy="0 0 -1.0" />        
+      <parent link="base_link"/>
+      <child link="LIDAR_sensor_link" />
+    </joint>
+-->
+    <!-- try  try try-->
+  <!--  <joint name="hokuyo_laser_box_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <parent link="LIDAR_sensor_link"/>
+      <child link="hokuyo_laser_box_link"/>
+    </joint>
+    <link name="hokuyo_laser_box_link">
+      <inertial>
+        <mass value="0.01"/>
+        <origin xyz="0 0 0"/>
+        <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>-->
+        <!-- box size="0.05 0.05 0.1" / -->
+        <!--<mesh filename="package://meshes/collada/hokuyo_urg.dae" scale="0.5 0.5 0.5"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <box size="0.05 0.05 0.1"/>
+        </geometry>
+      </collision>
+    </link>
+    <gazebo reference="hokuyo_laser_box_link">
+      <material>Gazebo/Magenta</material>
+      <turnGravityOff>false</turnGravityOff>
+    </gazebo>-->
+    <!-- try  try try-->
+    
+    
+    
+    
+    
+    
+    <!--Joint for GPS-->
+   <!-- <joint name="GPS_sensor_joint" type="fixed">
+      <origin xyz="-0.26 0.26 0.275" rpy="0 0 -1.0" />        
+      <parent link="base_link"/>
+      <child link="GPS_sensor_link" />
+    </joint>
+-->
     <!--  INSERT YOU MODEL HERE -->
-  
+    <hokuyo_urg name="hokuyo_laser" parent="base_link" >
+      <origin xyz="0 0.375 -0.3" rpy="0 1 0"/>
+    </hokuyo_urg>
+     
     <!-- Simulation sensors -->
     <!--<eklavya_sim_imu/>
     <eklavya_sim_laser/>
+  
     <eklavya_sim_create/> 
     <eklavya_sim_wall_sensors/>-->
 
