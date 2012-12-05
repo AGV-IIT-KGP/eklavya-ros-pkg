@@ -59,12 +59,12 @@
   
      <!-- left wheel -->
     <eklavya_wheel suffix="left" parent="base_link">
-     <origin rpy="0 -1 0" xyz="-.375 -.275 -0.2"/>
+     <origin rpy="0 0 1.5707" xyz="-.375 -.275 -0.2"/>
     </eklavya_wheel>
 
     <!-- right wheel -->
     <eklavya_wheel suffix="right" parent="base_link">
-      <origin rpy="0 0 0" xyz=".375 -.275 -.2"/>
+      <origin rpy="0 0 1.5707" xyz=".375 -.275 -.2"/>
     </eklavya_wheel>
 
     <!--Top of base_link supports-->
