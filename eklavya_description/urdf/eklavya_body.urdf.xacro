@@ -66,12 +66,12 @@
 
 
     <eklavya_wheel suffix="left" parent="base_link">
-      <origin xyz="-0.2 0.335 -0.2239" rpy="0 0 0" />
+      <origin xyz="-0.2 0.335 -0.303" rpy="0 0 0" />
     </eklavya_wheel>
 
   
     <eklavya_wheel suffix="right" parent="base_link">
-      <origin xyz="-0.2 -0.335 -0.2239" rpy="0 0 0" />
+      <origin xyz="-0.2 -0.335 -0.303" rpy="0 0 0" />
     </eklavya_wheel>
 
 
@@ -149,37 +149,105 @@
       </visual>
     </link>
      
-  
- 
-    <!--
-    
-
-  
-
+  <joint type="fixed" name="castor_support_joint">
+	  <origin rpy="0 0 0" xyz="0.36 0 -0.255"/>
+      <parent link="base_link"/>
+      <child link="castor_support"/>
+    </joint>
     <link name="castor_support">
-      <origin rpy="0 0 0" xyz="0 0.375 -0.275"/>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
       <inertial>
         <mass value="2.0001" />
         <inertia ixx="1" ixy="0.0" ixz="0.0" iyy="1" iyz="0.0" izz="1"/>
       </inertial>
       <collision name='extrusion_collision'>
         <geometry>
-          <box size=".1 .2 .02"/>
+          <box size=".2 .1 .02"/>
         </geometry>
       </collision>
       <visual name='extrusion_visual'>
         <geometry>
-          <box size=".1 .2 .02"/>
+          <box size=".2 .1 .02"/>
         </geometry>
         <material name="Blue"/>
       </visual>
     </link>
-        <joint type="fixed" name="castor_support_joint">
-      <origin rpy="0 0 0" xyz="0 0.375 -0.275"/>
-      <parent link="base_link"/>
-      <child link="castor_support"/>
-    </joint>
  
+ 
+ <joint name="base_caster_support_joint" type="continuous">
+      <origin xyz="0.36 0 -0.275" rpy="0 0 0" />
+      <parent link="base_link" />
+      <child link="base_caster_support_link"/>
+
+      <axis xyz="0 0 1" />
+      <anchor xyz="0.01 0 0" />
+      <limit effort="100" velocity="100" k_velocity="0" />
+      <joint_properties damping="0.0" friction="0.0" />
+    </joint>
+
+    <transmission type="pr2_mechanism_model/SimpleTransmission" name="base_caster_support_trans">
+      <actuator name="base_caster_support_motor" />
+      <joint name="base_caster_support_joint" />
+      <mechanicalReduction>1.0</mechanicalReduction>
+    </transmission>
+
+    <link name="base_caster_support_link">
+      <inertial>
+        <mass value="1"/>
+        <origin xyz="0 0 0" />
+        <inertia ixx="0.00375" ixy="0.0" ixz="0.0"
+          iyy="0.00375" iyz="0.0"
+          izz="0.00375" />
+      </inertial>
+
+      <visual>
+        <eklavya_castor_support_link_mesh />
+      </visual>
+
+      <collision>
+        <eklavya_castor_support_link_mesh />
+      </collision>
+
+    </link>
+<joint name="caster_wheel_joint" type="continuous">
+      <origin xyz="-0.0397 0 -0.0918" rpy="0 0 0" />
+      <parent link="base_caster_support_link" />
+      <child link="caster_wheel_link" />
+
+      <axis xyz="0 1 0" />
+      <anchor xyz="0 0 0" />
+      <limit effort="100" velocity="100" k_velocity="0" />
+      <joint_properties damping="0.0" friction="0.0" />
+    </joint>
+
+    <transmission type="pr2_mechanism_model/SimpleTransmission" name="caster_wheel_trans">
+      <actuator name="caster_wheel_motor" />
+      <joint name="caster_wheel_joint" />
+      <mechanicalReduction>1.0</mechanicalReduction>
+    </transmission>
+
+    <link name="caster_wheel_link">
+      <inertial>
+        <mass value="2" /> 
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <inertia  ixx="0.003" ixy="0.0" ixz="0.0"
+          iyy="0.00581" iyz="0.0"
+          izz="0.003" />
+      </inertial>
+
+      <visual>
+        <eklavya_castor_wheel_link_mesh />
+      </visual>
+
+      <collision>
+        <eklavya_castor_wheel_link_mesh />
+      </collision>
+
+    </link>
+
+    <gazebo_castor_wheel_link_surface />
+    <!--
+    
 
     <link name="castor">
    	  <origin rpy="0 0 0" xyz="0 0.375 -0.325"/>
@@ -317,31 +385,24 @@
       <material>Gazebo/Magenta</material>
       <turnGravityOff>false</turnGravityOff>
     </gazebo>-->
-    <!-- try  try try-->
-    
-    
-    
-    
-    
-    
+   
     <!--Joint for GPS-->
-   <!-- <joint name="GPS_sensor_joint" type="fixed">
+    <!--
+    <joint name="GPS_sensor_joint" type="fixed">
       <origin xyz="-0.26 0.26 0.275" rpy="0 0 -1.0" />        
       <parent link="base_link"/>
       <child link="GPS_sensor_link" />
-    </joint>
--->
+    </joint> -->
+
     <!--  INSERT YOU MODEL HERE -->
-   <!-- <hokuyo_urg name="hokuyo_laser" parent="base_link" >
-      <origin xyz="0 0.375 -0.3" rpy="0 1 0"/>
+    <hokuyo_urg name="hokuyo_laser" parent="base_link" >
+      <origin rpy="0 0 0" xyz="0.36 0 -0.245"/>
     </hokuyo_urg>
-     -->
+    
     <!-- Simulation sensors -->
     <!--<eklavya_sim_imu/>
-    <eklavya_sim_laser/>
-  
-    <eklavya_sim_create/> 
-    <eklavya_sim_wall_sensors/>-->
+
+      -->
 
   </xacro:macro>
 </robot>
