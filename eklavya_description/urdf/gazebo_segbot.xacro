@@ -6,7 +6,7 @@
   xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface">
 
   <!-- Included URDF Files -->
-  <include filename="$(find segbot_description)/urdf/gazebo_segbot_common.xacro" />
+  <include filename="$(find eklavya_description)/urdf/gazebo_segbot_common.xacro" />
 
   <macro name="segbot_base_link_visual" >
     <segbot_base_link_mesh />
