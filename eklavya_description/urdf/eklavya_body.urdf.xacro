@@ -6,222 +6,270 @@
   <include filename="$(find eklavya_description)/urdf/gazebo.urdf.xacro"/>
   <include filename="$(find eklavya_description)/urdf/materials.urdf.xacro"/>
 
- <xacro:macro name="eklavya_body">
+  <xacro:macro name="eklavya_body">
     <!--  INSERT YOU MODEL HERE -->
-  
-
-  <link name="base_footprint">
+      
+    <!--Dummy base without INERTIA because base_link is not supposed to have inertia-->
+    <link name="base_footprint">
     <!--
     <inertial>
       <mass value="0.0001" />
       <origin xyz="0 0 0" />
       <inertia ixx="0.0001" ixy="0.0" ixz="0.0"
-              iyy="0.0001" iyz="0.0" 
-              izz="0.0001" />
-    </inertial>
--->
-    <visual>
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <geometry>
-        <box size="0.001 0.001 0.001"/>
-      </geometry>
-      <material name="Green"/>      
-    </visual>
-    <collision>
-      <origin rpy="0 0 0" xyz="0 0 0.017"/>
-      <geometry>
-        <box size="0.001 0.001 0.001"/>
-      </geometry>
-    </collision>
-  </link>
-  
-  
-  <link name='base_link'>
-   <origin rpy="0 0 3.14" xyz="0 0 .375"/>
-    <inertial>
-      <mass value="2.0001" />
-      <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.5"/>
-    </inertial>    
-    <collision name='collision'>
-      <geometry>
-        <box size=".55 .55 .55"/>
-      </geometry>
-    </collision>
-
-    <visual name='visual'>
-      <geometry>
-        <box size=".55 .55 .55"/>
-      </geometry>
-      <material name="GunMetalBrushedAluminum"/>     
-    </visual>
+               iyy="0.0001" iyz="0.0" 
+               izz="0.0001" />
+      </inertial>
+    -->
+      <visual>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <geometry>
+          <box size="0.001 0.001 0.001"/>
+        </geometry>
+        <material name="Green"/>      
+      </visual>
+      <collision>
+        <origin rpy="0 0 0" xyz="0 0 0.017"/>
+        <geometry>
+          <box size="0.001 0.001 0.001"/>
+        </geometry>
+      </collision>
+    </link>
     
-  </link>
-  <!--Top of base_link support-->
-  <!--<link name="sc1">  
-    <collision name='sc1'>
-      <pose>0.26 0.26 0.575 0 0 0</pose>
-      <geometry>
-        <box size=".03 .03 .6"/>
-      </geometry>
-    </collision>
+    <!--Base link with inertial properties to join with other links of the model-->
+    <link name='base_link'>
+      <origin rpy="0 0 3.14" xyz="0 0 .375"/>
+      <inertial>
+        <mass value="2.0001" />
+        <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.5"/>
+      </inertial>    
+      <collision name='collision'>
+        <geometry>
+          <box size=".55 .55 .55"/>
+        </geometry>
+      </collision>
 
-    <visual name='sv1'>
-      <pose>0.26 0.26 0.575 0 0 0</pose>
-      <geometry>
-        <box size=".03 .03 .6"/>
-      </geometry>
-    </visual>
-  </link>
-
-  <link name="sc2">
-    <collision name='sc2'>
-      <pose>-0.26 0.26 0.575 0 0 0</pose>
-      <geometry>
-        <box size=".03 .03 .6"/>
-      </geometry>
-    </collision>
-
-    <visual name='sv2'>
-      <pose>-0.26 0.26 0.575 0 0 0</pose>
-      <geometry>
-        <box size=".03 .03 .6"/>
-      </geometry>
-    </visual>
-  </link>
+      <visual name='visual'>
+        <geometry>
+          <box size=".55 .55 .55"/>
+        </geometry>
+        <material name="GunMetalBrushedAluminum"/>     
+      </visual>
+    </link>
   
-  <link name="sc3">  
-    <collision name='sc3'>
-      <pose>0 0.26 0.89 0 0 0</pose>
-      <geometry>
-        <box size=".55 .03 .03"/>
-      </geometry>
-    </collision>
+    <!--Top of base_link supports-->
+    <link name="base_link_support_1">  
+      <origin rpy="0 0 0" xyz="0.26 0.26 0.575"/>
+      <inertial>
+        <mass value="2.0001" />
+        <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.5"/>
+      </inertial>
+      <collision name='sc1'>
+        <geometry>
+          <box size=".03 .03 .6"/>
+        </geometry>
+      </collision>
+      <visual name='sv1'>
+        <geometry>
+          <box size=".03 .03 .6"/>
+        </geometry>
+        <material name="Black"/>
+      </visual>
+    </link>
 
-    <visual name='sv3'>
-      <pose>0 0.26 0.89 0 0 0</pose>
-      <geometry>
-        <box size=".55 .03 .03"/>
-      </geometry>
-    </visual>
-  </link>
-  
-  <link name="castor_support">
- --> <!--Castor Support-->
-<!--    <collision name='extrusion_collision'>
-      <pose>0 0.375 -0.275 0 0 0</pose>
-      <geometry>
-        <box size=".1 .2 .02"/>
-      </geometry>
-    </collision>
-
-    <visual name='extrusion_visual'>
-      <pose>0 0.375 -0.275 0 0 0</pose>
-      <geometry>
-        <box size=".1 .2 .02"/>
-      </geometry>
-    </visual>
-  </link>
+    <link name="base_link_support_2">
+      <origin rpy="0 0 0" xyz="-0.26 0.26 0.575"/>
+      <inertial>
+        <mass value="2.0001" />
+        <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.5"/>
+      </inertial>
+      <collision name='sc2'>
+        <geometry>
+          <box size=".03 .03 .6"/>
+        </geometry>
+      </collision>
+      <visual name='sv2'>
+        <geometry>
+          <box size=".03 .03 .6"/>
+        </geometry>
+        <material name="White"/>
+      </visual>
+    </link>
  
-  <link name="castor">
-  --><!--Castor-->
-<!-- 	<collision name='caster_collision'>
-      <pose>0 0.375 -0.325 0 0 0</pose>
-      <geometry>
-        <sphere radius=".05"/>
-      </geometry>
+    <link name="base_link_support_3">  
+      <origin rpy="0 0 0" xyz="0 0.26 0.89"/>
+      <inertial>
+        <mass value="2.0001" />
+        <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.5"/>
+      </inertial>
+      <collision name='sc3'>
+        <geometry>
+          <box size=".55 .03 .03"/>
+        </geometry>
+      </collision>
+      <visual name='sv3'>
+        <geometry>
+          <box size=".55 .03 .03"/>
+        </geometry>
+        <material name="Red"/>
+      </visual>
+    </link>
+  
+    <!--Link for Castor Support-->
+    <link name="castor_support">
+      <origin rpy="0 0 0" xyz="0 0.375 -0.275"/>
+      <inertial>
+        <mass value="2.0001" />
+        <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.5"/>
+      </inertial>
+      <collision name='extrusion_collision'>
+        <geometry>
+          <box size=".1 .2 .02"/>
+        </geometry>
+      </collision>
+      <visual name='extrusion_visual'>
+        <geometry>
+          <box size=".1 .2 .02"/>
+        </geometry>
+        <material name="Blue"/>
+      </visual>
+    </link>
+ 
+    <!--Link for Castor-->
+    <link name="castor">
+   	  <origin rpy="0 0 0" xyz="0 0.375 -0.325"/>
+      <inertial>
+        <mass value="2.0001" />
+        <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.5"/>
+      </inertial>
+      <collision name='caster_collision'>
+        <geometry>
+          <sphere radius=".05"/>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>0</mu>
+              <mu2>0</mu2>
+              <slip1>1.0</slip1>
+              <slip2>1.0</slip2>
+            </ode>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='caster_visual'>
+        <geometry>
+          <sphere radius=".05"/>
+        </geometry>
+        <material name="Green"/>
+      </visual>
+    </link>
+  
+    <!--Link for Left_Wheel-->
+    <link name="left_wheel">
+      <origin rpy="0 1.5707 0" xyz="0 1.275 0.1"/>
+      <inertial>
+        <mass value="0.2001" />
+        <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.5"/>
+      </inertial>
+      <collision name='left_wheel_collision'>
+        <geometry>
+          <cylinder radius=".1" length="0.06"/>
+        </geometry>
+      </collision>
+      <visual name='left_wheel_visual'>
+        <geometry>
+          <cylinder radius=".1" length="0.06"/>
+        </geometry>
+        <material name="Grey"/>       
+      </visual>
+    </link>
 
-      <surface>
-        <friction>
-          <ode>
-            <mu>0</mu>
-            <mu2>0</mu2>
-            <slip1>1.0</slip1>
-            <slip2>1.0</slip2>
-          </ode>
-        </friction>
-      </surface>
-    </collision>
+    <!--Link for Right_Wheel-->
+    <link name="right_wheel">
+      <origin rpy="0 1.5707 0" xyz="0 0.275 0.1"/>
+      <inertial>
+        <mass value="0.2001" />
+        <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.5"/>
+      </inertial>
+      <collision name='right_wheel_collision'>
+        <geometry>
+          <cylinder radius=".1" length="0.06"/>
+        </geometry>
+      </collision>
+      <visual name='right_wheel_visual'>
+        <geometry>
+          <cylinder radius=".1" length="0.06"/>
+        </geometry>
+        <material name="Grey2"/>
+      </visual>
+    </link> 
 
-    <visual name='caster_visual'>
-      <pose>0 0.375 -0.325 0 0 0</pose>
-      <geometry>
-        <sphere radius=".05"/>
-      </geometry>
-    </visual>
-  </link>
-  -->
+    <!--JOINTS-->
+    
+    <!--Joining base_link and dummy base-->
+    <joint name="base_footprint_joint" type="fixed">
+      <origin rpy="0 0 0" xyz="0 0 0.017"/>
+      <parent link="base_footprint"/>
+      <child link="base_link"/>
+    </joint>
+    
+    <!--Creating hinge joints for the LEFT wheel-->
+    <joint type="continuous" name="left_wheel_hinge">
+      <origin rpy="1.5707 0 1.5707" xyz="-.375 -.275 -0.2"/>
+      <child link="left_wheel"/>
+      <parent link="base_link"/>
+      <axis xyz="0 0 1"/>
+    </joint>
+    
+    <!--Creating hinge joints for the RIGHT wheel-->
+    <joint type="continuous" name="right_wheel_hinge">
+      <origin rpy="1.5707 0 1.5707" xyz=".375 -.275 -.2"/>
+      <child link="right_wheel"/>
+      <parent link="base_link"/>
+      <axis xyz="0 0 1"/>
+    </joint>
+    
+    <!--Creating fixed joints for base link supports-->
+    <joint type="fixed" name="base_link_support_1_joint">
+      <origin rpy="0 0 0" xyz="0.26 0.26 0.575"/>
+      <parent link="base_link"/>
+      <child link="base_link_support_1"/>
+    </joint>
+    
+    <joint type="fixed" name="base_link_support_2_joint">
+      <origin rpy="0 0 0" xyz="-0.26 0.26 0.575"/>
+      <parent link="base_link"/>
+      <child link="base_link_support_2"/>
+    </joint>
+    
+    <joint type="fixed" name="base_link_support_3_joint">
+      <origin rpy="0 0 0" xyz="0 0.26 0.89"/>
+      <parent link="base_link"/>
+      <child link="base_link_support_3"/>
+    </joint>
+    
+    <!--Creating joint for Castor Support-->
+    <joint type="fixed" name="castor_support_joint">
+      <origin rpy="0 0 0" xyz="0 0.375 -0.275"/>
+      <parent link="base_link"/>
+      <child link="castor_support"/>
+    </joint>
+    
+    <!--Creating joint for CASTOR-->
+    <joint type="fixed" name="castor_joint">
+      <origin rpy="0 0 0" xyz="0 0.375 -0.325"/>
+      <parent link="base_link"/>
+      <child link="castor"/>
+    </joint>
   
-  <!--Left_Wheel-->
-  <link name="left_wheel">
-     <origin rpy="1.5707 0 1.5707" xyz="0 1.275 0.1"/>
-    <inertial>
-      <mass value="0.2001" />
-      <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.5"/>
-    </inertial>
-    <collision name='left_wheel_collision'>
-      <geometry>
-        <cylinder radius=".1" length="0.06"/>
-      </geometry>
-    </collision>
-    <visual name='left_wheel_visual'>
-      <geometry>
-        <cylinder radius=".1" length="0.06"/>
-      </geometry>
-      <material name="Green"/>       
-    </visual>
-  </link>
-
-  <!--Right_Wheel-->
-  <link name="right_wheel">
-    <origin rpy="1.5707 0 1.5707" xyz="0 0.275 0.1"/>
-    <inertial>
-      <mass value="0.2001" />
-      <inertia ixx="0.01" ixy="0.0" ixz="0.0" iyy="0.01" iyz="0.0" izz="0.5"/>
-    </inertial>
-    <collision name='right_wheel_collision'>
-      <geometry>
-        <cylinder radius=".1" length="0.06"/>
-      </geometry>
-    </collision>
-
-    <visual name='right_wheel_visual'>
-      <geometry>
-        <cylinder radius=".1" length="0.06"/>
-      </geometry>
-     <material name="Blue"/>
-    </visual>
-  </link> 
+    <!--  INSERT YOU MODEL HERE -->
   
-  <joint name="base_footprint_joint" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 0.017"/>
-    <parent link="base_footprint"/>
-    <child link="base_link"/>
-  </joint>
-  
-  
-  <!--Creating hinge joints for the wheels-->
-  <joint type="continuous" name="left_wheel_hinge">
-    <origin xyz="0.278 0.275 0.1 " rpy="1.5707 0 1.5707"/>
-    <child link="left_wheel"/>
-    <parent link="base_link"/>
-    <axis xyz="0 0 1"/>
-  </joint>
-
-  <joint type="continuous" name="right_wheel_hinge">
-    <origin xyz="-0.278 0.275 0.1" rpy="1.5707 0 1.5707"/>
-    <child link="right_wheel"/>
-    <parent link="base_link"/>
-    <axis xyz="0 0 1"/>
-  </joint>
-  
-  <!--  INSERT YOU MODEL HERE -->
-  
-  <!-- Simulation sensors -->
+    <!-- Simulation sensors -->
     <!--<eklavya_sim_imu/>
-  <eklavya_sim_laser/>
-<eklavya_sim_create/> 
-  <eklavya_sim_wall_sensors/>-->
-  </xacro:macro>
+    <eklavya_sim_laser/>
+    <eklavya_sim_create/> 
+    <eklavya_sim_wall_sensors/>-->
 
+  </xacro:macro>
 </robot>
 
