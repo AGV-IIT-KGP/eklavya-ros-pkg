@@ -4,9 +4,7 @@
   xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
   xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
   xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface">
-  
-
-  
+    
   <macro name="eklavya_wheel" params="suffix parent *origin">
     <joint name="${parent}_${suffix}_wheel_joint" type="continuous">
       <insert_block name="origin" />
@@ -28,11 +26,11 @@
       </inertial>
 
       <visual>
-        <segbot_wheel_visual suffix="${suffix}" />
+        <segbot_wheel_mesh suffix="${suffix}" />
       </visual>
 
       <collision>
-        <segbot_wheel_collision suffix="${suffix}" />
+        <segbot_wheel_mesh suffix="${suffix}" />
       </collision>
     </link>
 
