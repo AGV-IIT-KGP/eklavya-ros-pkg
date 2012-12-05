@@ -26,7 +26,7 @@
   <macro name="segbot_base_link_mesh">
     <origin xyz="0 0 0" rpy="0 0 0" />
     <geometry>
-      <mesh filename="package://segbot_description/meshes/rmp50-base-link.dae" scale="0.0254 0.0254 0.0254"/>
+      <mesh filename="package://eklavya_description/meshes/rmp50-base-link.dae" scale="0.0254 0.0254 0.0254"/>
     </geometry>
   </macro>
 
@@ -40,7 +40,7 @@
   <macro name="segbot_castor_wheel_link_mesh">
     <origin xyz="0 0 0" rpy="0 0 0" />
     <geometry>
-      <mesh filename="package://segbot_description/meshes/rmp50-castor-wheel.dae" scale="0.0254 0.0254 0.0254"/>
+      <mesh filename="package://eklavya_description/meshes/rmp50-castor-wheel.dae" scale="0.0254 0.0254 0.0254"/>
     </geometry>
   </macro>
 
@@ -54,7 +54,7 @@
   <macro name="segbot_castor_support_link_mesh">
     <origin xyz="0 0 0" rpy="0 0 0" />
     <geometry>
-      <mesh filename="package://segbot_description/meshes/rmp50-castor-link.dae" scale="0.0254 0.0254 0.0254"/>
+      <mesh filename="package://eklavya_description/meshes/rmp50-castor-link.dae" scale="0.0254 0.0254 0.0254"/>
     </geometry>
   </macro>
 
