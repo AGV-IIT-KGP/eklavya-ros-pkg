@@ -1,19 +1,11 @@
 <?xml version="1.0"?>
 <robot name="eklavya_hardware" xmlns:xacro="http://ros.org/wiki/xacro">
 <!-- Properties (Constants) -->
-    <property name="M_PI" value="3.14159"/>
+    <property name="M_PI" value="3.14159"/>    
     
-    <property name="base_size_x" value="0.217" />
-    <property name="base_size_y" value="0.280" />
-    <property name="base_size_z" value="0.155" />
-    
-    <property name="top_size_x" value="0.3937" />
-    <property name="top_size_y" value="0.3556" />
-    <property name="top_size_z" value="0.0020" />
-    
-    <property name="wheel_radius" value="0.0346" />
-    <property name="wheel_length" value="0.02" />
-    <property name="caster_wheel_offset_y" value="0.27" />
+    <property name="wheel_radius" value="0.0711" />
+    <property name="wheel_length" value="0.1423" />
+    <property name="caster_wheel_offset_y" value="-0.56" />
 
   <!-- Macro for eklavya body. Including Gazebo extensions, but does not include Kinect -->
   <include filename="$(find eklavya_description)/urdf/gazebo.urdf.xacro"/>
@@ -185,7 +177,11 @@
       <child link="GPS_sensor_link" />
     </joint> -->
 
-    <gazebo_segbot_drive_plugin2 />
+   <!-- <gazebo_eklavya_simple_drive_plugin />    -->
+    <gazebo_eklavya_drive_plugin_diffdrive />
+  <!--  <gazebo_eklavya_p3d_plugin /> -->
+   <!--   <eklavya_segbot_controllers_common />-->
+    
     <hokuyo_urg name="hokuyo_laser" parent="base_link" >
       <origin rpy="0 0 0" xyz="0.36 0 -0.245"/>
     </hokuyo_urg>
