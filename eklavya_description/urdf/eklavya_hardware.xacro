@@ -71,7 +71,7 @@
     </joint>
 
     <transmission type="pr2_mechanism_model/SimpleTransmission" name="base_caster_support_trans">
-      <actuator name="base_caster_support_motor" />
+      <actuator name="${parent}_caster_support_hinge_${suffix}_motor" />
       <joint name="${parent}_caster_support_hinge_${suffix}_joint" />
       <mechanicalReduction>1.0</mechanicalReduction>
     </transmission>
@@ -98,12 +98,11 @@
 
 
 <macro name="caster_wheel" params="suffix parent *origin">
-	<joint type="fixed" name="${parent}_castor_support_${suffix}_joint">
 	  
-	  <joint name="caster_wheel_joint" type="continuous">
+	  <joint name="${parent}_caster_wheel_${suffix}_joint" type="continuous">
       <insert_block name="origin" />
       <parent link="${parent}_caster_support_hinge_${suffix}_link" />
-      <child link="caster_wheel_link" />
+      <child link="${parent}_caster_wheel_${suffix}_link" />
 
       <axis xyz="0 1 0" />
       <anchor xyz="0 0 0" />
@@ -112,12 +111,12 @@
     </joint>
 
     <transmission type="pr2_mechanism_model/SimpleTransmission" name="caster_wheel_trans">
-      <actuator name="caster_wheel_motor" />
-      <joint name="caster_wheel_joint" />
+      <actuator name="${parent}_caster_wheel_${suffix}_motor" />
+      <joint name="${parent}_caster_wheel_${suffix}_joint" />
       <mechanicalReduction>1.0</mechanicalReduction>
     </transmission>
 
-    <link name="caster_wheel_link">
+    <link name="${parent}_caster_wheel_${suffix}_link">
       <inertial>
         <mass value="2" /> 
         <origin xyz="0 0 0" rpy="0 0 0" />
@@ -135,8 +134,7 @@
       </collision>
 
     </link>
-
-    <gazebo_castor_wheel_link_surface />
+    <gazebo_eklavya_castor_wheel_link_surface suffix="${suffix}" parent="${parent}" />
 </macro>
-</robot>
 
+</robot>
