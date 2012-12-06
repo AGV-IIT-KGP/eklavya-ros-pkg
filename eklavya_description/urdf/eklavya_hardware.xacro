@@ -1,0 +1,142 @@
+<?xml version="1.0"?>
+
+<robot
+  xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+  xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+  xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface">
+    
+  <macro name="eklavya_bar" params="suffix parent *origin">
+	<joint type="fixed" name="${parent}_support_${suffix}joint">
+      <insert_block name="origin" />
+      <parent link="${parent}"/>
+      <child link="${parent}_support_${suffix}"/>
+    </joint>
+    <link name="${parent}_support_${suffix}">  
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <inertial>
+        <mass value="0.01" />
+        <inertia ixx="1" ixy="0.0" ixz="0.0" iyy="1" iyz="0.0" izz="1"/>
+      </inertial>
+      <collision name='sc1'>
+        <geometry>
+          <box size=".03 .03 .6"/>
+        </geometry>
+      </collision>
+      <visual name='sv1'>
+        <geometry>
+          <box size=".03 .03 .6"/>
+        </geometry>
+        <material name="White"/>
+      </visual>
+    </link>
+ </macro>
+ 
+ 
+ <macro name="castor_support" params="suffix parent *origin">
+	<joint type="fixed" name="${parent}_castor_support_${suffix}_joint">
+	  <insert_block name="origin" />
+      <parent link="${parent}"/>
+      <child link="${parent}_castor_support_${suffix}_link"/>
+    </joint>
+    <link name="${parent}_castor_support_${suffix}_link">
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <inertial>
+        <mass value="2.0001" />
+        <inertia ixx="1" ixy="0.0" ixz="0.0" iyy="1" iyz="0.0" izz="1"/>
+      </inertial>
+      <collision name='extrusion_collision'>
+        <geometry>
+          <box size=".2 .1 .02"/>
+        </geometry>
+      </collision>
+      <visual name='extrusion_visual'>
+        <geometry>
+          <box size=".2 .1 .02"/>
+        </geometry>
+        <material name="Blue"/>
+      </visual>
+    </link>
+ </macro>
+ 
+ <macro name="caster_support_hinge" params="suffix parent *origin">
+	<joint name="${parent}_caster_support_hinge_${suffix}_joint" type="continuous">
+      <insert_block name="origin" />
+      <parent link="${parent}" />
+      <child link="${parent}_caster_support_hinge_${suffix}_link"/>
+
+      <axis xyz="0 0 1" />
+      <anchor xyz="0.01 0 0" />
+      <limit effort="100" velocity="100" k_velocity="0" />
+      <joint_properties damping="0.0" friction="0.0" />
+    </joint>
+
+    <transmission type="pr2_mechanism_model/SimpleTransmission" name="base_caster_support_trans">
+      <actuator name="base_caster_support_motor" />
+      <joint name="${parent}_caster_support_hinge_${suffix}_joint" />
+      <mechanicalReduction>1.0</mechanicalReduction>
+    </transmission>
+
+    <link name="${parent}_caster_support_hinge_${suffix}_link">
+      <inertial>
+        <mass value="1"/>
+        <origin xyz="0 0 0" />
+        <inertia ixx="0.00375" ixy="0.0" ixz="0.0"
+          iyy="0.00375" iyz="0.0"
+          izz="0.00375" />
+      </inertial>
+
+      <visual>
+        <eklavya_castor_support_link_mesh />
+      </visual>
+
+      <collision>
+        <eklavya_castor_support_link_mesh />
+      </collision>
+
+    </link>
+</macro>
+
+
+<macro name="caster_wheel" params="suffix parent *origin">
+	<joint type="fixed" name="${parent}_castor_support_${suffix}_joint">
+	  
+	  <joint name="caster_wheel_joint" type="continuous">
+      <insert_block name="origin" />
+      <parent link="${parent}_caster_support_hinge_${suffix}_link" />
+      <child link="caster_wheel_link" />
+
+      <axis xyz="0 1 0" />
+      <anchor xyz="0 0 0" />
+      <limit effort="100" velocity="100" k_velocity="0" />
+      <joint_properties damping="0.0" friction="0.0" />
+    </joint>
+
+    <transmission type="pr2_mechanism_model/SimpleTransmission" name="caster_wheel_trans">
+      <actuator name="caster_wheel_motor" />
+      <joint name="caster_wheel_joint" />
+      <mechanicalReduction>1.0</mechanicalReduction>
+    </transmission>
+
+    <link name="caster_wheel_link">
+      <inertial>
+        <mass value="2" /> 
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <inertia  ixx="0.003" ixy="0.0" ixz="0.0"
+          iyy="0.00581" iyz="0.0"
+          izz="0.003" />
+      </inertial>
+
+      <visual>
+        <eklavya_castor_wheel_link_mesh />
+      </visual>
+
+      <collision>
+        <eklavya_castor_wheel_link_mesh />
+      </collision>
+
+    </link>
+
+    <gazebo_castor_wheel_link_surface />
+</macro>
+</robot>
+

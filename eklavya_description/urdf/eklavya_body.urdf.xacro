@@ -18,9 +18,10 @@
   <!-- Macro for eklavya body. Including Gazebo extensions, but does not include Kinect -->
   <include filename="$(find eklavya_description)/urdf/gazebo.urdf.xacro"/>
   <include filename="$(find eklavya_description)/urdf/materials.urdf.xacro"/>
+  <include filename="$(find eklavya_description)/urdf/eklavya_hardware.xacro.xacro"/>
   <include filename="$(find eklavya_description)/urdf/eklavya_wheel.xacro"/>
   <include filename="$(find eklavya_description)/urdf/hokuyo_urg.xacro"/>
-  
+
   <xacro:macro name="eklavya_body">
     <!--Dummy base without INERTIA because base_link is not supposed to have inertia-->
     <link name="base_footprint">
@@ -85,216 +86,32 @@
     <eklavya_wheel suffix="right" parent="base_link">
       <origin xyz="-0.2 -0.335 -0.303" rpy="0 0 0" />
     </eklavya_wheel>
-
-
-    <joint type="fixed" name="base_link_support_left_joint">
+    
+	<eklavya_bar suffix="left" parent="base_link">
       <origin rpy="0 0 0" xyz="0.26 0.26 0.575"/>
-      <parent link="base_link"/>
-      <child link="base_link_support_left"/>
-    </joint>
-    <link name="base_link_support_left">  
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <inertial>
-        <mass value="2.0001" />
-        <inertia ixx="1" ixy="0.0" ixz="0.0" iyy="1" iyz="0.0" izz="1"/>
-      </inertial>
-      <collision name='sc1'>
-        <geometry>
-          <box size=".03 .03 .6"/>
-        </geometry>
-      </collision>
-      <visual name='sv1'>
-        <geometry>
-          <box size=".03 .03 .6"/>
-        </geometry>
-        <material name="Black"/>
-      </visual>
-    </link>
-
+	</eklavya_bar>
     
-     <joint type="fixed" name="base_link_support_right_joint">
+	<eklavya_bar suffix="right" parent="base_link">
       <origin rpy="0 0 0" xyz="0.26 -0.26 0.575"/>
-      <parent link="base_link"/>
-      <child link="base_link_support_right"/>
-    </joint> 
-    <link name="base_link_support_right">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <inertial>
-        <mass value="2.0001" />
-        <inertia ixx="1" ixy="0.0" ixz="0.0" iyy="1" iyz="0.0" izz="1"/>
-      </inertial>
-      <collision name='sc2'>
-        <geometry>
-          <box size=".03 .03 .6"/>
-        </geometry>
-      </collision>
-      <visual name='sv2'>
-        <geometry>
-          <box size=".03 .03 .6"/>
-        </geometry>
-        <material name="White"/>
-      </visual>
-    </link>
-
-    
-    <joint type="fixed" name="base_link_support_top_joint">
-      <origin rpy="0 0  ${M_PI/2}" xyz="0.26 0 0.89"/>
-      <parent link="base_link"/>
-      <child link="base_link_support_top"/>
-    </joint>
-    <link name="base_link_support_top">  
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <inertial>
-        <mass value="2.0001" />
-        <inertia ixx="1" ixy="0.0" ixz="0.0" iyy="1" iyz="0.0" izz="1"/>
-      </inertial>
-      <collision name='sc3'>
-        <geometry>
-          <box size=".55 .03 .03"/>
-        </geometry>
-      </collision>
-      <visual name='sv3'>
-        <geometry>
-          <box size=".55 .03 .03"/>
-        </geometry>
-        <material name="Red"/>
-      </visual>
-    </link>
+	</eklavya_bar>
      
-  <joint type="fixed" name="castor_support_joint">
-	  <origin rpy="0 0 0" xyz="0.36 0 -0.255"/>
-      <parent link="base_link"/>
-      <child link="castor_support"/>
-    </joint>
-    <link name="castor_support">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <inertial>
-        <mass value="2.0001" />
-        <inertia ixx="1" ixy="0.0" ixz="0.0" iyy="1" iyz="0.0" izz="1"/>
-      </inertial>
-      <collision name='extrusion_collision'>
-        <geometry>
-          <box size=".2 .1 .02"/>
-        </geometry>
-      </collision>
-      <visual name='extrusion_visual'>
-        <geometry>
-          <box size=".2 .1 .02"/>
-        </geometry>
-        <material name="Blue"/>
-      </visual>
-    </link>
- 
- 
- <joint name="base_caster_support_joint" type="continuous">
+	<eklavya_bar suffix="top" parent="base_link">
+      <origin rpy="0 0  ${M_PI/2}" xyz="0.26 0 0.89"/>
+	</eklavya_bar>   
+    <castor_support suffix="front" parent="base_link">
+      <origin rpy="0 0 0" xyz="0.36 0 -0.255"/>
+	</castor_support> 
+	
+	<caster_support_hinge suffix="front" parent="base_link">
       <origin xyz="0.36 0 -0.275" rpy="0 0 0" />
-      <parent link="base_link" />
-      <child link="base_caster_support_link"/>
+	</caster_support_hinge> 
 
-      <axis xyz="0 0 1" />
-      <anchor xyz="0.01 0 0" />
-      <limit effort="100" velocity="100" k_velocity="0" />
-      <joint_properties damping="0.0" friction="0.0" />
-    </joint>
-
-    <transmission type="pr2_mechanism_model/SimpleTransmission" name="base_caster_support_trans">
-      <actuator name="base_caster_support_motor" />
-      <joint name="base_caster_support_joint" />
-      <mechanicalReduction>1.0</mechanicalReduction>
-    </transmission>
-
-    <link name="base_caster_support_link">
-      <inertial>
-        <mass value="1"/>
-        <origin xyz="0 0 0" />
-        <inertia ixx="0.00375" ixy="0.0" ixz="0.0"
-          iyy="0.00375" iyz="0.0"
-          izz="0.00375" />
-      </inertial>
-
-      <visual>
-        <eklavya_castor_support_link_mesh />
-      </visual>
-
-      <collision>
-        <eklavya_castor_support_link_mesh />
-      </collision>
-
-    </link>
-<joint name="caster_wheel_joint" type="continuous">
+    <caster_wheel suffix="front" parent="base_link">
       <origin xyz="-0.0397 0 -0.0918" rpy="0 0 0" />
-      <parent link="base_caster_support_link" />
-      <child link="caster_wheel_link" />
+	</caster_wheel> 
+ 
 
-      <axis xyz="0 1 0" />
-      <anchor xyz="0 0 0" />
-      <limit effort="100" velocity="100" k_velocity="0" />
-      <joint_properties damping="0.0" friction="0.0" />
-    </joint>
 
-    <transmission type="pr2_mechanism_model/SimpleTransmission" name="caster_wheel_trans">
-      <actuator name="caster_wheel_motor" />
-      <joint name="caster_wheel_joint" />
-      <mechanicalReduction>1.0</mechanicalReduction>
-    </transmission>
-
-    <link name="caster_wheel_link">
-      <inertial>
-        <mass value="2" /> 
-        <origin xyz="0 0 0" rpy="0 0 0" />
-        <inertia  ixx="0.003" ixy="0.0" ixz="0.0"
-          iyy="0.00581" iyz="0.0"
-          izz="0.003" />
-      </inertial>
-
-      <visual>
-        <eklavya_castor_wheel_link_mesh />
-      </visual>
-
-      <collision>
-        <eklavya_castor_wheel_link_mesh />
-      </collision>
-
-    </link>
-
-    <gazebo_castor_wheel_link_surface />
-    <!--
-    
-
-    <link name="castor">
-   	  <origin rpy="0 0 0" xyz="0 0.375 -0.325"/>
-      <inertial>
-        <mass value="2.0001" />
-        <inertia ixx="1" ixy="0.0" ixz="0.0" iyy="1" iyz="0.0" izz="1"/>
-      </inertial>
-      <collision name='caster_collision'>
-        <geometry>
-          <sphere radius=".05"/>
-        </geometry>
-        <surface>
-          <friction>
-            <ode>
-              <mu>0</mu>
-              <mu2>0</mu2>
-              <slip1>1.0</slip1>
-              <slip2>1.0</slip2>
-            </ode>
-          </friction>
-        </surface>
-      </collision>
-      <visual name='caster_visual'>
-        <geometry>
-          <sphere radius=".05"/>
-        </geometry>
-        <material name="Green"/>
-      </visual>
-    </link>
-     <joint type="fixed" name="castor_joint">
-      <origin rpy="0 0 0" xyz="0 0.375 -0.325"/>
-      <parent link="base_link"/>
-      <child link="castor"/>
-    </joint>
-  -->
     
     <!--Links for sensor integration-->
     <!--IMU link-->
@@ -338,13 +155,7 @@
     </link>
 -->
  
-    
-    <!--Creating fixed joints for base link supports-->
-
-    
-    
    
-    
 
     <!--Joint for IMU-->
    <!-- <joint name="IMU_sensor_joint" type="fixed">
@@ -367,36 +178,7 @@
       <child link="LIDAR_sensor_link" />
     </joint>
 -->
-    <!-- try  try try-->
-  <!--  <joint name="hokuyo_laser_box_joint" type="fixed">
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <parent link="LIDAR_sensor_link"/>
-      <child link="hokuyo_laser_box_link"/>
-    </joint>
-    <link name="hokuyo_laser_box_link">
-      <inertial>
-        <mass value="0.01"/>
-        <origin xyz="0 0 0"/>
-        <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001"/>
-      </inertial>
-      <visual>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <geometry>-->
-        <!-- box size="0.05 0.05 0.1" / -->
-        <!--<mesh filename="package://meshes/collada/hokuyo_urg.dae" scale="0.5 0.5 0.5"/>
-        </geometry>
-      </visual>
-      <collision>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <geometry>
-          <box size="0.05 0.05 0.1"/>
-        </geometry>
-      </collision>
-    </link>
-    <gazebo reference="hokuyo_laser_box_link">
-      <material>Gazebo/Magenta</material>
-      <turnGravityOff>false</turnGravityOff>
-    </gazebo>-->
+   
    
     <!--Joint for GPS-->
     <!--
