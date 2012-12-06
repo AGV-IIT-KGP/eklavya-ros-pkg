@@ -87,16 +87,16 @@
       <origin xyz="-0.2 -0.335 -0.303" rpy="0 0 0" />
     </eklavya_wheel>
     
-	<eklavya_bar suffix="left" parent="base_link">
+	<eklavya_bar suffix="left" parent="base_link" length="0.6">
       <origin rpy="0 0 0" xyz="0.26 0.26 0.575"/>
 	</eklavya_bar>
     
-	<eklavya_bar suffix="right" parent="base_link">
+	<eklavya_bar suffix="right" parent="base_link" length="0.6">
       <origin rpy="0 0 0" xyz="0.26 -0.26 0.575"/>
 	</eklavya_bar>
      
-	<eklavya_bar suffix="top" parent="base_link">
-      <origin rpy="0 0  ${M_PI/2}" xyz="0.26 0 0.89"/>
+	<eklavya_bar suffix="top" parent="base_link" length="0.55">
+      <origin rpy="${M_PI/2} 0 0" xyz="0.26 0 0.89"/>
 	</eklavya_bar>   
     <castor_support suffix="front" parent="base_link">
       <origin rpy="0 0 0" xyz="0.36 0 -0.255"/>
@@ -109,10 +109,7 @@
     <caster_wheel suffix="front" parent="base_link">
       <origin xyz="-0.0397 0 -0.0918" rpy="0 0 0" />
 	</caster_wheel> 
- 
-
-
-    
+     
     <!--Links for sensor integration-->
     <!--IMU link-->
    <!-- <link name="IMU_sensor_link">
