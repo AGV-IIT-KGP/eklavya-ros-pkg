@@ -5,14 +5,14 @@
   xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
   xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface">
     
-  <macro name="eklavya_bar" params="suffix parent length *origin">
-	<joint type="fixed" name="${parent}_support_${suffix}_joint">
+  <macro name="eklavya_support_bar" params="suffix parent length *origin">
+	<joint type="fixed" name="${parent}_support_bar_${suffix}_joint">
       <insert_block name="origin" />
       <parent link="${parent}"/>
-      <child link="${parent}_support_${suffix}"/>
+      <child link="${parent}_support_bar_${suffix}"/>
     </joint>
     
-    <link name="${parent}_support_${suffix}">  
+    <link name="${parent}_support_bar_${suffix}">  
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <inertial>
         <mass value="2.01" />
