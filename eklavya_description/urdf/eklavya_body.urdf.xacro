@@ -406,7 +406,7 @@
       <child link="GPS_sensor_link" />
     </joint> -->
 
-    <gazebo_segbot_simple_drive_plugin />
+    <gazebo_segbot_drive_plugin2 />
     <hokuyo_urg name="hokuyo_laser" parent="base_link" >
       <origin rpy="0 0 0" xyz="0.36 0 -0.245"/>
     </hokuyo_urg>

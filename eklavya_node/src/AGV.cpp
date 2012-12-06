@@ -1,3 +1,5 @@
+#include "ros/ros.h"
+#include "std_msgs/String.h"
 #include <time.h>
 #include <iostream>
 #include "opencv/cv.h"
@@ -66,7 +68,7 @@ CvPoint bot_loc;
 #endif
 
 void initializeAGV() {
-  printf("Initializing Eklavya\n");
+  ROS_INFO("Initializing Eklavya\n");
 
   bot_loc.x = int(0.5 * MAP_MAX);
   bot_loc.y = int(0.1 * MAP_MAX);
@@ -97,9 +99,9 @@ void initializeAGV() {
   #endif
 
   #ifdef _NAV
-    printf("Initiating Navigator\n");
+    ROS_INFO("Initiating Navigator\n");
     Nav::NavCore::loadNavigator();
-    printf("Navigator Initiated\n");
+    ROS_INFO("Navigator Initiated\n");
   #endif
 
   #ifdef _SON
@@ -111,15 +113,15 @@ void initializeAGV() {
   #endif
 
   #ifdef _LDR
-    printf("Initializing Lidar\n");
+    ROS_INFO("Initializing Lidar\n");
     laser = new LidarData("ttyACM0");
-    printf("Lidar Initiated\n");
+    ROS_INFO("Lidar Initiated\n");
   #endif
 
   cvNamedWindow("Global Map", 0);
   
-  printf("Eklavya Initiated\n");
-  printf("=================\n");
+  ROS_INFO("Eklavya Initiated\n");
+  ROS_INFO("=================\n");
 }
 
 void plotMap() {
@@ -177,7 +179,12 @@ void closeAGV() {
   }
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
+ 
+  ros::init(argc, argv, "eklavya_node");
+  ros::NodeHandle n;
+
   int iterations = 0, c;
   int scale;
   int calib = 1;
@@ -208,7 +215,7 @@ int main(int argc, char **argv) {
 */
   #ifdef _LANE
     if(argc==1) {
-      printf("[PARAM] Please provide the scale parameter\n");
+      ROS_INFO("[PARAM] Please provide the scale parameter\n");
       exit(1);
     }
     else {
@@ -219,7 +226,9 @@ int main(int argc, char **argv) {
   initializeAGV();
 
   time(&start);
-  while(1) {
+  //ros::Rate loop_rate(10);
+  while (ros::ok())
+  {
     if(loggerActive) {
       fprintf(logFileHandle, "[%4d]: ", iterations);
     }
@@ -243,7 +252,7 @@ int main(int argc, char **argv) {
     #ifdef _LANE
       frame_in = cvQueryFrame(capture);
       if(frame_in == NULL) {
-        printf("End of Input Stream\n");
+        ROS_INFO("End of Input Stream\n");
         break;
       }
       Lanespace::LaneDetection::markLane(frame_in, local_map, LANE_CHOICE, scale);
@@ -392,11 +401,11 @@ int main(int argc, char **argv) {
 
       default:
         // Error
-        printf("[ERROR]: Target not set\n");
+        ROS_ERROR("[ERROR]: Target not set\n");
         exit(0);
     }
 
-    printf("[%d] : Target: (%d, %d)\n", iterations, targetLocation.x, targetLocation.y);
+    ROS_INFO("[%d] : Target: (%d, %d)\n", iterations, targetLocation.x, targetLocation.y);
 
     /// Planning and Navigation
 
@@ -418,12 +427,14 @@ int main(int argc, char **argv) {
     if((c = cvWaitKey(1)) == 27) {
       break;
     }
+    ros::spinOnce();
+//    loop_rate.sleep();
   }
 
   time(&finish);
-  printf("Number of iterations: %d\n",iterations);
+  ROS_INFO("Number of iterations: %d\n",iterations);
   closeAGV();
-  printf("FPS: %f\n", iterations / difftime(finish, start));
+  ROS_INFO("FPS: %f\n", iterations / difftime(finish, start));
 
   return 0;
 }
