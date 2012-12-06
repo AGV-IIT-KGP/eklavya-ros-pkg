@@ -18,7 +18,7 @@
   <!-- Macro for eklavya body. Including Gazebo extensions, but does not include Kinect -->
   <include filename="$(find eklavya_description)/urdf/gazebo.urdf.xacro"/>
   <include filename="$(find eklavya_description)/urdf/materials.urdf.xacro"/>
-  <include filename="$(find eklavya_description)/urdf/eklavya_hardware.xacro.xacro"/>
+  <include filename="$(find eklavya_description)/urdf/eklavya_hardware.xacro"/>
   <include filename="$(find eklavya_description)/urdf/eklavya_wheel.xacro"/>
   <include filename="$(find eklavya_description)/urdf/hokuyo_urg.xacro"/>
 
