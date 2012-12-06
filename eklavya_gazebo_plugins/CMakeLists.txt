@@ -10,3 +10,11 @@ rosbuild_add_boost_directories()
 
 rosbuild_add_library(diffdrive_plugin src/diffdrive_plugin.cpp)
 rosbuild_link_boost(diffdrive_plugin thread)
+
+rosbuild_add_boost_directories()
+
+rosbuild_add_library(eklavya_drive_plugin src/eklavya_drive_plugin.cpp)
+rosbuild_link_boost(eklavya_drive_plugin thread)
+
+rosbuild_add_library(eklavya_simple_drive_plugin src/eklavya_simple_drive_plugin.cpp)
+rosbuild_link_boost(eklavya_simple_drive_plugin thread)
