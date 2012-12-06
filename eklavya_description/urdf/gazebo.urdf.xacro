@@ -21,8 +21,8 @@
     </gazebo>
   </macro>
 
-  <macro name="gazebo_segbot_castor_wheel_link_surface">
-    <gazebo reference="caster_wheel_link">
+  <macro name="gazebo_eklavya_castor_wheel_link_surface" params="suffix parent">
+    <gazebo reference="${parent}_caster_wheel_${suffix}_link">
       <mu1 value="10.0" />
       <mu2 value="10.0" />
       <kp  value="1000000.0" />
@@ -48,7 +48,7 @@
     </geometry>
   </macro>
 
-  <macro name="segbot_collision_none">
+  <macro name="eklavya_collision_none">
     <origin xyz="0 0 0" rpy="0 0 0" />
     <geometry>
       <box size="0.01 0.01 0.01" />
@@ -62,14 +62,14 @@
     </geometry>
   </macro>
 
-  <macro name="segbot_wheel_mesh" params="suffix">
+  <macro name="eklavya_wheel_mesh" params="suffix">
     <origin xyz="0 0 0" rpy="0 0 0" />
     <geometry>
       <mesh filename="package://eklavya_description/meshes/rmp50-${suffix}-wheel.dae" scale="0.0150 0.0150 0.0150"/>
     </geometry>
   </macro>
 
-  <macro name="gazebo_segbot_wheel_surface">
+  <macro name="eklavya_segbot_wheel_surface" params="suffix parent">
     <gazebo reference="${parent}_${suffix}_wheel_link" >
       <mu1 value="10.0" />
       <mu2 value="10.0" />
