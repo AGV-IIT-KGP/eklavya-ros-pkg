@@ -101,13 +101,13 @@
   </macro>
 
   <macro name="gazebo_segbot_simple_drive_plugin">
-    <controller:segbotsimpledrive_plugin name="differential_drive_controller" plugin="libsegbotsimpledrive_plugin.so">
+    <controller:segbotsimpledrive_plugin name="differential_drive_controller" plugin="libeklavya_simple_drive_plugin.so">
       <gazebo_segbot_drive_parameters />
     </controller:segbotsimpledrive_plugin>
   </macro>
 
   <macro name="gazebo_segbot_drive_plugin">
-    <controller:segbotdrive_plugin name="differential_drive_controller" plugin="libsegbotdrive_plugin.so">
+    <controller:segbotdrive_plugin name="differential_drive_controller" plugin="libeklavya_drive_plugin.so">
       <gazebo_segbot_drive_parameters />
     </controller:segbotdrive_plugin>
    </macro>
@@ -136,7 +136,7 @@
                 <topicName>base_pose_ground_truth</topicName>
                 <gaussianNoise>0.01</gaussianNoise>
                 <frameName>map</frameName>
-                <xyzOffsets>0 0 0</xyzOffsets> 
+                <xyzOffsets>25.7 25.7 0</xyzOffsets> <!-- initialize odometry for fake localization-->
                 <rpyOffsets>0 0 0</rpyOffsets>
                 <interface:position name="p3d_base_position"/>
             </controller:gazebo_ros_p3d>
@@ -144,7 +144,7 @@
             <canonicalBody>base_footprint</canonicalBody>
 
             <!-- this publishes empty joint_states due to no transmission, but
-             triggering robot_state_publisher to publish tf between fixed joints in create,
+             triggering robot_state_publisher to publish tf between fixed joints in eklavya,
              (e.g. base_laser_link for the base_scan frame) -->
             <controller:gazebo_ros_controller_manager name="gazebo_ros_controller_manager" plugin="libgazebo_ros_controller_manager.so">
                 <alwaysOn>true</alwaysOn>
