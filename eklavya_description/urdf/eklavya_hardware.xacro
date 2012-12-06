@@ -133,7 +133,6 @@
       <collision>
         <eklavya_castor_wheel_link_mesh />
       </collision>
-
     </link>
     <gazebo_eklavya_castor_wheel_link_surface suffix="${suffix}" parent="${parent}" />
 </macro>
