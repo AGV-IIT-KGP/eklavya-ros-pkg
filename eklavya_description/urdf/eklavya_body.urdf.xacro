@@ -13,6 +13,8 @@
   <include filename="$(find eklavya_description)/urdf/eklavya_hardware.xacro"/>
   <include filename="$(find eklavya_description)/urdf/eklavya_wheel.xacro"/>
   <include filename="$(find eklavya_description)/urdf/hokuyo_urg.xacro"/>
+  <include filename="$(find eklavya_description)/urdf/microstrain_3dmgx3_imu.urdf.xacro"/>
+  <include filename="$(find eklavya_description)/urdf/eklavya_kinect.urdf.xacro"/>
 
   <xacro:macro name="eklavya_body">
     <!--Dummy base without INERTIA because base_link is not supposed to have inertia-->
@@ -102,95 +104,23 @@
     <caster_wheel suffix="front" parent="base_link">
       <origin xyz="-0.0397 0 -0.0918" rpy="0 0 0" />
 	</caster_wheel> 
-     
-    <!--Links for sensor integration-->
-    <!--IMU link-->
-   <!-- <link name="IMU_sensor_link">
-      <inertial>
-        <mass value="0.01" />
-        <origin xyz="0 0 0"/>
-        <inertia ixx="0.001" ixy="0.0" ixz="0.0"
-                  iyy="0.001" iyz="0.0" izz="0.001" />
-      </inertial>
-    </link>
--->
-    <!--BumbleBee link-->
-   <!-- <link name="BumbleBee_sensor_link">
-      <inertial>
-        <mass value="0.01" />
-        <origin xyz="0 0 0"/>
-        <inertia ixx="0.001" ixy="0.0" ixz="0.0"
-                 iyy="0.001" iyz="0.0" izz="0.001" />
-      </inertial>
-    </link>
- -->
-    <!--LIDAR link-->
-    <!--<link name="LIDAR_sensor_link">
-      <inertial>
-        <mass value="0.01" />
-        <origin xyz="0 0 0"/>
-        <inertia ixx="0.001" ixy="0.0" ixz="0.0"
-                 iyy="0.001" iyz="0.0" izz="0.001" />
-      </inertial>
-    </link>
--->
-    <!--GPS link-->
-   <!-- <link name="GPS_sensor_link">
-      <inertial>
-        <mass value="0.01" />
-        <origin xyz="0 0 0"/>
-        <inertia ixx="0.001" ixy="0.0" ixz="0.0"
-                 iyy="0.001" iyz="0.0" izz="0.001" />
-      </inertial>
-    </link>
--->
- 
-   
 
-    <!--Joint for IMU-->
-   <!-- <joint name="IMU_sensor_joint" type="fixed">
-      <origin xyz="0.26 0.26 0.275" rpy="0 0 -1.0" />        
-      <parent link="base_link"/>
-      <child link="IMU_sensor_link" />
-    </joint>
--->
-    <!--Joint for BumbleBee Sterio Camera-->
-   <!-- <joint name="BumbleBee_sensor_joint" type="fixed">
-      <origin rpy="0 0 0" xyz="0 0.26 0.89"/>        
-      <parent link="base_link"/>
-      <child link="BumbleBee_sensor_link" />
-    </joint>
--->
-    <!--Joint for LIDAR-->
-   <!-- <joint name="LIDAR_sensor_joint" type="fixed">
-      <origin xyz="0 0.375 -0.3" rpy="0 0 -1.0" />        
-      <parent link="base_link"/>
-      <child link="LIDAR_sensor_link" />
-    </joint>
--->
-   
-   
-    <!--Joint for GPS-->
-    <!--
-    <joint name="GPS_sensor_joint" type="fixed">
-      <origin xyz="-0.26 0.26 0.275" rpy="0 0 -1.0" />        
-      <parent link="base_link"/>
-      <child link="GPS_sensor_link" />
-    </joint> -->
 
+	<!-- Controllers -->
    <!-- <gazebo_eklavya_simple_drive_plugin />    -->
     <gazebo_eklavya_drive_plugin_diffdrive /><!-- cmd_vel movement -->
     <gazebo_eklavya_p3d_plugin /> <!-- Ground Truth-->
-    <eklavya_controllers_common /> 
-    
-    <hokuyo_urg name="hokuyo_laser" parent="base_link" >
-      <origin rpy="0 0 0" xyz="0.36 0 -0.245"/>
-    </hokuyo_urg>
+     <eklavya_controllers_common />  
     
     <!-- Simulation sensors -->
-    <!--<eklavya_sim_imu/> -->
+	<hokuyo_urg name="hokuyo_laser" parent="base_link" >
+      <origin rpy="0 0 0" xyz="0.36 0 -0.245"/>
+    </hokuyo_urg>
+	<microstrain_imu name="eklavya_sim_imu" parent="base_link" imu_topic="imu/data" update_rate="30" stdevNoise="0.0017">
+		<origin rpy="0 0 0" xyz="0.26 0.20 0.575"/>
+	</microstrain_imu>
     <!-- Kinect frames and mounting (includes simulation) -->
-  <turtlebot_kinect/>
+   <eklavya_kinect/>
 
      
 
