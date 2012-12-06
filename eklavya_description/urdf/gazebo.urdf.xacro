@@ -4,14 +4,8 @@
   xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
   xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
   xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface">
-<gazebo reference="castor">
-    <mu1 value="0"/>
-    <mu2 value="0"/>
-    <kp value="100000000.0"/>
-    <kd value="10000.0"/>
-    <fdir value="1 0 0"/>
-  </gazebo>
-  
+
+ 
   <macro name="gazebo_eklavya_base_link_surface">
     <gazebo reference="base_link">
       <mu1 value="100.0" />
@@ -22,13 +16,13 @@
   </macro>
 
   <macro name="gazebo_eklavya_castor_wheel_link_surface" params="suffix parent">
-    <gazebo reference="${parent}_caster_wheel_${suffix}_link">
+    <gazebo reference="${parent}_caster_wheel_${suffix}_link"> 
       <mu1 value="10.0" />
       <mu2 value="10.0" />
       <kp  value="1000000.0" />
       <kd  value="1.0" />
     </gazebo>
-  </macro>
+  </macro> 
 
   <macro name="eklavya_base_link_mesh">
     <origin xyz="0 0 0" rpy="0 0 0" />
@@ -69,13 +63,15 @@
     </geometry>
   </macro>
 
-  <macro name="eklavya_segbot_wheel_surface" params="suffix parent">
+  <macro name="eklavya_wheel_surface" params="suffix parent">
     <gazebo reference="${parent}_${suffix}_wheel_link" >
       <mu1 value="10.0" />
       <mu2 value="10.0" />
       <kp  value="1000000.0" />
       <kd  value="1.0" />
+       <fdir value="1 0 0"/>
     </gazebo>
+
   </macro>
 
  
@@ -84,12 +80,12 @@
   
  <!-- CONTROLLERS -->
  
-        <!-- this publishes empty joint_states due to no transmission, but
+       
+
+  <macro name="eklavya_controllers_common">
+ <!-- this publishes empty joint_states due to no transmission, but
              triggering robot_state_publisher to publish tf between fixed joints in eklavya,
              (e.g. base_laser_link for the base_scan frame) -->
- <!-- 
-  <macro name="eklavya_segbot_controllers_common">
-
     <controller:gazebo_ros_controller_manager name="gazebo_ros_controller_manager" plugin="libgazebo_ros_controller_manager.so">
       <alwaysOn>true</alwaysOn>
       <updateRate>100.0</updateRate>
@@ -97,8 +93,8 @@
     </controller:gazebo_ros_controller_manager>
     <canonicalBody>base_footprint</canonicalBody>
   </macro>
-  -->
-  <macro name="eklavya_segbot_drive_parameters">
+
+  <macro name="eklavya_drive_parameters">
     <alwaysOn>true</alwaysOn>
     <update>100</update>
     <updateRate>100.0</updateRate>
@@ -113,22 +109,22 @@
   
   <macro name="gazebo_eklavya_simple_drive_plugin">
 	  <gazebo>
-    <controller:segbotsimpledrive_plugin name="differential_drive_controller" plugin="libeklavya_simple_drive_plugin.so">
-      <eklavya_segbot_drive_parameters />
-    </controller:segbotsimpledrive_plugin>
+    <controller:eklavya_simple_drive_plugin name="differential_drive_controller" plugin="libeklavya_simple_drive_plugin.so">
+      <eklavya_drive_parameters />
+    </controller:eklavya_simple_drive_plugin>
      </gazebo>
   </macro>
 
   <macro name="gazebo_eklavya_drive_plugin">
 	<gazebo>
-    <controller:segbotdrive_plugin name="differential_drive_controller" plugin="libeklavya_drive_plugin.so">
-      <eklavya_segbot_drive_parameters />
-    </controller:segbotdrive_plugin>
+    <controller:eklavya_drive_plugin name="differential_drive_controller" plugin="libeklavya_drive_plugin.so">
+      <eklavya_drive_parameters />
+    </controller:eklavya_drive_plugin>
      </gazebo>
    </macro>
 
 
- <macro name="gazebo_eklavya_drive_plugin_diffdrive">
+	<macro name="gazebo_eklavya_drive_plugin_diffdrive">
         <gazebo>
             <controller:diffdrive_plugin name="differential_drive_controller" plugin="libdiffdrive_plugin.so">
                 <alwaysOn>true</alwaysOn>
@@ -145,8 +141,8 @@
             </controller:diffdrive_plugin>
          </gazebo>
     </macro>
-    <!-- 
-<macro name="gazebo_eklavya_p3d_plugin">
+
+	<macro name="gazebo_eklavya_p3d_plugin">
 		 <gazebo>
             <controller:gazebo_ros_p3d name="p3d_base_controller" plugin="libgazebo_ros_p3d.so">
                 <alwaysOn>true</alwaysOn>
@@ -159,7 +155,6 @@
                 <rpyOffsets>0 0 0</rpyOffsets>
                 <interface:position name="p3d_base_position"/>
             </controller:gazebo_ros_p3d>
-        </gazebo>
-      
-  </macro>  -->
+        </gazebo>      
+  </macro>   
 </robot>

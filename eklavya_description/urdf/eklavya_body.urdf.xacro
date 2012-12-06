@@ -79,17 +79,18 @@
       <origin xyz="-0.2 -0.335 -0.303" rpy="0 0 0" />
     </eklavya_wheel>
     
-	<eklavya_bar suffix="left" parent="base_link" length="0.6">
+	<eklavya_support_bar suffix="left" parent="base_link" length="0.6">
       <origin rpy="0 0 0" xyz="0.26 0.26 0.575"/>
-	</eklavya_bar>
+	</eklavya_support_bar>
     
-	<eklavya_bar suffix="right" parent="base_link" length="0.6">
+	<eklavya_support_bar suffix="right" parent="base_link" length="0.6">
       <origin rpy="0 0 0" xyz="0.26 -0.26 0.575"/>
-	</eklavya_bar>
+	</eklavya_support_bar>
      
-	<eklavya_bar suffix="top" parent="base_link" length="0.55">
+	<eklavya_support_bar suffix="top" parent="base_link" length="0.55">
       <origin rpy="${M_PI/2} 0 0" xyz="0.26 0 0.89"/>
-	</eklavya_bar>   
+	</eklavya_support_bar>   
+	
     <castor_support suffix="front" parent="base_link">
       <origin rpy="0 0 0" xyz="0.36 0 -0.255"/>
 	</castor_support> 
@@ -178,18 +179,20 @@
     </joint> -->
 
    <!-- <gazebo_eklavya_simple_drive_plugin />    -->
-    <gazebo_eklavya_drive_plugin_diffdrive />
-  <!--  <gazebo_eklavya_p3d_plugin /> -->
-   <!--   <eklavya_segbot_controllers_common />-->
+    <gazebo_eklavya_drive_plugin_diffdrive /><!-- cmd_vel movement -->
+    <gazebo_eklavya_p3d_plugin /> <!-- Ground Truth-->
+    <eklavya_controllers_common /> 
     
     <hokuyo_urg name="hokuyo_laser" parent="base_link" >
       <origin rpy="0 0 0" xyz="0.36 0 -0.245"/>
     </hokuyo_urg>
     
     <!-- Simulation sensors -->
-    <!--<eklavya_sim_imu/>
+    <!--<eklavya_sim_imu/> -->
+    <!-- Kinect frames and mounting (includes simulation) -->
+  <turtlebot_kinect/>
 
-      -->
+     
 
   </xacro:macro>
 </robot>
