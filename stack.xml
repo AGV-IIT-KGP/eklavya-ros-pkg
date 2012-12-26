@@ -1,13 +1,14 @@
 <stack>
   <description brief="eklavya">The bot by AGV IIT KGP</description>
-  <author>Maintained by Jit Ray Chowdhury</author>
+  <author>Maintained by  Bhuvnesh Agarwal, Jit Ray Chowdhury, Samuel Anudeep, Bhaskar Bagchi, Tanmay Patil, Sidakpreet Chawla</author>
   <license>BSD</license>  
   <review status="unreviewed" notes=""/>
-  <url>http://ros.org/wiki/eklavya</url>
+  <url>https://github.com/jitrc/eklavya-ros-pkg</url>
+  <depend stack="ros" />
+  <depend stack="ros_comm" /> <!-- std_msgs, std_srvs, roscpp -->
   <depend stack="common_msgs" /> <!-- nav_msgs, sensor_msgs, geometry_msgs -->
-  <depend stack="driver_common" /> <!-- dynamic_reconfigure -->
   <depend stack="geometry" /> <!-- tf -->
-  <depend stack="image_transport_plugins" /> <!-- compressed_image_transport -->
+  <depend stack="driver_common" /> <!-- dynamic_reconfigure -->
   <depend stack="joystick_drivers" /> <!-- joy -->
   <depend stack="multimaster_experimental" /> <!-- app_manager -->
   <depend stack="nodelet_core" /> <!-- nodelet -->
@@ -15,7 +16,9 @@
   <depend stack="orocos_kinematics_dynamics" /> <!-- kdl -->
   <depend stack="perception_pcl" /> <!-- pcl_ros -->
   <depend stack="robot_model" /> <!-- robot_state_publisher, urdf -->
-  <depend stack="ros" />
-  <depend stack="ros_comm" /> <!-- std_msgs, std_srvs, roscpp -->
   <depend stack="xacro" /> <!-- xacro -->
+  <depend stack="laser_pipeline" /> <!-- laser_geometry -->
+  <depend stack="image_transport_plugins" /> <!-- compressed_image_transport -->
+  <depend stack="image_common" /> <!-- for image_transport, used by map_to_image node. Consider removal in future versions-->
+  <depend stack="vision_opencv" /> <!-- cv_bridge -->
 </stack>
