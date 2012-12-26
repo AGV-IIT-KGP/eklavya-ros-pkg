@@ -1,0 +1,12 @@
+<launch>
+  <!-- start gazebo with an empty plane -->
+  <param name="/use_sim_time" value="true" />
+
+  <node name="gazebo" pkg="gazebo" type="gazebo" args="-u $(find gazebo_worlds)/worlds/simple_office.world" respawn="false" output="screen"/>
+  <node name="gazebo_gui" pkg="gazebo" type="gui" respawn="false" output="screen"/> 
+
+
+ <include file="$(find eklavya_gazebo)/launch/robot.launch"/> 
+ <include file="$(find turtlebot_teleop)/keyboard_teleop.launch" />
+</launch>
+
