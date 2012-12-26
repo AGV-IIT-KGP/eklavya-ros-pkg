@@ -13,7 +13,7 @@ Design of the Eklavya series had started in the month of June of 2011. With an a
 
 After the competition, the team decided to improvise the 1.0 platform with some changes in its mechanical design leading to Eklavya 1.1, which is almost half as heavy as its predecessor and still be able to carry the 10 Kg payload. Most of the software improvements are developed and tested on this platform.
 
-
+<https://github.com/jitrc/eklavya-ros-pkg/wiki>
 
 
 Installation and Requirements
@@ -25,8 +25,9 @@ Main requirements are:
 
 ### ROS Setup ###
 
-todo
-http://www.jitrc.com/downloads/ppt_reports/ROS_tut_jit.pdf
+at <https://github.com/jitrc/eklavya-ros-pkg/wiki/Installing-ROS-in-Ubuntu-12.04-(Precise)>
+
+more at <http://www.jitrc.com/downloads/ppt_reports/ROS_tut_jit.pdf>
 
 
 == mrpt in ros ==
