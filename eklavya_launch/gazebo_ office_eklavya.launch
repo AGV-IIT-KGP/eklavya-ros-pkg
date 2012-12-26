@@ -1,0 +1,18 @@
+<launch>
+	<!-- we run gazebo with a world argument where path to
+	gazebo_worlds is automatically located. We also run the
+	gazebo gui -->
+
+	<param name="/use_sim_time" value="true" />
+
+	<node name="gazebo" pkg="gazebo" type="gazebo"	args="-u $(find gazebo_worlds)/worlds/simple_office.world" />
+
+	<node name="gazebo_gui" pkg="gazebo" type="gui" />
+
+	<!-- we include preexisting launch files which will set
+	up the robot model and the node for teleop -->
+
+	<include file="$(find turtlebot_gazebo)/launch/robot.launch" />
+	<include file="$(find turtlebot_teleop)/keyboard_teleop.launch" />
+
+</launch>
