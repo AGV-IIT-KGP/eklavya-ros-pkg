@@ -1,3 +1,5 @@
+The readme file is outdated.. nothing much updaed after we started converting to ROS
+
 ROS
 
 mrpt in ros
