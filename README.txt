@@ -1,10 +1,12 @@
-The readme file is outdated.. nothing much updaed after we started converting to ROS
+= ROS Setup =
+todo
 
-ROS
 
-mrpt in ros
+== mrpt in ros ==
+{{{
 http://www.mrpt.org/mrpt-ros-pkg
 http://code.google.com/p/mrpt-ros-pkg/
+}}}
 
 *************Libraries used***************
 
