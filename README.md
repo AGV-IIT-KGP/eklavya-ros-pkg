@@ -18,11 +18,15 @@ After the competition, the team decided to improvise the 1.0 platform with some 
 
 Installation and Requirements
 -----------------------------
-OpenCV,MRPT
+Main requirements are 
+ROS (Fuerte) http://www.ros.org
+OpenCV (included in ROS) http://opencv.org
+MRPT http://www.mrpt.org
 
 ### ROS Setup ###
 
 todo
+http://www.jitrc.com/downloads/ppt_reports/ROS_tut_jit.pdf
 
 
 == mrpt in ros ==
