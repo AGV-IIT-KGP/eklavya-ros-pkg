@@ -1,0 +1,15 @@
+<launch>
+
+  <!-- start up office world with robot-->
+  <!-- <include file="$(find eklavya_gazebo)/launch/simple_office.launch"/> --> 
+
+  <!-- start up robot -->
+  <include file="$(find eklavya_gazebo)/launch/robot.launch"/> 
+
+  <!-- for visualization -->
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find eklavya_description)/rviz/rviz_display.vcg" />
+
+  <!-- keyboard teleoperation -->
+  <include file="$(find turtlebot_teleop)/keyboard_teleop.launch" />
+</launch>
+

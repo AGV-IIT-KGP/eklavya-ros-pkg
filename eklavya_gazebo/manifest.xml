@@ -7,7 +7,7 @@
   <author>Jit Ray Chowdhury</author>
   <license>BSD</license>
   <review status="unreviewed" notes=""/>
-  <url>http://ros.org/wiki/eklavya_gazebo</url>
+  <url>https://github.com/jitrc/eklavya-ros-pkg</url>
   <depend package="xacro"/>
   <depend package="ivcon"/>
   <depend package="gazebo"/>
