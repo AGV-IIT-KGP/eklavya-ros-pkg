@@ -1,12 +1,13 @@
 <launch>
 
   <!-- start up office world with robot-->
-  <!-- <include file="$(find eklavya_gazebo)/launch/simple_office.launch"/> --> 
+  <include file="$(find eklavya_gazebo)/launch/simple_office.launch"/>  
 
   <!-- start up robot -->
   <include file="$(find eklavya_gazebo)/launch/robot.launch"/> 
 
   <!-- for visualization -->
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" ></node>
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find eklavya_description)/rviz/rviz_display.vcg" />
 
   <!-- keyboard teleoperation -->
