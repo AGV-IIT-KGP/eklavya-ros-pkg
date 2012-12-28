@@ -1,0 +1,15 @@
+<package>
+  <description brief="eklavya_launchers">
+
+     eklavya_launchers
+
+  </description>
+  <author>Jit Ray Chowdhury</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>https://github.com/jitrc/eklavya-ros-pkg</url>
+  <depend package="rviz"/>
+  <depend package="joint_state_publisher"/>
+</package>
+
+
