@@ -1,15 +1,15 @@
 <package>
     <description brief="eklavya_gazebo_plugins">
-        Contains a differential drive plugin that works with the erratic robot model provided
-        in the erratic_description package. The plugin may also work for other differential drive 
+        Contains a differential drive plugin that works with the eklavya robot model provided
+        in the eklavya_description package. The plugin may also work for other differential drive 
         robots. The purpose of this custom plugin is to build the ROS functionality directly into a 
         proper Gazebo plugin, rather than a node that communicates with Gazebo. 
     </description>
 
-    <author>Daniel Hewlett, Antons Rebguns</author>
+    <author>Daniel Hewlett, Antons Rebguns, Jit Ray Chowdhury</author>
     <license>BSD</license>
     <review status="unreviewed" notes=""/>
-    <url>http://ros.org/wiki/erratic_gazebo_plugins</url>
+    <url>https://github.com/jitrc/eklavya-ros-pkg</url>
 
     <depend package="roscpp"/>
     <depend package="gazebo"/>
