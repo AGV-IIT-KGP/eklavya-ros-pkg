@@ -1,21 +1,44 @@
 <launch>
 
   <!-- start up office world with robot-->
-  <!-- <include file="$(find eklavya_gazebo)/launch/simple_office.launch"/> --> 
+  <include file="$(find eklavya_gazebo)/launch/simple_office.launch"/>
 
 
   <!-- start up robot -->
   <include file="$(find eklavya_gazebo)/launch/robot.launch"/> 
 
 
-  <!-- for visualization -->
-  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find eklavya_description)/rviz/rviz_display.vcg" />
-
   <!-- dynamic map generation -->
   <node name="gmapping_node" pkg="gmapping" type="slam_gmapping" respawn="false" >
-    <remap to="base_scan" from="scan"/>
-    <param name="odom_frame" value="odom_combined" />
+    <remap to="hokuyo_laser/scan" from="scan"/>
+    <param name="odom_frame" value="odom" />
   </node>
+
+ <!-- for visualization -->
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" ></node> 
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find eklavya_description)/rviz/rviz_display.vcg" />
+
+<!-- gmapping params -->
+  <!-- <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" output="screen">
+    <param name="scan" value="hokuyo_laser/scan" />
+    <param name="base_frame" value="base_link"/>
+    <param name="map_frame" value="map"/>
+    <param name="odom_frame" value="odom"/>
+ <param name="_odom_frame" value="odom"/>
+    <param name="iterations" value="7"/>
+    <param name="linearUpdate" value="0.25"/>
+    <param name="angularUpdate" value="0.262"/>
+    <param name="temporalUpdate" value="-1.0"/>
+    <param name="resampleThreshold" value="0.5"/>
+    <param name="particles" value="75" />
+    <param name="stt" value=".3"/>
+    <param name="str" value=".2"/>
+    <param name="srt" value=".3"/>
+    <param name="srr" value=".1"/>
+    <param name="maxUrange" value="8"/>
+    <param name="maxRange" value="10"/>
+  </node>-->
+
 
   <!-- keyboard teleoperation -->
   <include file="$(find turtlebot_teleop)/keyboard_teleop.launch" />
