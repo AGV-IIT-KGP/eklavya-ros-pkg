@@ -18,8 +18,8 @@
   <!-- dynamic hector slam map generation -->
    <arg name="tf_map_scanmatch_transform_frame_name" default="scanmatcher_frame"/>
   <arg name="base_frame" default="base_footprint"/>
-  <arg name="odom_frame" default="odom"/>
-  <arg name="pub_map_odom_transform" default="false"/>
+  <arg name="odom_frame" default="base_footprint"/>
+  <arg name="pub_map_odom_transform" default="true"/>
   <arg name="scan_subscriber_queue_size" default="5"/>
   <arg name="scan_topic" default="hokuyo_laser/scan"/>
   <arg name="map_size" default="2048"/>
@@ -69,10 +69,10 @@
   <!-- keyboard teleoperation -->
   <include file="$(find turtlebot_teleop)/keyboard_teleop.launch" />
   
-   <!--
- <include file="$(find hector_geotiff)/launch/geotiff_mapper.launch">
+  
+ <!-- <include file="$(find hector_geotiff)/launch/geotiff_mapper.launch">
     <arg name="trajectory_source_frame_name" value="scanmatcher_frame"/> 
-  </include> 
+  </include> -->
   
   <node pkg="hector_trajectory_server" type="hector_trajectory_server" name="hector_trajectory_server" output="screen">
     <param name="target_frame_name" type="string" value="/map" />
@@ -89,5 +89,5 @@
     <param name="draw_background_checkerboard" type="bool" value="true" />
     <param name="draw_free_space_grid" type="bool" value="true" />
   </node>
-  -->
+
 </launch>

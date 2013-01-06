@@ -27,7 +27,8 @@
 	    <geometry>
           <box size=".03 .03 ${length}"/>
         </geometry>
-        <material name="White"/>
+        <!--<material name="White"/>-->
+        <material name="GunMetalBrushedAluminum"/>  
       </visual>
     </link>
  </macro>
