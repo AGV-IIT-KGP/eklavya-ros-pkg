@@ -12,7 +12,9 @@
   <include filename="$(find eklavya_description)/urdf/materials.urdf.xacro"/>
   <include filename="$(find eklavya_description)/urdf/eklavya_hardware.xacro"/>
   <include filename="$(find eklavya_description)/urdf/eklavya_wheel.xacro"/>
-  <include filename="$(find eklavya_description)/urdf/hokuyo_urg.xacro"/>
+  <!--  <include filename="$(find eklavya_description)/urdf/hokuyo_urg.xacro"/>-->
+ <include filename="$(find eklavya_description)/urdf/sick_lms100_200.urdf.xacro"/>
+
   <include filename="$(find eklavya_description)/urdf/microstrain_3dmgx3_imu.urdf.xacro"/>
   <include filename="$(find eklavya_description)/urdf/eklavya_kinect.urdf.xacro"/>
 
@@ -20,15 +22,21 @@
     <!--Dummy base without INERTIA because base_link is not supposed to have inertia-->
     <link name="base_footprint">
       <visual>
-        <origin xyz="0 0 0" rpy="0 0 0" />
+        <origin xyz="0 0 0.0" rpy="0 0 0" />
         <geometry>
           <box size="0.001 0.001 0.001" />
         </geometry>
       </visual>
+      <collision>
+		<origin xyz="0 0 0.817" rpy="0 0 0" />
+	      <geometry>
+			<box size="0.001 0.001 0.001" />
+	      </geometry>
+		</collision>
     </link>
 
     <joint name="base_footprint_joint" type="fixed">
-      <origin xyz="0.0 0 0.5" rpy="0 0 0" />
+      <origin xyz="0.0 0 0.97" rpy="0 0 0" />
       <parent link="base_footprint"/>
       <child link="base_link" />
     </joint>
@@ -114,7 +122,8 @@
     
     <!-- Simulation sensors -->
 	<hokuyo_urg name="hokuyo_laser" parent="base_link" >
-      <origin rpy="0 0 0" xyz="0.36 0 -0.245"/>
+      <origin rpy="0 0 0" xyz="0.36 0 -0.190"/>
+       <!--<origin rpy="0 0 0" xyz="0.36 0 -0.245"/>-->
     </hokuyo_urg>
 	<microstrain_imu name="eklavya_sim_imu" parent="base_link" imu_topic="imu/data" update_rate="30" stdevNoise="0.0017">
 		<origin rpy="0 0 0" xyz="0.26 0.20 0.575"/>

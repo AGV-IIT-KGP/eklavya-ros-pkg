@@ -212,11 +212,12 @@
     </body:box>
   </model:physical>
 
+<!--  Obstacles -->
 
  <model:physical name="sphere1_model">
-    <xyz>-1 -3 0.5</xyz>
+    <xyz>1.1 1.8 0.5</xyz> <!-- front right -->
     <rpy>0.0 0.0 0.0</rpy>
-    <static>false</static>
+    <static>true</static>
 
     <body:sphere name="sphere1_body">
       <massMatrix>true</massMatrix> 
@@ -231,7 +232,7 @@
       <cy>0.0</cy>
       <cz>0.0</cz>
       <geom:sphere name="sphere1_geom">
-        <size>0.125</size>
+        <size>1.0 1.0 1.0</size>
         <mass>0.1</mass>
 
         <mu1>1.0</mu1>
@@ -249,9 +250,9 @@
   </model:physical>
   
   <model:physical name="box1_model">
-    <xyz>-3.2 5.85 0.5</xyz>
+    <xyz>-2.2 7 0.5</xyz><!-- small room-->
     <canonicalBody>box1_body</canonicalBody>
-    <static>false</static>
+    <static>true</static>
 
     <body:box name="box1_body">
       <massMatrix>true</massMatrix> 
@@ -277,16 +278,16 @@
         <visual>
           <size>1.0 1.0 1.0</size>
           <mesh>unit_box</mesh>
-          <material>Gazebo/BumpyMetal</material>
+          <material>Gazebo/Red</material>
         </visual>
       </geom:box>
     </body:box>
   </model:physical>
   
   <model:physical name="box2_model">
-    <xyz>4.0 3.0 0.5</xyz>
+    <xyz>4.0 3.0 0.5</xyz> <!-- front left -->
     <canonicalBody>box1_body</canonicalBody>
-    <static>false</static>
+    <static>true</static>
 
     <body:box name="box2_body">
       <massMatrix>true</massMatrix> 
@@ -319,9 +320,9 @@
   </model:physical>
   
   <model:physical name="cly1_model">
-    <xyz>-4.0 -3.0 0.5</xyz>
+    <xyz>-4.0 -3.0 0.5</xyz><!-- back right -->
     <canonicalBody>cly1_body</canonicalBody>
-    <static>false</static>
+    <static>true</static>
 
     <body:cylinder name="cly1_body">
       <massMatrix>true</massMatrix> 
@@ -338,7 +339,7 @@
       <geom:cylinder name="cly1_geom1">
         <mesh>default</mesh>
     <xyz>0.0 0.0 -0.010</xyz>
-    <size>0.05 0.05 0.05</size>
+    <size>1.0 1.0 1.0</size>
     <density>0</density>
     <material>Gazebo/White</material>
 
@@ -349,7 +350,7 @@
 
         <visual>
           <size>1.0 1.0 1.0</size>
-          <mesh>unit_box</mesh>
+          <mesh>unit_cylinder</mesh>
           <material>Gazebo/Red</material>
         </visual>
       </geom:cylinder>

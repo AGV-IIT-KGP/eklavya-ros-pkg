@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- start gazebo with an empty plane -->
+  <param name="/use_sim_time" value="true" />
+  <arg name="use_sim_time" default="true"/>
+  <arg name="gui" default="true"/>
+  <node name="gazebo" pkg="gazebo" type="gazebo" args="-u $(find eklavya_gazebo)/worlds/box.world" respawn="false" output="screen"/>
+  <!-- <node name="gazebo" pkg="gazebo" type="gazebo" args="-u $(find eklavya_gazebo)/worlds/simple_office.world" respawn="false" output="screen"/> -->
+<group if="$(arg gui)">
+    <node name="gazebo_gui" pkg="gazebo" type="gui" respawn="false" output="screen"/>
+</group>
+
+<include file="$(find turtlebot_gazebo)/launch/robot.launch" />
+	<include file="$(find turtlebot_teleop)/keyboard_teleop.launch" />
+
+  <!-- dynamic map generation -->
+  <node name="gmapping_node" pkg="gmapping" type="slam_gmapping" respawn="false" >
+    <!-- <remap to="hokuyo_laser/scan" from="scan"/> -->
+    <remap to="scan" from="scan"/>
+    <param name="odom_frame" value="/odom_combined" />
+  </node>
+  <!-- for visualization -->
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" ></node> 
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find turtlebot_navigation)/nav_rviz.vcg" />
+</launch>
+
