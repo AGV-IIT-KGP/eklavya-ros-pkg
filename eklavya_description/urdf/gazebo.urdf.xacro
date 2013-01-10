@@ -25,7 +25,7 @@
   </macro> 
 
   <macro name="eklavya_base_link_mesh">
-    <origin xyz="0 0 0" rpy="0 0 0" />
+    <origin xyz="0 0 0.0308" rpy="0 0 0" />
     <geometry>
      <!-- <mesh filename="package://eklavya_description/meshes/rmp50-base-link.dae" scale="0.0254 0.0254 0.0254"/> -->
     <box size=".55 .55 .55"/>
@@ -147,7 +147,7 @@
             <controller:gazebo_ros_p3d name="p3d_base_controller" plugin="libgazebo_ros_p3d.so">
                 <alwaysOn>true</alwaysOn>
                 <updateRate>100.0</updateRate>
-                <bodyName>base_link</bodyName>
+                <bodyName>base_footprint</bodyName>
                 <topicName>base_pose_ground_truth</topicName>
                 <gaussianNoise>0.01</gaussianNoise>
                 <frameName>map</frameName>

@@ -305,9 +305,9 @@ void DiffDrivePlugin::publish_odometry()
   odom_.pose.pose.orientation.w = pose.rot.w;
 
   math::Vector3 linear = this->parent->GetWorldLinearVel();
-  odom_.twist.twist.linear.x = linear.x;
-  odom_.twist.twist.linear.y = linear.y;
-  odom_.twist.twist.angular.z = this->parent->GetWorldAngularVel().z;
+  //odom_.twist.twist.linear.x = linear.x;
+ // odom_.twist.twist.linear.y = linear.y;
+ // odom_.twist.twist.angular.z = this->parent->GetWorldAngularVel().z;
 
   odom_.header.stamp = current_time;
   odom_.header.frame_id = odom_frame;
@@ -323,13 +323,13 @@ void DiffDrivePlugin::publish_odometry()
   memcpy( &odom_.pose.covariance[0], pose_cov, sizeof(double)*36 );
   memcpy( &odom_.twist.covariance[0], pose_cov, sizeof(double)*36 );
 
-  //odom_.twist.twist.linear.x = 0;
-  //odom_.twist.twist.linear.y = 0;
+  odom_.twist.twist.linear.x = 0;
+  odom_.twist.twist.linear.y = 0;
   odom_.twist.twist.linear.z = 0;
 
   odom_.twist.twist.angular.x = 0;
   odom_.twist.twist.angular.y = 0;
-  //odom_.twist.twist.angular.z = 0;
+  odom_.twist.twist.angular.z = 0;
 
   pub_.publish(odom_);
 }
