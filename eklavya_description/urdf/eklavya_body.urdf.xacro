@@ -12,7 +12,7 @@
   <include filename="$(find eklavya_description)/urdf/materials.urdf.xacro"/>
   <include filename="$(find eklavya_description)/urdf/eklavya_hardware.xacro"/>
   <include filename="$(find eklavya_description)/urdf/eklavya_wheel.xacro"/>
-  <!--  <include filename="$(find eklavya_description)/urdf/hokuyo_urg.xacro"/>-->
+  <include filename="$(find eklavya_description)/urdf/hokuyo_urg.xacro"/>
  <include filename="$(find eklavya_description)/urdf/sick_lms100_200.urdf.xacro"/>
 
   <include filename="$(find eklavya_description)/urdf/microstrain_3dmgx3_imu.urdf.xacro"/>
@@ -79,16 +79,32 @@
       </inertial>
     </link>
 
-
+	 <!-- WHEEL macros -->
     <eklavya_wheel suffix="left" parent="base_link">
-      <origin xyz="-0.2 0.335 -0.303" rpy="0 0 0" />
+      <origin xyz="${ -1*base_x_origin_to_wheel_origin} ${base_y_origin_to_wheel_origin} ${ -1*base_z_origin_to_wheel_origin}" rpy="0 0 0" /> 
     </eklavya_wheel>
-
   
     <eklavya_wheel suffix="right" parent="base_link">
-      <origin xyz="-0.2 -0.335 -0.303" rpy="0 0 0" />
+      <origin xyz="${ -1*base_x_origin_to_wheel_origin} ${-1*base_y_origin_to_wheel_origin} ${ -1*base_z_origin_to_wheel_origin}" rpy="0 0 0" />
     </eklavya_wheel>
     
+    
+    <!-- Castor -->    
+    <castor_support suffix="front" parent="base_link">
+      <origin rpy="0 0 0" xyz="0.36 0 -0.255"/>
+	</castor_support> 
+	
+	<caster_support_hinge suffix="front" parent="base_link">
+      <origin xyz="0.36 0 -0.275" rpy="0 0 0" />
+	</caster_support_hinge> 
+
+    <caster_wheel suffix="front" parent="base_link">
+      <origin xyz="-0.0397 0 -0.0918" rpy="0 0 0" />
+	</caster_wheel> 
+	
+	
+     <!-- DECORATIONS -->
+     <!-- Bars -->
 	<eklavya_support_bar suffix="left" parent="base_link" length="0.6">
       <origin rpy="0 0 0" xyz="0.26 0.26 0.575"/>
 	</eklavya_support_bar>
@@ -101,17 +117,7 @@
       <origin rpy="${M_PI/2} 0 0" xyz="0.26 0 0.89"/>
 	</eklavya_support_bar>   
 	
-    <castor_support suffix="front" parent="base_link">
-      <origin rpy="0 0 0" xyz="0.36 0 -0.255"/>
-	</castor_support> 
-	
-	<caster_support_hinge suffix="front" parent="base_link">
-      <origin xyz="0.36 0 -0.275" rpy="0 0 0" />
-	</caster_support_hinge> 
-
-    <caster_wheel suffix="front" parent="base_link">
-      <origin xyz="-0.0397 0 -0.0918" rpy="0 0 0" />
-	</caster_wheel> 
+    
 
 
 	<!-- Controllers -->
@@ -121,17 +127,20 @@
      <eklavya_controllers_common />  
     
     <!-- Simulation sensors -->
-	<!--<hokuyo_urg name="hokuyo_laser" parent="base_link" >
+	<hokuyo_urg name="hokuyo_laser" parent="base_link" >
        <origin rpy="0 0 0" xyz="0.36 0 -0.245"/>
-    </hokuyo_urg> -->
-    <sick_lms100_200 name="sick_laser" parent="base_link" >
+    </hokuyo_urg>
+   <!-- <sick_lms100_200 name="sick_laser" parent="base_link" >
       <origin rpy="0 0 0" xyz="0.39 0 -0.185"/>
-    </sick_lms100_200>
+    </sick_lms100_200> -->
 	<microstrain_imu name="eklavya_sim_imu" parent="base_link" imu_topic="imu/data" update_rate="30" stdevNoise="0.0017">
 		<origin rpy="0 0 0" xyz="0.26 0.20 0.575"/>
 	</microstrain_imu>
     <!-- Kinect frames and mounting (includes simulation) -->
    <eklavya_kinect/>
+
+     
+
   </xacro:macro>
 </robot>
 
