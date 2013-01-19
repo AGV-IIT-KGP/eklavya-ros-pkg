@@ -96,7 +96,7 @@
                     <gaussianNoise>0.005</gaussianNoise>
                     <alwaysOn>true</alwaysOn>
                     <updateRate>10.0</updateRate>
-                    <topicName>${name}/scan</topicName>
+                    <topicName>scan</topicName>
                     <frameName>${name}_link</frameName>
                     <interface:laser name="gazebo_ros_${name}_laser_iface" />
                 </controller:gazebo_ros_laser>

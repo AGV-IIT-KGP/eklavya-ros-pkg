@@ -16,7 +16,7 @@
 
   <!-- dynamic map generation -->
   <node name="gmapping_node" pkg="gmapping" type="slam_gmapping" respawn="false" >
-    <remap to="hokuyo_laser/scan" from="scan"/>
+   <!-- <remap to="hokuyo_laser/scan" from="scan"/> -->
     <param name="odom_frame" value="odom" />
   </node>
 
