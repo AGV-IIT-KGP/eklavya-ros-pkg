@@ -11,7 +11,7 @@
 
   <include filename="$(find eklavya_description)/urdf/common.xacro"/>
 
-    <macro name="hokuyo_urg" params="name parent *origin" >
+    <macro name="sick_lms100_200" params="name parent *origin" >
         <joint name="${name}_mount_joint" type="fixed">
             <insert_block name="origin" /> 
             <parent link="${parent}"/>

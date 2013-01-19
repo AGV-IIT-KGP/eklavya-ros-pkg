@@ -121,18 +121,17 @@
      <eklavya_controllers_common />  
     
     <!-- Simulation sensors -->
-	<hokuyo_urg name="hokuyo_laser" parent="base_link" >
-      <origin rpy="0 0 0" xyz="0.36 0 -0.190"/>
-       <!--<origin rpy="0 0 0" xyz="0.36 0 -0.245"/>-->
-    </hokuyo_urg>
+	<!--<hokuyo_urg name="hokuyo_laser" parent="base_link" >
+       <origin rpy="0 0 0" xyz="0.36 0 -0.245"/>
+    </hokuyo_urg> -->
+    <sick_lms100_200 name="sick_laser" parent="base_link" >
+      <origin rpy="0 0 0" xyz="0.39 0 -0.185"/>
+    </sick_lms100_200>
 	<microstrain_imu name="eklavya_sim_imu" parent="base_link" imu_topic="imu/data" update_rate="30" stdevNoise="0.0017">
 		<origin rpy="0 0 0" xyz="0.26 0.20 0.575"/>
 	</microstrain_imu>
     <!-- Kinect frames and mounting (includes simulation) -->
    <eklavya_kinect/>
-
-     
-
   </xacro:macro>
 </robot>
 
