@@ -52,7 +52,7 @@
         </link>
         
         <joint name="${name}_joint" type="fixed">
-            <origin xyz="0 0 0.06" rpy="0 0 0" />
+            <origin xyz="0.08 0 0.01" rpy="0 0 0" />
             <parent link="${name}_mount_link" />
             <child link="${name}_link" />
         </joint>
@@ -85,24 +85,24 @@
         </link>
         
         <gazebo reference="${name}_mount_link">
-            <material value="Erratic/Black" />
+            <material value="Erratic/Blue" />
         </gazebo>
         
         <gazebo reference="${name}_link">
-            <material value="Erratic/Black" />
+            <material value="Erratic/Blue" />
         </gazebo>
         
         <gazebo reference="${name}_link">
             <sensor:ray name="laser">
-                <rayCount>1080</rayCount>
-                <rangeCount>1080</rangeCount>
+                <rayCount>1000</rayCount>
+                <rangeCount>1000</rangeCount>
                 <laserCount>1</laserCount>
                 
                 <origin>0.0 0.0 0.0</origin>
                 <displayRays>false</displayRays>
                 
-                <minAngle>-120</minAngle>
-                <maxAngle> 120</maxAngle>
+                <minAngle>-100</minAngle>
+                <maxAngle> 100</maxAngle>
                 
                 <minRange>0.05</minRange>
                 <maxRange>6.0</maxRange>
