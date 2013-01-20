@@ -4,11 +4,8 @@
 
    <arg name="gui" default="False" />
    <param name="use_gui" value="$(arg gui)"/>
-   <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" ></node>
-   <node pkg="robot_state_publisher" type="state_publisher" name="robot_state_publisher" output="screen">
-    <param name="publish_frequency" type="double" value="30.0" />
-    <!--param name="tf_prefix" type="string" value="" /-->
-   </node>
+   	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
 
-   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find eklavya_description)/rviz/rviz_display.vcg" />
+   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find eklavya_description)/rviz/rviz_display_model.vcg" />
  </launch>

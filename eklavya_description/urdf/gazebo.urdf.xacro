@@ -8,10 +8,10 @@
  
   <macro name="gazebo_eklavya_base_link_surface">
     <gazebo reference="base_link">
-      <mu1 value="100.0" />
+      <!--<mu1 value="100.0" />
       <mu2 value="100.0" />
       <kp  value="1000000.0" />
-      <kd  value="1.0" />
+      <kd  value="1.0" />-->
       <!--material name="Eklavya/GunMetalBrushedAluminum   Gazebo/Blue" />-->
     <material>Eklavya/GunMetalBrushedAluminum</material>
     </gazebo>
@@ -26,11 +26,11 @@
     </gazebo>
   </macro> 
 
-  <macro name="eklavya_base_link_mesh">
-    <origin xyz="0 0 0" rpy="0 0 0" />
+  <macro name="eklavya_base_link_mesh"  params="*origin *box" >
+	  <insert_block name="origin" /> 
     <geometry>
      <!-- <mesh filename="package://eklavya_description/meshes/rmp50-base-link.dae" scale="0.0254 0.0254 0.0254"/> -->
-    <box size=".55 .55 .55"/>
+    <insert_block name="box" /> 
     </geometry>
      <material name="GunMetalBrushedAluminum"/>  
   </macro>
@@ -40,7 +40,7 @@
   <macro name="eklavya_castor_wheel_link_mesh">
     <origin xyz="0 0 0" rpy="0 0 0" />
     <geometry>
-      <mesh filename="package://eklavya_description/meshes/rmp50-castor-wheel.dae" scale="0.0254 0.0254 0.0254"/>
+      <mesh filename="package://eklavya_description/meshes/rmp50-castor-wheel.dae" scale="0.0220 0.0220 0.0220"/>
     </geometry>
   </macro>
 
@@ -54,7 +54,7 @@
   <macro name="eklavya_castor_support_link_mesh">
     <origin xyz="0 0 0" rpy="0 0 0" />
     <geometry>
-      <mesh filename="package://eklavya_description/meshes/rmp50-castor-link.dae" scale="0.0254 0.0254 0.0254"/>
+      <mesh filename="package://eklavya_description/meshes/rmp50-castor-link.dae" scale="0.0220 0.0220 0.0220"/>
     </geometry>
   </macro>
 
@@ -106,8 +106,8 @@
     <updateRate>100.0</updateRate>
     <leftJoint>base_link_right_wheel_joint</leftJoint>
     <rightJoint>base_link_left_wheel_joint</rightJoint>
-    <wheelSeparation>${caster_wheel_offset_y*2}</wheelSeparation>
-    <wheelDiameter>${wheel_radius}</wheelDiameter>
+    <wheelSeparation>${base_y_size}</wheelSeparation>
+    <wheelDiameter>${wheel_x_size/2}</wheelDiameter>
     <torque>30</torque>
     <interface:position name="position_iface_0"/>
     <topicName>cmd_vel</topicName>
@@ -138,15 +138,16 @@
                 <updateRate>100.0</updateRate>
                 <leftJoint>base_link_right_wheel_joint</leftJoint>
                 <rightJoint>base_link_left_wheel_joint</rightJoint>
-                <wheelSeparation>${caster_wheel_offset_y*2}</wheelSeparation>
-                <wheelDiameter>${wheel_radius*2}</wheelDiameter>
-                <torque>30</torque>
+                <wheelSeparation>${base_y_size}</wheelSeparation>
+                <wheelDiameter>${wheel_x_size}</wheelDiameter>
+                <torque>35</torque>
                 <interface:position name="position_iface_0"/>
                 <robotNamespace>/</robotNamespace>
                 <topicName>cmd_vel</topicName>
             </controller:diffdrive_plugin>
          </gazebo>
     </macro>
+  
 
 	<macro name="gazebo_eklavya_p3d_plugin">
 		 <gazebo>
