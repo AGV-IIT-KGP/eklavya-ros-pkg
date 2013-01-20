@@ -34,9 +34,9 @@
  </macro>
  
  
- <macro name="castor_support" params="suffix parent *origin">
+ <macro name="castor_support" params="suffix parent">
 	<joint type="fixed" name="${parent}_castor_support_${suffix}_joint">
-	  <insert_block name="origin" />
+	  <origin rpy="0 0 0" xyz="${base_x_size/2+0.1} 0 ${0.02/2}"/>
       <parent link="${parent}"/>
       <child link="${parent}_castor_support_${suffix}_link"/>
     </joint>
@@ -51,7 +51,7 @@
           <box size=".2 .1 .02"/>
         </geometry>
       </collision>
-      <visual name='extrusion_visual'>
+      <visual name='extrusion_visual'>	
         <geometry>
           <box size=".2 .1 .02"/>
         </geometry>
@@ -60,9 +60,9 @@
     </link>
  </macro>
  
- <macro name="caster_support_hinge" params="suffix parent *origin">
+ <macro name="caster_support_hinge" params="suffix parent">
 	<joint name="${parent}_caster_support_hinge_${suffix}_joint" type="continuous">
-      <insert_block name="origin" />
+      <origin rpy="0 0 0" xyz="${base_x_size/2+0.1} 0 ${0.02-0.02}"/>
       <parent link="${parent}" />
       <child link="${parent}_caster_support_hinge_${suffix}_link"/>
 
@@ -99,10 +99,10 @@
 </macro>
 
 
-<macro name="caster_wheel" params="suffix parent *origin">
+<macro name="caster_wheel" params="suffix parent">
 	  
 	  <joint name="${parent}_caster_wheel_${suffix}_joint" type="continuous">
-      <insert_block name="origin" />
+      <origin rpy="0 0 0" xyz="${-0.036} 0 ${-0.0818}" />
       <parent link="${parent}_caster_support_hinge_${suffix}_link" />
       <child link="${parent}_caster_wheel_${suffix}_link" />
 
