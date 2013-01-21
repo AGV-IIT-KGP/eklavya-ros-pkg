@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- start gazebo with an empty plane -->
+  <param name="/use_sim_time" value="true" />
+
+  <node name="gazebo" pkg="gazebo" type="gazebo" args="-u $(find eklavya_gazebo)/worlds/empty.world" respawn="false" output="screen"/>
+  <node name="gazebo_gui" pkg="gazebo" type="gui" respawn="false" output="screen"/> 
+
+
+ <include file="$(find eklavya_gazebo)/launch/robot2.launch"/> 
+ 
+   	<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find eklavya_description)/rviz/rviz_display_model.vcg" />
+</launch>
