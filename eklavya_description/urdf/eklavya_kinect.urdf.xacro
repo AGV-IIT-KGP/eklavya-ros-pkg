@@ -5,7 +5,7 @@
        xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface">
   <property name="M_PI" value="3.14159"/>
 
-  <include filename="$(find eklavya_description)/urdf/gazebo.urdf.xacro"/>
+  <!-- <include filename="$(find eklavya_description)/urdf/gazebo.urdf.xacro"/> -->
   <include filename="$(find eklavya_description)/urdf/eklavya_calibration.xacro" />
 
 <xacro:macro name="eklavya_sim_kinect">

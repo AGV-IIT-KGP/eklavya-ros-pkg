@@ -1,0 +1,173 @@
+<?xml version="1.0"?>
+
+<robot
+  xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+  xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+  xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface">
+
+ 
+  <macro name="gazebo_eklavya_base_link_surface">
+    <gazebo reference="base_link">
+      <!--<mu1 value="100.0" />
+      <mu2 value="100.0" />
+      <kp  value="1000000.0" />
+      <kd  value="1.0" />-->
+      <!--material name="Eklavya/GunMetalBrushedAluminum   Gazebo/Blue" />-->
+    <material>Eklavya/GunMetalBrushedAluminum</material>
+    
+    </gazebo>
+  </macro>
+
+  <macro name="gazebo_eklavya_castor_wheel_link_surface" params="suffix parent">
+    <gazebo reference="${parent}_caster_wheel_${suffix}_link"> 
+      <mu1 value="10.0" />
+      <mu2 value="10.0" />
+      <kp  value="1000000.0" />
+      <kd  value="1.0" />
+    </gazebo>
+  </macro> 
+
+  <macro name="eklavya_base_link_mesh"  params="*origin *box" >
+	  <insert_block name="origin" /> 
+     <geometry>
+    <!--<mesh filename="package://eklavya_description/meshes/rmp50-base-link.dae" scale="0.0254 0.0254 0.0254"/> -->
+    <mesh filename="package://eklavya_description/meshes/body.dae" />
+  	<!-- <insert_block name="box" /> -->
+    </geometry>
+     
+   
+     <material name="GunMetalBrushedAluminum"/>  
+  </macro>
+
+
+
+  <macro name="eklavya_castor_wheel_link_mesh">
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <geometry>
+      <mesh filename="package://eklavya_description/meshes/rmp50-castor-wheel.dae" scale="0.0220 0.0220 0.0220"/>
+    </geometry>
+  </macro>
+
+  <macro name="eklavya_collision_none">
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <geometry>
+      <box size="0.01 0.01 0.01" />
+    </geometry>
+  </macro>
+
+  <macro name="eklavya_castor_support_link_mesh">
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <geometry>
+      <mesh filename="package://eklavya_description/meshes/rmp50-castor-link.dae" scale="0.0220 0.0220 0.0220"/>
+    </geometry>
+  </macro>
+
+  <macro name="eklavya_wheel_mesh" params="suffix">
+    <origin xyz="0 0 0" rpy="0 0 0" />
+    <geometry>
+     <!-- <mesh filename="package://eklavya_description/meshes/rmp50-${suffix}-wheel.dae" scale="0.0150 0.0150 0.0150"/>-->
+     <!-- <mesh filename="package://eklavya_description/meshes/wheel.stl" /> -->
+    <mesh filename="package://eklavya_description/meshes/wheel.dae" />
+    </geometry>
+    <material name="DarkGray" />
+  </macro>
+
+  <macro name="eklavya_wheel_surface" params="suffix parent">
+    <gazebo reference="${parent}_${suffix}_wheel_link" >
+		<mu1 value="75.0"/>
+		<mu2 value="1.5"/>
+		<kp  value="1000000.0" />
+		<kd  value="1.0" />
+		<fdir value="1 0 0"/>
+		<material>Gazebo/Grey</material>
+		
+		<turnGravityOff>false</turnGravityOff>
+    </gazebo>
+  </macro>
+
+ 
+
+ 
+  
+ <!-- CONTROLLERS -->
+ 
+       
+
+  <macro name="eklavya_controllers_common">
+ <!-- this publishes empty joint_states due to no transmission, but
+             triggering robot_state_publisher to publish tf between fixed joints in eklavya,
+             (e.g. base_laser_link for the base_scan frame) -->
+    <controller:gazebo_ros_controller_manager name="gazebo_ros_controller_manager" plugin="libgazebo_ros_controller_manager.so">
+      <alwaysOn>true</alwaysOn>
+      <updateRate>100.0</updateRate>
+      <interface:audio name="gazebo_ros_controller_manager_dummy_iface" />
+    </controller:gazebo_ros_controller_manager>
+    <canonicalBody>base_footprint</canonicalBody>
+  </macro>
+
+  <macro name="eklavya_drive_parameters">
+    <alwaysOn>true</alwaysOn>
+    <update>100</update>
+    <updateRate>100.0</updateRate>
+    <leftJoint>base_link_right_wheel_joint</leftJoint>
+    <rightJoint>base_link_left_wheel_joint</rightJoint>
+    <wheelSeparation>${base_y_size}</wheelSeparation>
+    <wheelDiameter>${wheel_x_size/2}</wheelDiameter>
+    <torque>30</torque>
+    <interface:position name="position_iface_0"/>
+    <topicName>cmd_vel</topicName>
+  </macro>
+  
+  <macro name="gazebo_eklavya_simple_drive_plugin">
+	  <gazebo>
+    <controller:eklavya_simple_drive_plugin name="differential_drive_controller" plugin="libeklavya_simple_drive_plugin.so">
+      <eklavya_drive_parameters />
+    </controller:eklavya_simple_drive_plugin>
+     </gazebo>
+  </macro>
+
+  <macro name="gazebo_eklavya_drive_plugin">
+	<gazebo>
+    <controller:eklavya_drive_plugin name="differential_drive_controller" plugin="libeklavya_drive_plugin.so">
+      <eklavya_drive_parameters />
+    </controller:eklavya_drive_plugin>
+     </gazebo>
+   </macro>
+
+
+	<macro name="gazebo_eklavya_drive_plugin_diffdrive">
+        <gazebo>
+            <controller:diffdrive_plugin name="differential_drive_controller" plugin="libdiffdrive_plugin.so">
+                <alwaysOn>true</alwaysOn>
+                <update>100</update>
+                <updateRate>100.0</updateRate>
+                <leftJoint>base_link_right_wheel_joint</leftJoint>
+                <rightJoint>base_link_left_wheel_joint</rightJoint>
+                <wheelSeparation>${base_y_size}</wheelSeparation>
+                <wheelDiameter>${wheel_x_size}</wheelDiameter>
+                <torque>35</torque>
+                <interface:position name="position_iface_0"/>
+                <robotNamespace>/</robotNamespace>
+                <topicName>cmd_vel</topicName>
+            </controller:diffdrive_plugin>
+         </gazebo>
+    </macro>
+  
+
+	<macro name="gazebo_eklavya_p3d_plugin">
+		 <gazebo>
+            <controller:gazebo_ros_p3d name="p3d_base_controller" plugin="libgazebo_ros_p3d.so">
+                <alwaysOn>true</alwaysOn>
+                <updateRate>100.0</updateRate>
+                <bodyName>base_link</bodyName>
+                <topicName>base_pose_ground_truth</topicName>
+                <gaussianNoise>0.01</gaussianNoise>
+                <frameName>map</frameName>
+                <xyzOffsets>25.7 25.7 0</xyzOffsets> 
+                <rpyOffsets>0 0 0</rpyOffsets>
+                <interface:position name="p3d_base_position"/>
+            </controller:gazebo_ros_p3d>
+        </gazebo>      
+  </macro>   
+
+</robot>

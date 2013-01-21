@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
  <launch>
- <param name="robot_description" command="$(find xacro)/xacro.py '$(find eklavya_description)/urdf/eklavya.urdf.xacro'"/>
+ <param name="robot_description" command="$(find xacro)/xacro.py '$(find eklavya_description)/urdf/eklavya2.urdf.xacro'"/>
 
    <arg name="gui" default="False" />
    <param name="use_gui" value="$(arg gui)"/>
