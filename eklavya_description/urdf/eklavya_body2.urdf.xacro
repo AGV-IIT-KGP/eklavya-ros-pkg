@@ -29,7 +29,7 @@
     
     
   <!-- Macro for eklavya body. Including Gazebo extensions, but does not include Kinect -->
-  <include filename="$(find eklavya_description)/urdf/gazebo.urdf.xacro"/>
+  <include filename="$(find eklavya_description)/urdf/gazebo2.urdf.xacro"/>
   <include filename="$(find eklavya_description)/urdf/materials.urdf.xacro"/>
   <include filename="$(find eklavya_description)/urdf/eklavya_hardware.xacro"/>
   <include filename="$(find eklavya_description)/urdf/eklavya_wheel.xacro"/>
@@ -87,8 +87,8 @@
 	 </inertial>
       <visual>		  
         <eklavya_base_link_mesh>
-          <origin xyz="0 0 ${base_x_size/2}" rpy="0 0 0" />
-           <!--  <origin xyz="-0.33 0 0.69" rpy="0 0 0" /> -->
+           <!--<origin xyz="0 0 ${base_x_size/2}" rpy="0 0 0" />-->
+            <origin xyz="-0.33 0 0.69" rpy="0 0 0" /> 
            <box size = "${base_x_size} ${base_y_size} ${base_z_size}"/>
           
         </eklavya_base_link_mesh>
@@ -106,24 +106,24 @@
 
 
 	 <!-- WHEEL macros -->
-    <eklavya_wheel suffix="left" parent="base_link">
+   <!-- <eklavya_wheel suffix="left" parent="base_link">
       <origin xyz="${ -1*base_x_origin_to_wheel_origin} ${base_y_origin_to_wheel_origin} ${ -1*base_z_origin_to_wheel_origin}" rpy="${M_PI} 0 0" /> 
     </eklavya_wheel>
   
     <eklavya_wheel suffix="right" parent="base_link">
       <origin xyz="${ -1*base_x_origin_to_wheel_origin} ${-1*base_y_origin_to_wheel_origin} ${ -1*base_z_origin_to_wheel_origin}" rpy="0 0 0" />
-    </eklavya_wheel>
+    </eklavya_wheel>  -->
 
     
     <!-- Castor -->    
-    <castor_support suffix="front" parent="base_link" />	
+  <!--  <castor_support suffix="front" parent="base_link" />	
 	<caster_support_hinge suffix="front" parent="base_link" />
     <caster_wheel suffix="front" parent="base_link" /> 
-	
+	-->
 	
      <!-- DECORATIONS -->
      <!-- Bars -->
-	 <eklavya_support_bar suffix="left" parent="base_link" length="0.6">
+	<!--  <eklavya_support_bar suffix="left" parent="base_link" length="0.6">
       <origin rpy="0 0 0" xyz="${base_x_size/2-0.03/2} ${(base_y_size/2-0.03/2)} ${base_z_size+0.6/2}"/>
 	</eklavya_support_bar>
     
@@ -133,29 +133,29 @@
      
 	<eklavya_support_bar suffix="top" parent="base_link" length="0.55">
 		<origin rpy="${M_PI/2} 0 0"  xyz="${base_x_size/2-0.03/2} 0 ${base_z_size+0.6+0.03/2}"/>
-	</eklavya_support_bar>  
+	</eklavya_support_bar>   -->
 	
     
 
 
 	<!-- Controllers -->
    <!-- <gazebo_eklavya_simple_drive_plugin />    -->
-    <gazebo_eklavya_drive_plugin_diffdrive /><!-- cmd_vel movement -->
-    <gazebo_eklavya_p3d_plugin /> <!-- Ground Truth-->
-     <eklavya_controllers_common />  
+  <!--   <gazebo_eklavya_drive_plugin_diffdrive /> --> <!-- cmd_vel movement -->
+  <!--   <gazebo_eklavya_p3d_plugin />--> <!-- Ground Truth-->
+  <!--    <eklavya_controllers_common />   -->
     
     <!-- Simulation sensors -->
-	<hokuyo_urg name="hokuyo_laser" parent="base_link" >
+	<!-- <hokuyo_urg name="hokuyo_laser" parent="base_link" >
       <origin rpy="0 0 0" xyz="${base_x_size/2+0.05} 0  0.021"/>
-    </hokuyo_urg>
-    <!-- <sick_lms100_200 name="sick_laser" parent="base_link" >
+    </hokuyo_urg> -->
+  <!--   <sick_lms100_200 name="sick_laser" parent="base_link" >
       <origin rpy="0 0 0" xyz="${base_x_size/2+0.12} 0  0.080"/>
     </sick_lms100_200>   -->
-	 <microstrain_imu name="eklavya_sim_imu" parent="base_link" imu_topic="imu/data" update_rate="30" stdevNoise="0.0017">
+	<!--  <microstrain_imu name="eklavya_sim_imu" parent="base_link" imu_topic="imu/data" update_rate="30" stdevNoise="0.0017">
 		 <origin rpy="0 0 0" xyz="${base_x_size/2-0.03/2} ${base_y_size/4} ${base_z_size}"/>
-	</microstrain_imu> 
+	</microstrain_imu>  -->
     <!-- Kinect frames and mounting (includes simulation) -->
-    <eklavya_kinect/> 
+    <!-- <eklavya_kinect/>  -->
   </xacro:macro>
 </robot>
 
