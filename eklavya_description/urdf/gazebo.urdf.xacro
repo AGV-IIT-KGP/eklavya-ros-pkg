@@ -14,6 +14,7 @@
       <kd  value="1.0" />-->
       <!--material name="Eklavya/GunMetalBrushedAluminum   Gazebo/Blue" />-->
     <material>Eklavya/GunMetalBrushedAluminum</material>
+    
     </gazebo>
   </macro>
 
@@ -28,10 +29,13 @@
 
   <macro name="eklavya_base_link_mesh"  params="*origin *box" >
 	  <insert_block name="origin" /> 
-    <geometry>
-     <!-- <mesh filename="package://eklavya_description/meshes/rmp50-base-link.dae" scale="0.0254 0.0254 0.0254"/> -->
-    <insert_block name="box" /> 
+     <geometry>
+    <!--<mesh filename="package://eklavya_description/meshes/rmp50-base-link.dae" scale="0.0254 0.0254 0.0254"/> -->
+    <!-- <mesh filename="package://eklavya_description/meshes/body.dae" />-->
+  	<insert_block name="box" /> 
     </geometry>
+     
+   
      <material name="GunMetalBrushedAluminum"/>  
   </macro>
 
@@ -62,7 +66,8 @@
     <origin xyz="0 0 0" rpy="0 0 0" />
     <geometry>
      <!-- <mesh filename="package://eklavya_description/meshes/rmp50-${suffix}-wheel.dae" scale="0.0150 0.0150 0.0150"/>-->
-      <mesh filename="package://eklavya_description/meshes/wheel.stl" />
+      <mesh filename="package://eklavya_description/meshes/wheel.stl" /> 
+    <!--  <mesh filename="package://eklavya_description/meshes/wheel.dae" />-->
     </geometry>
     <material name="DarkGray" />
   </macro>
