@@ -69,7 +69,6 @@
         <turnGravityOff>false</turnGravityOff>
     </gazebo>
     <joint name="base_footprint_joint" type="fixed">
-      <!-- <origin xyz="0.0 0 0.97" rpy="0 0 0" />-->
       <origin xyz="0 0 ${wheel_x_size/2 - base_z_origin_to_wheel_origin}" rpy="0 0 0" />
       <parent link="base_footprint"/>
       <child link="base_link" />
@@ -88,15 +87,17 @@
 	 </inertial>
       <visual>		  
         <eklavya_base_link_mesh>
-           <origin xyz="0 0 ${base_x_size/2}" rpy="0 0 0" />
+          <origin xyz="0 0 ${base_x_size/2}" rpy="0 0 0" />
+           <!--  <origin xyz="-0.33 0 0.69" rpy="0 0 0" /> -->
            <box size = "${base_x_size} ${base_y_size} ${base_z_size}"/>
-          <!-- <origin xyz="0 0 0" rpy="0 0 0" />-->
+          
         </eklavya_base_link_mesh>
       </visual>
 
       <collision>
         <eklavya_base_link_mesh>
-           <origin xyz="0 0 ${base_x_size/2 }" rpy="0 0 0 " />
+	   <origin xyz="0 0 0" rpy="0 0 0" />
+            <!-- <origin xyz="0 0 ${base_x_size/2 }" rpy="0 0 0 " /> -->
            <box size = "${base_x_size} ${base_y_size} ${base_z_size}"/> <!--making it slightly bigger in x and z direction-->
         </eklavya_base_link_mesh>
       </collision>
@@ -106,7 +107,7 @@
 
 	 <!-- WHEEL macros -->
     <eklavya_wheel suffix="left" parent="base_link">
-      <origin xyz="${ -1*base_x_origin_to_wheel_origin} ${base_y_origin_to_wheel_origin} ${ -1*base_z_origin_to_wheel_origin}" rpy="0 0 0" /> 
+      <origin xyz="${ -1*base_x_origin_to_wheel_origin} ${base_y_origin_to_wheel_origin} ${ -1*base_z_origin_to_wheel_origin}" rpy="${M_PI} 0 0" /> 
     </eklavya_wheel>
   
     <eklavya_wheel suffix="right" parent="base_link">

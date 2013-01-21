@@ -323,7 +323,6 @@
     <xyz>-4.0 -3.0 0.5</xyz><!-- back right -->
     <canonicalBody>cly1_body</canonicalBody>
     <static>true</static>
-
     <body:cylinder name="cly1_body">
       <massMatrix>true</massMatrix> 
       <mass>1.0</mass>
@@ -339,7 +338,7 @@
       <geom:cylinder name="cly1_geom1">
         <mesh>default</mesh>
     <xyz>0.0 0.0 -0.010</xyz>
-    <size>1.0 1.0 1.0</size>
+    <size>0.5  0.5 0.5</size>
     <density>0</density>
     <material>Gazebo/White</material>
 
