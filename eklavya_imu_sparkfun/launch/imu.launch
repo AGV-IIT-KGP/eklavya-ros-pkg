@@ -1,0 +1,6 @@
+<launch>
+  <node pkg="eklavya_imu_sparkfun" type="node.py" name="node" output="screen">
+        <param name="device" type="string" value="/dev/ttyUSB0" />
+        <param name="baud" type="string" value="57600" />
+  </node>
+</launch>
