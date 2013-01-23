@@ -1,0 +1,17 @@
+<package>
+    <description brief="Eklavya Bringup">
+        For bronging up the real robot. The controllers and sensors.
+    </description>
+
+    <author>Bhaskar Bagchi</author>
+    <license>BSD</license>
+    <review status="unreviewed" notes=""/>
+    <url>https://github.com/jitrc/eklavya-ros-pkg</url>
+
+    <depend package="roscpp"/>
+    <depend package="geometry_msgs"/>
+    <depend package="tf"/>
+    <depend package="nav_msgs"/>
+</package>
+
+
