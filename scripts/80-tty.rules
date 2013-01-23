@@ -1,0 +1,1 @@
+ACTION=="add",KERNEL=="ttyUSB[0-9]*", GROUP="plugdev", MODE="0666"

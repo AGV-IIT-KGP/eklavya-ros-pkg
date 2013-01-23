@@ -27,7 +27,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import roslib; roslib.load_manifest('razor_imu_9dof')
+import roslib; roslib.load_manifest('eklavya_imu_sparkfun')
 import rospy
 
 import serial
@@ -36,7 +36,7 @@ import math
 
 from time import time
 from sensor_msgs.msg import Imu
-from razor_imu_9dof.msg import RazorImu
+from eklavya_imu_sparkfun.msg import RazorImu
 import tf
 
 grad2rad = 3.141592/180.0
@@ -57,12 +57,9 @@ imuMsg.linear_acceleration_covariance = [0.2 , 0 , 0,
 0 , 0.2, 0,
 0 , 0 , 0.2]
 
-default_port='/dev/ttyUSB0'
-port_ = rospy.get_param('device', default_port)
-#default_baudrate=57600
-#baudrate_ = rospy.get_param('baudrate', default_port)
-# Check your COM port and baud rate
-ser = serial.Serial(port=port_,baudrate=57600, timeout=1)
+port_ = rospy.get_param('port','/dev/ttyUSB0')
+baudrate_ = rospy.get_param('baudrate', 57600)
+ser = serial.Serial(port=port_,baudrate=baudrate_, timeout=1)
 
 #f = open("Serial"+str(time())+".txt", 'w')
 
@@ -71,7 +68,7 @@ pitch=0
 yaw=0
 rospy.sleep(5) # Sleep for 8 seconds to wait for the board to boot then only write command.
 ser.write('#ox' + chr(13)) # To start display angle and sensor reading in text 
-while 1:
+while not rospy.is_shutdown():
     line = ser.readline()
     if (line.find("#YPRAMG=")==-1):
         ser.write('#ox' + chr(13))
