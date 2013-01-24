@@ -1,0 +1,15 @@
+LIDAR
+  Instead of copying maps, use indexing to update the right area directly. laser_scan will be a list of scan points with defined obstacle radius.
+  Lidar now directly copies its scan into map that is used by the planner. Once lane is also active, laser should update a laser_scan and lane should update lanes. These two are merged by the strategy module which will also update the map under the lane-following-laser-obstacle-avoidance scheme. 
+
+NAVIGATION
+  Implementing Strategy Switch statement inside while loop allows for run-time switching of strategies - which might be useful for IGVC where the strategy might need to be switched at times from lane following with obstacle avoidance to gps target navigation with obstacle avoidance or to flag based navigation and obstacle avoidance.
+  
+PLANNER
+  Once class structure is properly defined, private vars can be maintained in the adjoining libs and can be modified by method calls from the corresponding thread.
+
+10/01/13
+  Open CV Components aren't working. Here 1 and Here 2 are the debugging examples.
+  
+EKLAVYA2
+  Take strategy from cmd line. Even the diag flag shud come from cmd line.
