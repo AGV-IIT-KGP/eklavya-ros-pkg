@@ -4,7 +4,7 @@
 
 void *diagnostics_thread(void *arg) {
   int iterations = 0;
-  while(1) {
+  while(ros::ok()) {
     printf("=========================================\n");
     printf("Diagnostics Iteration #: %d\n", iterations++);
     printf("=========================================\n");

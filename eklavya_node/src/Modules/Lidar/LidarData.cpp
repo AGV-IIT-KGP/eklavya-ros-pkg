@@ -19,7 +19,7 @@
 #define MAP_Y 1000
 #define HOKUYO_SCALE 100
 #define VIEW_OBSTACLES 0
-#define RADIUS 100
+#define RADIUS 8
 
 using namespace mrpt;
 using namespace mrpt::hwdrivers;
@@ -69,29 +69,28 @@ void LidarData::createCircle(int x, int y, int R) {
     }
 }
 
-void plotMap(char **local_map) {
+void plotMap() {
     IplImage *mapImg = cvCreateImage(cvSize(MAP_X, MAP_Y), IPL_DEPTH_8U, 1);
 
     for (int i = 0; i < MAP_X; i++) {
         uchar* ptr = (uchar *) (mapImg->imageData + i * mapImg->widthStep);
         for (int j = 0; j < MAP_Y; j++) {
-            if (local_map[j][MAP_X - i - 1] == 0) {
+            if (global_map[j][MAP_X - i - 1] == 0) {
                 ptr[j] = 0;
             } else {
-                ptr[j] = 200;
+                ptr[j] = 255;
             }
         }
     }
 
     cvShowImage("Global Map", mapImg);
-    cvWaitKey(100);
+    cvWaitKey(1);
     //cvSaveImage("map.png", mapImg);
     cvReleaseImage(&mapImg);
 }
 
 void LidarData::update_map(const sensor_msgs::LaserScan& scan) {
   pthread_mutex_lock(&map_mutex);
-  
   size_t size = scan.ranges.size();
   float angle = scan.angle_min;
   float maxRangeForContainer = scan.range_max - 0.1f;
@@ -108,9 +107,11 @@ void LidarData::update_map(const sensor_msgs::LaserScan& scan) {
 
     if ( (dist > scan.range_min) && (dist < maxRangeForContainer))
     {
-      dist *= LIDAR_SCALE_TO_MAP;
-      int x = cos(angle) * dist;
-      int y = sin(angle) * dist;
+      double x1 = cos(angle) * dist;
+      double y1 = sin(angle) * dist;
+      
+      int x = (int)((-1 * y1 * 200) + CENTERY);
+      int y = (int)((x1 * 200) + CENTERX);
       
       if (x < 900 - RADIUS && x > RADIUS + 50 && y > RADIUS && y < 800 - RADIUS && !(x < 560 && x > 440 && y < 150)) {
         if (y > CENTERX + 5) {
@@ -122,10 +123,12 @@ void LidarData::update_map(const sensor_msgs::LaserScan& scan) {
     angle += scan.angle_increment;
   }
   
+  //plotMap();
+  
   pthread_mutex_unlock(&map_mutex);
 }
 
 LidarData::~LidarData() {
-    laser.turnOff();
+    //laser.turnOff();
 }
 

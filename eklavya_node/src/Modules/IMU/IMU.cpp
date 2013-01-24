@@ -15,6 +15,7 @@
 #include "random.h"
 #include "../../Utils/SerialPortLinux/serial_lnx.h"
 #include "../devices.h"
+#include "../../eklavya2.h"
 
 #define D 0.1
 #define WAIT 50
@@ -48,19 +49,19 @@ namespace IMUspace
   
   void IMUspace::IMU::initIMU()
   {
-    fd=open( UART_COMM_PORT , O_RDONLY | O_NOCTTY );
-    if (fd <0) 
-    {   
-      perror(UART_COMM_PORT );
-      exit(-1); 
-    }
+    //fd=open( UART_COMM_PORT , O_RDONLY | O_NOCTTY );
+    //if (fd <0) 
+    //{   
+      //perror(UART_COMM_PORT );
+      //exit(-1); 
+    //}
     
-    char c;
-    p = new Tserial();
+    //char c;
+    //p = new Tserial();
     
-    p->connect(UART_COMM_PORT, UART_BAUD_RATE, spNONE,VERBOSE);
-    while((c = p->getChar()) != '!');
-    p->disconnect();
+    //p->connect(UART_COMM_PORT, UART_BAUD_RATE, spNONE,VERBOSE);
+    //while((c = p->getChar()) != '!');
+    //p->disconnect();
   }
 
   float convertDataToVal(char *data)
@@ -121,10 +122,10 @@ namespace IMUspace
     int val = 0;
     int count = 0;
 
-    p->connect(UART_COMM_PORT, UART_BAUD_RATE, spNONE,VERBOSE);
-    while(p->getChar() != '!');
-    p->getArray(data_in, 8);
-    p->disconnect();
+    //p->connect(UART_COMM_PORT, UART_BAUD_RATE, spNONE,VERBOSE);
+    //while(p->getChar() != '!');
+    //p->getArray(data_in, 8);
+    //p->disconnect();
 /*
     while(flag)
     {
@@ -141,7 +142,27 @@ namespace IMUspace
 
   void IMUspace::IMU::closeIMU()
   {
-    p->disconnect();
+   // p->disconnect();
+  }
+  
+  void IMUspace::IMU::update_pose(const sensor_msgs::Imu& imu_msg) {
+    tf::StampedTransform transform_;
+    tf::Quaternion tmp_;
+
+    tf::quaternionMsgToTF(imu_msg.orientation, tmp_);
+
+    tfScalar yaw, pitch, roll;
+    tf::Matrix3x3(tmp_).getRPY(roll, pitch, yaw);
+    
+    //printf("RPY: %lf %lf %lf\n", roll, pitch, yaw);
+    
+    pthread_mutex_lock(&pose_mutex);
+    
+    pose.orientation.x = (double) roll * 180 / 3.14;
+    pose.orientation.y = (double) pitch * 180 / 3.14;
+    pose.orientation.z = (double) yaw * 180 / 3.14; // Yaw
+    
+    pthread_mutex_unlock(&pose_mutex);
   }
 }
 

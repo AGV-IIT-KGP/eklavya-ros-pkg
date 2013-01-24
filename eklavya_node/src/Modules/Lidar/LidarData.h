@@ -26,8 +26,6 @@ using namespace std;
 #ifndef LIDARDATA_H
 #define	LIDARDATA_H
 
-#define LIDAR_SCALE_TO_MAP 1
-
 class LidarData {
 public:
     LidarData(string serial_name);
