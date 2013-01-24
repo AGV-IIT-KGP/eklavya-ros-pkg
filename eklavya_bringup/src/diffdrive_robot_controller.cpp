@@ -1,10 +1,6 @@
 
 #include <algorithm>
 #include <assert.h>
-
-//#include <eklavya_bringup/diffdrive_robot_controller.h>
-
-
 #include <ros/ros.h>
 #include <tf/transform_broadcaster.h>
 #include <tf/transform_listener.h>
@@ -23,7 +19,8 @@ int wheelSpeed[2];
 int scale=100;
 double x_;
 double rot_;
-ros::Time current_time, last_time;
+//ros::Time 
+double current_time, last_time;
 std::string topicName,port,cmd_topic_name;
 double wheelSeparation;
 double wheelDiameter;
@@ -45,7 +42,7 @@ void cmdVelCallback(const geometry_msgs::Twist::ConstPtr& cmd_msg)
 {
     lock.lock();
     ROS_INFO("cmdVelCallback: cmd_msg->linear.x %lf cmd_msg->angular.z %lf\n",cmd_msg->linear.x,cmd_msg->angular.z);
-    last_time=ros::Time::now();
+    last_time=ros::Time::now().toSec();
     x_ = cmd_msg->linear.x;
     rot_ = cmd_msg->angular.z;
     double vr, va;
@@ -63,13 +60,13 @@ void cmdVelCallback(const geometry_msgs::Twist::ConstPtr& cmd_msg)
 	   
 	    usleep(100);
 
-	    p->sendChar('0' + wheelSpeed[LEFT] / 10);
-	    usleep(100);
-	    p->sendChar('0' + wheelSpeed[LEFT] % 10);
-	    usleep(100);
 	    p->sendChar('0' + wheelSpeed[RIGHT] / 10);
 	    usleep(100);
 	    p->sendChar('0' + wheelSpeed[RIGHT] % 10);
+	    usleep(100);
+	    p->sendChar('0' + wheelSpeed[LEFT] / 10);
+	    usleep(100);
+	    p->sendChar('0' + wheelSpeed[LEFT] % 10);
 	    
 	}
 lock.unlock();
@@ -90,12 +87,11 @@ int main( int argc, char** argv) {
     ros::Subscriber sub = rosnode_robot_controller.subscribe(cmd_topic_name, 1000, cmdVelCallback);
 
 
+    char usb_port[13];
+    current_time = ros::Time::now().toSec();
 
-    current_time = ros::Time::now();
-
-	if(!dummy)
-		{
-  		  ROS_INFO("Connecting to serial port %s %d ",port.c_str(),baud_rate);
+	if(!dummy){
+  	    ROS_INFO("Connecting to serial port %s %d ",port.c_str(),baud_rate);
 	    p = new Tserial();
 	    p->connect("/dev/ttyUSB0", baud_rate, spNONE);
 	    usleep(100);
@@ -103,14 +99,21 @@ int main( int argc, char** argv) {
 
 	    usleep(100);
 	}
+	else
+		ROS_INFO("In dummy mode.");
     ros::Rate loop_rate(20.0);
     while (rosnode_robot_controller.ok()) {
 
-        current_time = ros::Time::now();
-        //double dt = (current_time - last_time).toSec();
+        current_time = ros::Time::now().toSec();
+        double dt = (current_time - last_time);        ROS_INFO("\n %lf ", dt);
+        if(dt>2){
+            ROS_INFO("\nRobot timeout. Stopping robot after %lf seconds", dt);
+            p->sendChar(' ');
+        }
         ros::spinOnce();
 
         loop_rate.sleep();
     }
+    p->disconnect();
 
 }
