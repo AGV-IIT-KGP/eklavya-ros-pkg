@@ -16,7 +16,7 @@ using namespace std;
 Tserial* p; //Serial definition
 //Declaration for the bot
 int wheelSpeed[2];
-int scale=100;
+int scale=100, flag=0;
 double x_;
 double rot_;
 //ros::Time 
@@ -42,6 +42,7 @@ void cmdVelCallback(const geometry_msgs::Twist::ConstPtr& cmd_msg)
 {
     lock.lock();
     ROS_INFO("cmdVelCallback: cmd_msg->linear.x %lf cmd_msg->angular.z %lf\n",cmd_msg->linear.x,cmd_msg->angular.z);
+    flag=1;
     last_time=ros::Time::now().toSec();
     x_ = cmd_msg->linear.x;
     rot_ = cmd_msg->angular.z;
@@ -91,9 +92,10 @@ int main( int argc, char** argv) {
     current_time = ros::Time::now().toSec();
 
 	if(!dummy){
-  	    ROS_INFO("Connecting to serial port %s %d ",port.c_str(),baud_rate);
+  	    strcpy(usb_port,port.c_str());
+  	    ROS_INFO("Connecting to serial port %s %d ",usb_port,baud_rate);
 	    p = new Tserial();
-	    p->connect("/dev/ttyUSB0", baud_rate, spNONE);
+	    p->connect(usb_port, baud_rate, spNONE);
 	    usleep(100);
 	    p->sendChar('w');
 
@@ -105,8 +107,8 @@ int main( int argc, char** argv) {
     while (rosnode_robot_controller.ok()) {
 
         current_time = ros::Time::now().toSec();
-        double dt = (current_time - last_time);        ROS_INFO("\n %lf ", dt);
-        if(dt>2){
+        double dt = (current_time - last_time);        
+        if(dt>2 && flag){
             ROS_INFO("\nRobot timeout. Stopping robot after %lf seconds", dt);
             p->sendChar(' ');
         }
