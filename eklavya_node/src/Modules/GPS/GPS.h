@@ -1,3 +1,8 @@
+#ifndef _GPS_H
+#define _GPS_H
+
+#include "ros/ros.h"
+
 namespace GPSspace
 {
 	class GPS
@@ -11,3 +16,5 @@ namespace GPSspace
 		static void Local_Map_Coordinate(double north_d,double east_d,double yaw_d, int* tx, int *ty);
 	};
 }
+
+#endif

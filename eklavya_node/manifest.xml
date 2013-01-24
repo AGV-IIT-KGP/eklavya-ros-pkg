@@ -12,6 +12,7 @@
  <!-- <depend package="mrpt_libs"/>
   <depend package="mrpt_hokuyo"/>  -->
   <rosdep name="opencv2"/>
+  <depend package="tf"/>
 </package>
 
 

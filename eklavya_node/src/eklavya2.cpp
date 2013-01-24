@@ -12,9 +12,10 @@
 #include "Modules/Encoder/encoder.h"
 #include "Modules/Planner/PathPlanner.h"
 #include "Modules/Diagnostics/diagnostics.h"
+#include "ros/ros.h"
 #include "eklavya2.h"
 
-#define DIAG
+//#define DIAG
 
 using namespace cv;
 
@@ -183,7 +184,7 @@ int main(int argc, char *argv[]) {
 
   startThreads();
 
-  while(1);
+  while(ros::ok());
   
   return 0;
 }
