@@ -41,44 +41,76 @@ find_package(OpenCV REQUIRED)
 #LINK_DIRECTORIES(${OpenCV_LIBRARY_DIRS})
 
 #Options
-option (USE_LANE  "Use LANE" ON) 
-option (USE_NAV  "Use Nav" ON) 
-option (USE_IMU  "Use IMU" ON) 
-option (USE_GPS  "Use GPS" ON) 
-option (USE_LIDAR  "Use Lidar" ON) 
-option (USE_SERIAL_PORT  "Use SerialPortLinux" ON) 
+option (USE_IMU "Use IMU" ON) 
+option (USE_LIDAR "Use Lidar" ON) 
+option (USE_GPS "Use GPS" ON)
+option (USE_ENCODER "Use Encoder" ON)
+option (USE_EKF "Use EKF" ON)
+option (USE_SLAM "Use SLAM" ON)
+option (USE_NAVIGATION "Use Navigation" ON)
+option (USE_PLANNER "Use Planner" ON)
+option (USE_SERIAL_PORT "Use SerialPortLinux" ON) 
+#option (USE_DIAGNOSTICS "Use Diagnostics" ON)
 
-# add the LANE library?
-if (USE_LANE)
- # include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/Lane")
-  add_subdirectory ("${PROJECT_SOURCE_DIR}/src/Modules/Lane") 
-  #set (EXTRA_LIBS ${EXTRA_LIBS} lane)
-  #message(STATUS "EXTRA_LIBS: ${EXTRA_LIBS}")
-endif (USE_LANE)
+include_directories ("${PROJECT_SOURCE_DIR}/src/")
 
-if (USE_NAV)
-  add_subdirectory ("${PROJECT_SOURCE_DIR}/src/Modules/Nav") 
-endif (USE_NAV)
-
-
+if (USE_IMU)
 include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/IMU/")
-include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/GPS/")
+rosbuild_add_library(IMULib src/Modules/IMU/IMU.cpp src/Modules/IMU/imu_thread.cpp)
+endif ()
 
+if (USE_LIDAR)
 include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/Lidar")
+rosbuild_add_library(LidarLib src/Modules/Lidar/LidarData.cpp src/Modules/Lidar/lidar_thread.cpp)
+endif ()
+
+if (USE_GPS)
+include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/GPS/")
+rosbuild_add_library(GPSLib src/Modules/GPS/GPS.cpp src/Modules/GPS/gps_thread.cpp)
+endif ()
+
+if (USE_ENCODER)
+include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/Encoder/")
+rosbuild_add_library(EncoderLib src/Modules/Encoder/encoder_thread.cpp)
+endif ()
+
+if (USE_EKF)
+include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/EKF/")
+rosbuild_add_library(EKFLib src/Modules/EKF/ekf_thread.cpp)
+endif ()
+
+if (USE_SLAM)
+include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/SLAM/")
+rosbuild_add_library(SLAMLib src/Modules/SLAM/slam.cpp src/Modules/SLAM/slam_thread.cpp)
+endif ()
+
+if (USE_NAVIGATION)
+include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/Navigation/")
+rosbuild_add_library(NavigationLib src/Modules/Navigation/navigation.cpp                                    src/Modules/Navigation/follow_nose_strategy.cpp src/Modules/Navigation/track_way_point_strategy.cpp                                    src/Modules/Navigation/navigation_thread.cpp)
+endif ()
+
+if (USE_PLANNER)
+include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/Planner/")
+rosbuild_add_library(PlannerLib src/Modules/Planner/Planner.cpp src/Modules/Planner/planner_thread.cpp)
+endif ()
+
+if (USE_DIAGNOSTICS)
+include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/Diagnostics/")
+rosbuild_add_library(DiagnosticsLib src/Modules/Diagnostics/diagnostics.cpp src/Modules/Diagnostics/diagnostics_thread.cpp)
+endif ()
+
+if (USE_SERIAL_PORT)
 include_directories ("${PROJECT_SOURCE_DIR}/src/Utils/SerialPortLinux/")
+rosbuild_add_library(SerialPortLinuxLib src/Utils/SerialPortLinux/serial_lnx.cpp)
+endif ()
 
 find_package(MRPT REQUIRED base slam hwdrivers)# WARNING: Add all the MRPT libs used by your program: "gui", "obs", "slam",etc. 
 LINK_DIRECTORIES(${MRPT_DIR}/lib)
 LINK_DIRECTORIES(${MRPT_DIR}/lib/otherlibs)
 LINK_DIRECTORIES(${MRPT_SOURCE_DIR}/lib/otherlibs)
 
-
-
-rosbuild_add_executable(${PROJECT_NAME} src/AGV.cpp ./src/Modules/IMU/IMU.cpp  ./src/Utils/SerialPortLinux/serial_lnx.cpp ./src/Modules/Lidar/LidarData.cpp ./src/Modules/GPS/GPS.cpp )
-
-
-#rosbuild_add_executable(${PROJECT_NAME} src/AGV.cpp )
-
+rosbuild_add_executable(${PROJECT_NAME} src/eklavya2.cpp)
+target_link_libraries (${PROJECT_NAME} IMULib LidarLib GPSLib EncoderLib EKFLib SLAMLib PlannerLib NavigationLib DiagnosticsLib SerialPortLinuxLib)
 
 #target_link_libraries (${PROJECT_NAME}  ${EXTRA_LIBS})
 target_link_libraries( ${PROJECT_NAME} ${OpenCV_LIBS} )
