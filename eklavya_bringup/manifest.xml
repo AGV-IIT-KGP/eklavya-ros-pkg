@@ -12,6 +12,8 @@
     <depend package="geometry_msgs"/>
     <depend package="tf"/>
     <depend package="nav_msgs"/>
+    <depend package="eklavya_node"/>
+
 </package>
 
 
