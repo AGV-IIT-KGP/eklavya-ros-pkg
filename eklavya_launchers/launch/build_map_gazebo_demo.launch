@@ -45,6 +45,7 @@
 
 
   <!-- keyboard teleoperation -->
-  <include file="$(find turtlebot_teleop)/keyboard_teleop.launch" />
+  <!--<include file="$(find turtlebot_teleop)/keyboard_teleop.launch" /> -->
+  <node name="teleop" pkg="eklavya_teleop" type="eklavya_keyboard_teleop" />
 </launch>
 
