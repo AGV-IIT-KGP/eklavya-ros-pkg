@@ -7,7 +7,7 @@ void *planner_thread(void *arg) {
   double heading;
   Triplet my_target_location;
   
-  while(1) {
+  while(ros::ok()) {
     pthread_mutex_lock(&target_location_mutex);
     my_target_location = target_location; // Target
     pthread_mutex_unlock(&target_location_mutex);

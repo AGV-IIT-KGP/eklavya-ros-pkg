@@ -238,6 +238,15 @@ namespace Nav {
   state* loadPosData() {
       double x, y, theta, g;
       int vl, vr;
+      
+      printf("BPS: %s\n", BPS_SOURCE);
+      
+      char cwd[1024];
+       if (getcwd(cwd, sizeof(cwd)) != NULL)
+           fprintf(stdout, "Current working dir: %s\n", cwd);
+       else
+           perror("getcwd() error");
+      
       FILE *fp = fopen(BPS_SOURCE, "r");
       fscanf(fp, "%d\n", &nSeeds);
       state* np = (state *)malloc(nSeeds * sizeof(state));
@@ -405,7 +414,6 @@ namespace Nav {
     cvLine(mapImg, cvPoint(b.x, MAP_MAX - b.y), cvPoint(b.x, MAP_MAX - (b.y + 7)), CV_RGB(0, 0, 255), 5, CV_AA, 0);
     cvLine(mapImg, cvPoint(t.x, MAP_MAX - t.y), cvPoint(t.x, MAP_MAX - (t.y + 7)), CV_RGB(255, 0, 255), 5, CV_AA, 0);
 
-    cout << "!!!!!!! Plotting" << endl;
     cvShowImage("GMap", mapImg);
     cvWaitKey(1);
   }
@@ -525,6 +533,8 @@ namespace Nav {
   }
 
   void Nav::NavCore::loadNavigator() {
+    printf ("HERE\n");
+
     seeds = loadPosData();
 
     initGMap();
@@ -571,7 +581,9 @@ namespace Nav {
       }
     }
 
+    pthread_mutex_lock(&map_mutex);
     loadMap();
+    pthread_mutex_unlock(&map_mutex);
     
     #ifdef SIMOBS
       srand(time(0));
@@ -717,7 +729,7 @@ namespace Nav {
       pState = map[pState.px][pState.py];
     }
 
-    //plotGmap();
+    plotGmap();
 
     list *nextMove = path;
     if (nextMove) {

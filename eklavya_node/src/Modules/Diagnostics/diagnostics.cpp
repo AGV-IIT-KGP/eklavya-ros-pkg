@@ -26,6 +26,7 @@ namespace diagnostics_space {
     
     cvShowImage("Map", image);
     cvWaitKey(1);
+    cvReleaseImage(&image);
   }
   
   void diagnostics_space::Diagnostics::printPose() {

@@ -4,12 +4,12 @@
 
 namespace navigation_space {
   double reference_heading;
-	void navigation_space::FollowNoseStrategy::calibrateReferenceHeading(double heading) {
-    int count = 5;
-    while (count > 0) {
+	void navigation_space::FollowNoseStrategy::calibrateReferenceHeading(double heading, int iterations) {
+    if (iterations < 50) {
       reference_heading = heading;
       usleep(200 * 1000);
-      count--;
+    } else if (iterations == 50){
+      printf("Ref Heading: %lf\n", reference_heading);
     }
   }
   Triplet navigation_space::FollowNoseStrategy::getTargetLocation(double heading) {

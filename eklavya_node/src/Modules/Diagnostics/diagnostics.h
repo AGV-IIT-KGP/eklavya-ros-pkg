@@ -1,3 +1,8 @@
+#ifndef _DIAGNOSTICS_H
+#define _DIAGNOSTICS_H
+
+#include "ros/ros.h"
+
 namespace diagnostics_space {
 	class Diagnostics {
 	public:
@@ -9,3 +14,5 @@ namespace diagnostics_space {
     static void printTargetLocation();
 	};
 }
+
+#endif
