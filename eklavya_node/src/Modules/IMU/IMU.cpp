@@ -10,6 +10,7 @@
 #include <termios.h>
 #include <stdlib.h>
 #include <string.h>
+#include <iostream>
 #include "IMU.h"
 #include "random.h"
 #include "../../Utils/SerialPortLinux/serial_lnx.h"
@@ -53,12 +54,13 @@ namespace IMUspace
       perror(UART_COMM_PORT );
       exit(-1); 
     }
-    double yaw;
-
-    bzero(&p, 10);
+    
+    char c;
     p = new Tserial();
     
-    getYaw(&yaw);
+    p->connect(UART_COMM_PORT, UART_BAUD_RATE, spNONE,VERBOSE);
+    while((c = p->getChar()) != '!');
+    p->disconnect();
   }
 
   float convertDataToVal(char *data)
@@ -120,7 +122,6 @@ namespace IMUspace
     int count = 0;
 
     p->connect(UART_COMM_PORT, UART_BAUD_RATE, spNONE,VERBOSE);
-    tcflush(fd, TCIFLUSH);
     while(p->getChar() != '!');
     p->getArray(data_in, 8);
     p->disconnect();

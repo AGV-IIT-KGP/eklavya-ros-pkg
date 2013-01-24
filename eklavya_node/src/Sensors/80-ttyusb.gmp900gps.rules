@@ -1,5 +1,0 @@
-#KERNEL=="ttyUSB[0-9]", GROUP="plugdev", MODE="0666"
-SUBSYSTEMS=="usb", KERNEL=="ttyUSB[0-9]*", GROUP="plugdev", ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60",  GROUP="plugdev", MODE="0666", SYMLINK+="sensors/GPS_GM_R900"
-
-#idVendor       0x10c4     Cygnal Integrated Products, Inc.
-#idProduct      0xea60 	    CP210x Composite Device

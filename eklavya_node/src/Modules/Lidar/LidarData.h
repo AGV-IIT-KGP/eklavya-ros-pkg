@@ -12,6 +12,9 @@
 #include <opencv/cvaux.h>
 #include <opencv/cxcore.h>
 #include <opencv/highgui.h>
+#include "ros/ros.h"
+#include "std_msgs/String.h"
+#include <sensor_msgs/LaserScan.h>
 
 using namespace mrpt;
 using namespace mrpt::hwdrivers;
@@ -23,16 +26,16 @@ using namespace std;
 #ifndef LIDARDATA_H
 #define	LIDARDATA_H
 
+#define LIDAR_SCALE_TO_MAP 1
+
 class LidarData {
 public:
     LidarData(string serial_name);
-    char** plotLaserScan(char **localmap);
+    static void update_map(const sensor_msgs::LaserScan&);
     virtual ~LidarData();
 private:
-    char **checkObstacles(char **localmap, CSimplePointsMap map);
     CHokuyoURG laser;
-    char **expandObstacles(char **localmap, CSimplePointsMap map);
-    void createCircle(char **localmap, int x, int y, int R);
+    static void createCircle(int x, int y, int R);
 };
 
 #endif	/* LIDARDATA_H */
