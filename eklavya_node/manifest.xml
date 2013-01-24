@@ -1,10 +1,10 @@
 <package>
   <description brief="eklavya_node">
 
-     eklavya_node
+     eklavya2_node
 
   </description>
-  <author>Jit Ray Chowdhury</author>
+  <author>Samuel</author>
   <license>BSD</license>
   <review status="unreviewed" notes=""/>
   <url>http://ros.org/wiki/eklavya_node</url>
