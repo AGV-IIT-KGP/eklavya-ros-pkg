@@ -10,16 +10,11 @@ void *imu_thread(void *arg) {
   ros::init(argc, argv, "imu_thread");
   ros::NodeHandle imu_node;
   
+  ros::Subscriber sub = imu_node.subscribe("imu", 1000, IMUspace::IMU::update_pose);
   
-
   double heading = 0;
-  while(1) {
-    //IMUspace::IMU::getYaw(&heading);
-//    printf("Heading: %lf\n", heading);
-    
-    pthread_mutex_lock(&pose_mutex);
-    pose.orientation.z = heading; // Yaw
-    pthread_mutex_unlock(&pose_mutex);
+  while(ros::ok()) {
+    ros::spinOnce();
   }
 }
 

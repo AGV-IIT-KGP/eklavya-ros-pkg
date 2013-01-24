@@ -1,6 +1,7 @@
 #ifndef _PATH_PLANNER_H_
 #define _PATH_PLANNER_H_
 
+#include "ros/ros.h"
 #include "../../eklavya2.h"
 
 namespace Nav {
