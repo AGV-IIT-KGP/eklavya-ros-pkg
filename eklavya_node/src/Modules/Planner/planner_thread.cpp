@@ -7,6 +7,14 @@ void *planner_thread(void *arg) {
   double heading;
   Triplet my_target_location;
   
+  int argc;
+  char *argv[0];
+  
+  ros::init(argc, argv, "planner");
+  ros::NodeHandle n;
+  
+  ros::Publisher planner_pub = n.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
+  
   while(ros::ok()) {
     pthread_mutex_lock(&target_location_mutex);
     my_target_location = target_location; // Target
@@ -16,8 +24,16 @@ void *planner_thread(void *arg) {
     heading = pose.orientation.z; // Yaw
     pthread_mutex_unlock(&pose_mutex);
     
-    Nav::NavCore::navigate(my_target_location, iterations, heading);
+    Nav::command cmd = Nav::NavCore::navigate(my_target_location, iterations, heading);
     
+    double scale = 100;
+    double w = 0.55000000;
+    geometry_msgs::Twist cmd_msg;
+    cmd_msg.linear.x = (cmd.left_velocity + cmd.right_velocity) / (2 * scale);
+    cmd_msg.angular.z = (cmd.left_velocity - cmd.right_velocity) / (w * scale);
+    
+    planner_pub.publish(cmd_msg);
+
     iterations++;
   }
 }

@@ -20,7 +20,7 @@
 #define MAP_MAX 1000
 
 //#define VIS
-#define SIMCTL
+//#define SIMCTL
 //#define SIMOBS
 //#define SIMSEEDS
 //#define YAWPID
@@ -84,8 +84,8 @@ namespace Nav {
   int transfer(int leftVelocity, int rightVelocity, double currentCurvature) {
     int mode = 8, Kp = 5;
     double velocityRatioAt[9] = {0.45, 0.54, 0.67, 0.84, 1, 1.19, 1.5, 1.84, 2.22};
-    double targetVelocityRatio = (double)leftVelocity / rightVelocity;
-    double targetCurvature = 2 * (targetVelocityRatio - 1) / (targetVelocityRatio + 1);
+    double targetVelocityRatio = rightVelocity!=0 ? (double)leftVelocity / rightVelocity : 3;
+    double targetCurvature = 2 * (leftVelocity - rightVelocity) / (leftVelocity + rightVelocity);
 
     //cout<<"Allow1 ("<<leftVelocity<<","<<rightVelocity<<") "<<targetCurvature<<","<<currentCurvature<<endl;
 
@@ -109,7 +109,14 @@ namespace Nav {
     return mode;
   }
 
-  void sendCommand(int leftVelocityIn, int rightVelocityIn, double omega) {
+  command sendCommand(int leftVelocityIn, int rightVelocityIn, double omega) {
+    if ((leftVelocityIn == 0) && (rightVelocityIn == 0)) {
+      command cmd;
+      cmd.left_velocity = 0;
+      cmd.right_velocity = 0;
+      return cmd;
+    }
+    
     int leftSpeedAt[9]  = {18, 19, 20, 21, 18, 26, 30, 34, 38};
     int rightSpeedAt[9] = {38, 34, 30, 26, 21, 22, 21, 20, 19};
 
@@ -125,25 +132,14 @@ namespace Nav {
 
     leftVelocity = leftSpeedAt[mode];
     rightVelocity = rightSpeedAt[mode];
-
-    //cout<<"Exact\t("<<leftVelocity<<","<<rightVelocity<<")\t---->\t"<<mode<<"\t"<<omega<<endl;
-
-    #ifndef SIMCTL
-      p->sendChar('w');
-      usleep(100);
-
-      p->sendChar('0' + leftVelocity / 10);
-      usleep(100);
-      p->sendChar('0' + leftVelocity % 10);
-      usleep(100);
-      p->sendChar('0' + rightVelocity / 10);
-      usleep(100);
-      p->sendChar('0' + rightVelocity % 10);
-      usleep(100);
-    #endif
+    
+    command cmd;
+    cmd.left_velocity = leftVelocity;
+    cmd.right_velocity = rightVelocity;
+    return cmd;
   }
 
-  void sendCommand(int leftVelocity, int rightVelocity) {
+  command sendCommand(int leftVelocity, int rightVelocity) {
   int leftVel=0,rightVel=0;
     if (leftVelocity > rightVelocity) {
       leftVel = 34;
@@ -155,22 +151,11 @@ namespace Nav {
       leftVel = 22;
       rightVel = 25;
     }
-
-	//printf("Velocity: (%d, %d)\n", leftVel, rightVel);
-
-    #ifndef SIMCTL
-      p->sendChar('w');
-      usleep(100);
-
-      p->sendChar('0' + leftVel / 10);
-      usleep(100);
-      p->sendChar('0' + leftVel % 10);
-      usleep(100);
-      p->sendChar('0' + rightVel / 10);
-      usleep(100);
-      p->sendChar('0' + rightVel % 10);
-      usleep(100);
-    #endif
+    
+    command cmd;
+    cmd.left_velocity = leftVel;
+    cmd.right_velocity = rightVel;
+    return cmd;
   }
 
   void initState(state *s) {
@@ -238,14 +223,6 @@ namespace Nav {
   state* loadPosData() {
       double x, y, theta, g;
       int vl, vr;
-      
-      printf("BPS: %s\n", BPS_SOURCE);
-      
-      char cwd[1024];
-       if (getcwd(cwd, sizeof(cwd)) != NULL)
-           fprintf(stdout, "Current working dir: %s\n", cwd);
-       else
-           perror("getcwd() error");
       
       FILE *fp = fopen(BPS_SOURCE, "r");
       fscanf(fp, "%d\n", &nSeeds);
@@ -533,8 +510,6 @@ namespace Nav {
   }
 
   void Nav::NavCore::loadNavigator() {
-    printf ("HERE\n");
-
     seeds = loadPosData();
 
     initGMap();
@@ -548,15 +523,6 @@ namespace Nav {
     b.y = (int)(0.1 * MAP_MAX);
     b.theta = 90;
 
-    #ifndef SIMCTL
-      p = new Tserial();
-      p->connect(BOT_COM_PORT, BOT_BAUD_RATE, spNONE);
-      usleep(100);
-
-      p->sendChar('w');
-      usleep(100);
-    #endif
-
     cvNamedWindow("GMap", CV_WINDOW_NORMAL);
     mapImg = cvCreateImage(cvSize(MAP_MAX, MAP_MAX), IPL_DEPTH_8U, 3);
   }
@@ -569,7 +535,7 @@ namespace Nav {
     }
   }
 
-  int Nav::NavCore::navigate(Triplet target, int frame_count, double yaw) {
+  command Nav::NavCore::navigate(Triplet target, int frame_count, double yaw) {
     #ifdef VIS
       IplImage *vis = cvCreateImage(cvSize(MAP_MAX, MAP_MAX), IPL_DEPTH_8U, 3);
       cvNamedWindow("Visualization", CV_WINDOW_NORMAL);
@@ -616,8 +582,7 @@ namespace Nav {
 
     if (isNear(b, t)) {
       printf("Target Reached\n");
-      sendCommand(0, 0);
-      return 0;
+      return sendCommand(0, 0);
     }
 
     cl = ol = NULL;
@@ -686,8 +651,7 @@ namespace Nav {
             continue;
           } else {
             printf("No path found\n");
-            sendCommand(0, 0);
-            return 0;
+            return sendCommand(0, 0);
           }
         } else {
           nSeeds = 9;
@@ -695,8 +659,7 @@ namespace Nav {
       #else
         if (ol == NULL) {
           printf("No path found\n");
-          sendCommand(0, 0);
-          return 0;
+          return sendCommand(0, 0);
         }
       #endif
 
@@ -707,8 +670,7 @@ namespace Nav {
       if (count % 5000 == 0) {
         if (count != 0) {
           printf("Counter Overflow\n");
-          sendCommand(0, 0);
-          return 1;
+          return sendCommand(0, 0);
         }
       }
     }
@@ -731,6 +693,12 @@ namespace Nav {
 
     plotGmap();
 
+    while (cl) {
+      list *temp = cl;
+      cl = cl->next;
+      free(temp);
+    }
+
     list *nextMove = path;
     if (nextMove) {
       int lVel, rVel;
@@ -746,29 +714,17 @@ namespace Nav {
 
       #ifdef YAWPID
     //cout<<"Yaw="<<yaw<<" Previous Yaw="<<previousYaw<<endl;
-        sendCommand(lVel, rVel, yaw - previousYaw);
         previousYaw = yaw;
+        return sendCommand(lVel, rVel, yaw - previousYaw);
       #else
-        sendCommand(lVel, rVel);
+        return sendCommand(lVel, rVel);
       #endif
     }
 
-    while (cl) {
-      list *temp = cl;
-      cl = cl->next;
-      free(temp);
-    }
-
-    return 0;
+    return sendCommand(0, 0);
   }
 
   void Nav::NavCore::closeNav() {
-    #ifndef SIMCTL
-      p->sendChar(' ');
-      usleep(100);
 
-      p->disconnect();
-      usleep(100);
-    #endif
   }
 }
