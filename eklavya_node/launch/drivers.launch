@@ -14,6 +14,6 @@
     <param name="baudrate" value="57600" />
   </node>
 
-  <node pkg="eklavya_node" type="eklavya_node" name="eklavya_node" args="0" output="screen" cwd="node"/>
+  <node pkg="eklavya_bringup" type="diffdrive_robot_controller" name="bot_controller"/>
 </launch>
   
