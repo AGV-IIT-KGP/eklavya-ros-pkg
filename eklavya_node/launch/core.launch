@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+
+<launch>
+  <node pkg="eklavya_node" type="eklavya_node" name="eklavya_node" args="0" output="screen" cwd="node"/>
+</launch>
+  
