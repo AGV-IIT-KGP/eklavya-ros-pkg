@@ -119,19 +119,19 @@
 	<caster_support_hinge suffix="front" parent="base_link" />
     <caster_wheel suffix="front" parent="base_link" />  
 
-<!-- Controllers -->
-   <!-- <gazebo_eklavya_simple_drive_plugin />    -->
-    <gazebo_eklavya_drive_plugin_diffdrive /><!-- cmd_vel movement -->
-    <gazebo_eklavya_p3d_plugin /> <!-- Ground Truth-->
-     <eklavya_controllers_common /> 
+	<!-- Controllers -->
+	<!-- <gazebo_eklavya_simple_drive_plugin />    -->
+	<!--  <gazebo_eklavya_drive_plugin_diffdrive /> --><!-- cmd_vel movement -->
+	<gazebo_eklavya_p3d_plugin /> <!-- Ground Truth-->
+	<eklavya_controllers_common /> 
     
     <!-- Simulation sensors -->
     <hokuyo_urg name="hokuyo_laser" parent="base_link" >
-      <origin rpy="0 0 0" xyz="${-base_x_size/2} 0  0.23"/>
+      <origin rpy="0 0 ${M_PI}" xyz="${-base_x_size/2} 0  0.33"/>
     </hokuyo_urg> 
-  <!--   <sick_lms100_200 name="sick_laser" parent="base_link" >
-      <origin rpy="0 0 0" xyz="${base_x_size/2+0.12} 0  0.080"/>
-    </sick_lms100_200>   -->
+	<!--<sick_lms100_200 name="sick_laser" parent="base_link" >
+		<origin rpy="0 0 0" xyz="${base_x_size/2+0.12} 0  0.080"/>
+	</sick_lms100_200>   -->
 	 <microstrain_imu name="eklavya_sim_imu" parent="base_link" imu_topic="imu/data" update_rate="30" stdevNoise="0.0017">
 		 <origin rpy="0 0 0" xyz="0 0 0"/>
 	</microstrain_imu> 
