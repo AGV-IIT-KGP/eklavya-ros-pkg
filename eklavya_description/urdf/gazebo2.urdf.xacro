@@ -30,7 +30,7 @@
   <macro name="eklavya_base_link_mesh"  params="*origin *box" >
 	  <insert_block name="origin" /> 
      <geometry>
-    <!--<mesh filename="package://eklavya_description/meshes/rmp50-base-link.dae" scale="0.0254 0.0254 0.0254"/> -->
+    <!-- mesh filename="package://eklavya_description/meshes/rmp50-base-link.dae" scale="0.0254 0.0254 0.0254"/ -->
     <mesh filename="package://eklavya_description/meshes/body.dae" />
   	<!-- <insert_block name="box" /> -->
     </geometry>
@@ -44,7 +44,8 @@
   <macro name="eklavya_castor_wheel_link_mesh">
     <origin xyz="0 0 0" rpy="0 0 0" />
     <geometry>
-      <mesh filename="package://eklavya_description/meshes/rmp50-castor-wheel.dae" scale="0.0220 0.0220 0.0220"/>
+      <!--mesh filename="package://eklavya_description/meshes/rmp50-castor-wheel.dae"/-->
+      <mesh filename="package://eklavya_description/meshes/castorWheel.dae" scale="2 2 2"/>
     </geometry>
   </macro>
 
@@ -58,12 +59,13 @@
   <macro name="eklavya_castor_support_link_mesh">
     <origin xyz="0 0 0" rpy="0 0 0" />
     <geometry>
-      <mesh filename="package://eklavya_description/meshes/rmp50-castor-link.dae" scale="0.0220 0.0220 0.0220"/>
+      <!--mesh filename="package://eklavya_description/meshes/rmp50-castor-link.dae" scale="0.0220 0.0220 0.0220"/-->
+      <mesh filename="package://eklavya_description/meshes/wheelhub.dae"/> <!-- scale="0.0220 0.0220 0.0220"-->
     </geometry>
   </macro>
 
   <macro name="eklavya_wheel_mesh" params="suffix">
-    <origin xyz="0 0 0" rpy="0 0 0" />
+    <origin xyz="0 0 0" rpy="0 0 1.570796327" />
     <geometry>
      <!-- <mesh filename="package://eklavya_description/meshes/rmp50-${suffix}-wheel.dae" scale="0.0150 0.0150 0.0150"/>-->
      <!-- <mesh filename="package://eklavya_description/meshes/wheel.stl" /> -->
@@ -85,13 +87,7 @@
     </gazebo>
   </macro>
 
- 
-
- 
-  
- <!-- CONTROLLERS -->
- 
-       
+ <!-- CONTROLLERS -->      
 
   <macro name="eklavya_controllers_common">
  <!-- this publishes empty joint_states due to no transmission, but
@@ -134,7 +130,6 @@
      </gazebo>
    </macro>
 
-
 	<macro name="gazebo_eklavya_drive_plugin_diffdrive">
         <gazebo>
             <controller:diffdrive_plugin name="differential_drive_controller" plugin="libdiffdrive_plugin.so">
@@ -152,7 +147,6 @@
             </controller:diffdrive_plugin>
          </gazebo>
     </macro>
-  
 
 	<macro name="gazebo_eklavya_p3d_plugin">
 		 <gazebo>
