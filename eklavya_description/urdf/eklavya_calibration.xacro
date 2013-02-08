@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <robot>
 
-  <property name="eklavya_calib_cam_x" value="${-0.0844382+0.36}" />
+  <property name="eklavya_calib_cam_x" value="${-0.0844382+0.36-0.55}" />
   <property name="eklavya_calib_cam_y" value="${0+ 0}" />
-  <property name="eklavya_calib_cam_z" value="${0.05+0.55}" />
+  <property name="eklavya_calib_cam_z" value="${0.05+0.55-0.18}" />
   <property name="eklavya_calib_cam_rr" value="0" />
   <property name="eklavya_calib_cam_rp" value="0" />
-  <property name="eklavya_calib_cam_ry" value="0" />
+  <property name="eklavya_calib_cam_ry" value="3.1415926535897932384626" />
   <property name="eklavya_camera_parent_name" value="base_link" />
 
 </robot>

@@ -8,8 +8,10 @@
 	<property name="wheel_y_com" value="0.00000000" /> <!-- com : center of mass -->
 	<property name="wheel_z_com" value="0.00019000" /> <!-- com : center of mass -->
 
-	<property name="wheel_x_size" value="0.30550000" /> 
-	<property name="wheel_y_size" value="0.30550000" /> 
+	<!--property name="wheel_x_size" value="0.30550000" /--> 
+	<!--property name="wheel_y_size" value="0.30550000" /-->
+	<property name="wheel_x_size" value="0.22" /> 
+	<property name="wheel_y_size" value="0.22" />
 	<property name="wheel_z_size" value="0.11430000" />
 
 	<property name="wheel_mass" value="2.63657000" /> <!-- in kg-->
@@ -21,9 +23,9 @@
 	<property name="wheel_iyz_com_cs" value="0.00000000" /> <!-- at center of mass aligned with coordinate system, kg*m^2-->
 	<property name="wheel_izz_com_cs" value="0.04410576" /> <!-- at center of mass aligned with coordinate system, kg*m^2-->
 
-	<property name="base_x_origin_to_wheel_origin" value="0.20" />
-	<property name="base_y_origin_to_wheel_origin" value="0.350" />
-	<property name="base_z_origin_to_wheel_origin" value="-0.0262508" />
+	<property name="base_x_origin_to_wheel_origin" value="0.15" />
+	<property name="base_y_origin_to_wheel_origin" value="0.225" />
+	<property name="base_z_origin_to_wheel_origin" value="0" />
 	
   <macro name="eklavya_wheel" params="suffix parent *origin">
     <joint name="${parent}_${suffix}_wheel_joint" type="continuous">
@@ -46,7 +48,7 @@
 
       <visual>
         <eklavya_wheel_mesh suffix="${suffix}" />  
-		<!--<material name="DarkGray" />-->
+		<material name="Red" />
       </visual>
 
       <collision>
