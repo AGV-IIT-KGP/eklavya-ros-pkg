@@ -55,7 +55,7 @@ option (USE_SLAM "Use SLAM" ON)
 option (USE_NAVIGATION "Use Navigation" ON)
 option (USE_PLANNER "Use Planner" ON)
 option (USE_SERIAL_PORT "Use SerialPortLinux" ON) 
-#option (USE_DIAGNOSTICS "Use Diagnostics" ON)
+option (USE_DIAGNOSTICS "Use Diagnostics" ON)
 
 include_directories ("${PROJECT_SOURCE_DIR}/src/")
 
