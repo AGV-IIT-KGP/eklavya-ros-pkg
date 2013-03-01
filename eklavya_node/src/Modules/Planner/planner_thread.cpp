@@ -1,40 +1,47 @@
 #include <stdio.h>
+#include <ros/ros.h>
+#include <geometry_msgs/Twist.h>
 #include "../../eklavya2.h"
-#include "PathPlanner.h"
+#include "planner.h"
 
 void *planner_thread(void *arg) {
   int iterations = 0;
   double heading;
+  Triplet my_bot_location;
   Triplet my_target_location;
   
   int argc;
   char *argv[0];
   
-  ros::init(argc, argv, "planner");
-  ros::NodeHandle n;
+  //ros::init(argc, argv, "planner");
+  //ros::NodeHandle n;
   
-  ros::Publisher planner_pub = n.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
+  //ros::Publisher planner_pub = n.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
   
-  while(ros::ok()) {
+  printf("Initiating Planner\n");
+  planner_space::Planner::loadPlanner();
+  printf("\tPlanner Initiated\n");
+
+  //while(1) {
+    pthread_mutex_lock(&bot_location_mutex);
+    my_bot_location = bot_location; // Bot
+    pthread_mutex_unlock(&bot_location_mutex);
+    
+    my_bot_location.x = 500; my_bot_location.y = 100; my_bot_location.z = 90;
+    
     pthread_mutex_lock(&target_location_mutex);
     my_target_location = target_location; // Target
     pthread_mutex_unlock(&target_location_mutex);
         
-    pthread_mutex_lock(&pose_mutex);
-    heading = pose.orientation.z; // Yaw
-    pthread_mutex_unlock(&pose_mutex);
+    my_target_location.x = 500; my_target_location.y = 900; my_target_location.z = 90;    
     
-    Nav::command cmd = Nav::NavCore::navigate(my_target_location, iterations, heading);
+    vector<Triplet> path = planner_space::Planner::findPath(my_bot_location, my_target_location);
     
-    double scale = 100;
-    double w = 0.55000000;
-    geometry_msgs::Twist cmd_msg;
-    cmd_msg.linear.x = (cmd.left_velocity + cmd.right_velocity) / (2 * scale);
-    cmd_msg.angular.z = (cmd.left_velocity - cmd.right_velocity) / (w * scale);
+    for(int i = 0; i < path.size(); i++) {
+      cout << "{ " << path[i].x << " , " << path[i].y << " , " << path[i].z << " }" << endl;
+    }
     
-    planner_pub.publish(cmd_msg);
-
     iterations++;
-  }
+  //}
 }
 
