@@ -136,7 +136,8 @@ namespace planner_space {
   }
   
   void print(state s) {
-    cout << "{ " << s.pose.x << " , " << s.pose.y << " , " << s.pose.z << " , " << s.g + s.h << " }" << endl;
+    double f = s.g + s.h;
+    cout << "{ " << s.pose.x << " , " << s.pose.y << " , " << s.pose.z << " , " << f << " }" << endl;
   }
   
   /// ------------------------------------------------------------- ///
@@ -152,7 +153,7 @@ namespace planner_space {
 
   vector<Triplet> Planner::findPath(Triplet bot, Triplet target) {
     state start, goal;
-    start.pose = bot; start.g = start.h = distance(bot, target); start.seed_id = 0;
+    start.pose = bot; start.g = 0; start.h = distance(bot, target); start.seed_id = 0;
     goal.pose = target; goal.g = 0; goal.h = 0; goal.seed_id = 0;
     
     cout << "START: ";  print(start);
@@ -173,7 +174,7 @@ namespace planner_space {
       cout << ">CURRENT: ";  print(current);
       cout << ">GOAL: ";  print(goal);
       
-      getchar();
+      //getchar();
       
       if (isEqual(current, goal)) {
         return reconstructPath(goal);
@@ -191,7 +192,7 @@ namespace planner_space {
         state neighbor = neighbors[i];
         cout << ">>NEIGHBOR: "; print(neighbor);
         
-        double tentative_g_score = neighbor.g + distance(neighbor.pose, goal.pose);
+        double tentative_g_score = neighbor.g + current.g;
         cout << ">>TGS: " << tentative_g_score << endl;
         
         if(!((membership.find(neighbor.pose) != membership.end()) && (membership[neighbor.pose] == OPEN)) || 
