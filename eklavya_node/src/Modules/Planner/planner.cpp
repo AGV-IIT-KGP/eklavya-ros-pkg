@@ -60,7 +60,6 @@ namespace planner_space {
   vector<seed> seeds;
   map<Triplet, char, PoseCompare> membership;
   map<Triplet, Triplet, PoseCompare> came_from;
-  char walkability[MAP_MAX][MAP_MAX];
   IplImage *map_img;
   
   /// ------------------------------------------------------------- ///
@@ -139,6 +138,10 @@ namespace planner_space {
     cout << "{ " << s.pose.x << " , " << s.pose.y << " , " << s.pose.z << " , " << s.g + s.h << " }" << endl;
   }
   
+  bool isWalkable(Triplet pose) {
+    return local_map[(int) pose.x][(int) pose.y] == 0;
+  }
+  
   /// ------------------------------------------------------------- ///
   
   void Planner::loadPlanner() {
@@ -189,6 +192,11 @@ namespace planner_space {
       
       for(int i = 0; i < neighbors.size(); i++) {
         state neighbor = neighbors[i];
+        
+        if(!isWalkable(neighbor.pose)) {
+          continue;
+        }
+        
         cout << ">>NEIGHBOR: "; print(neighbor);
         
         double tentative_g_score = neighbor.g + distance(neighbor.pose, goal.pose);
