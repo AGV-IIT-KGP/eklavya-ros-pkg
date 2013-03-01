@@ -4,6 +4,8 @@
 #include "../../eklavya2.h"
 #include "planner.h"
 
+char** local_map;
+
 void *planner_thread(void *arg) {
   int iterations = 0;
   double heading;
@@ -12,6 +14,11 @@ void *planner_thread(void *arg) {
   
   int argc;
   char *argv[0];
+  
+  local_map = new char*[MAP_MAX];
+  for (int i = 0; i < MAP_MAX; i++) {
+    local_map[i] = new char[MAP_MAX];
+  }
   
   //ros::init(argc, argv, "planner");
   //ros::NodeHandle n;
@@ -34,6 +41,14 @@ void *planner_thread(void *arg) {
     pthread_mutex_unlock(&target_location_mutex);
         
     my_target_location.x = 500; my_target_location.y = 900; my_target_location.z = 90;    
+
+    pthread_mutex_lock(&map_mutex);
+    for(int i = 0; i < MAP_MAX; i++) {
+      for(int j = 0; j < MAP_MAX; j++) {
+        local_map[i][j] = global_map[i][j];
+      }
+    }
+    pthread_mutex_unlock(&map_mutex);
     
     vector<Triplet> path = planner_space::Planner::findPath(my_bot_location, my_target_location);
     
