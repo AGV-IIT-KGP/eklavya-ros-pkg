@@ -35,7 +35,6 @@ void *planner_thread(void *arg) {
     pthread_mutex_unlock(&bot_location_mutex);
     
     my_bot_location.x = 500; my_bot_location.y = 100; my_bot_location.z = 90;
-    
     pthread_mutex_lock(&target_location_mutex);
     my_target_location = target_location; // Target
     pthread_mutex_unlock(&target_location_mutex);
