@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.4.6)
+cmake_minimum_required(VERSION 2.6)
 include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
 
 # Set the build type.  Options are:
@@ -40,6 +40,11 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 find_package(OpenCV REQUIRED)
 #LINK_DIRECTORIES(${OpenCV_LIBRARY_DIRS})
 
+find_package(MRPT REQUIRED base slam hwdrivers)# WARNING: Add all the MRPT libs used by your program: "gui", "obs", "slam",etc. 
+LINK_DIRECTORIES(${MRPT_DIR}/lib)
+LINK_DIRECTORIES(${MRPT_DIR}/lib/otherlibs)
+LINK_DIRECTORIES(${MRPT_SOURCE_DIR}/lib/otherlibs)
+
 #Options
 option (USE_IMU "Use IMU" ON) 
 option (USE_LIDAR "Use Lidar" ON) 
@@ -66,7 +71,8 @@ endif ()
 
 if (USE_GPS)
 include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/GPS/")
-rosbuild_add_library(GPSLib src/Modules/GPS/GPS.cpp src/Modules/GPS/gps_thread.cpp)
+#rosbuild_add_library(GPSLib src/Modules/GPS/GPS.cpp src/Modules/GPS/gps_thread.cpp)
+rosbuild_add_library(GPSLib src/Modules/GPS/gps.cpp src/Modules/GPS/gps_thread.cpp)
 endif ()
 
 if (USE_ENCODER)
@@ -91,7 +97,8 @@ endif ()
 
 if (USE_PLANNER)
 include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/Planner/")
-rosbuild_add_library(PlannerLib src/Modules/Planner/Planner.cpp src/Modules/Planner/planner_thread.cpp)
+#rosbuild_add_library(PlannerLib src/Modules/Planner/Planner.cpp src/Modules/Planner/planner_thread.cpp)
+rosbuild_add_library(PlannerLib src/Modules/Planner/planner.cpp src/Modules/Planner/planner_thread.cpp)
 endif ()
 
 if (USE_DIAGNOSTICS)
@@ -104,10 +111,6 @@ include_directories ("${PROJECT_SOURCE_DIR}/src/Utils/SerialPortLinux/")
 rosbuild_add_library(SerialPortLinuxLib src/Utils/SerialPortLinux/serial_lnx.cpp)
 endif ()
 
-find_package(MRPT REQUIRED base slam hwdrivers)# WARNING: Add all the MRPT libs used by your program: "gui", "obs", "slam",etc. 
-LINK_DIRECTORIES(${MRPT_DIR}/lib)
-LINK_DIRECTORIES(${MRPT_DIR}/lib/otherlibs)
-LINK_DIRECTORIES(${MRPT_SOURCE_DIR}/lib/otherlibs)
 
 rosbuild_add_executable(${PROJECT_NAME} src/eklavya2.cpp)
 target_link_libraries (${PROJECT_NAME} IMULib LidarLib GPSLib EncoderLib EKFLib SLAMLib PlannerLib NavigationLib DiagnosticsLib SerialPortLinuxLib)

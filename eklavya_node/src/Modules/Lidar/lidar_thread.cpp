@@ -1,7 +1,6 @@
 /*
  * Lidar Processing Node
  * Subscribes to scan published by hokuyo_node
- * Publishes local_laser_map subscribed by navigation_node
  * 
  * */
 
