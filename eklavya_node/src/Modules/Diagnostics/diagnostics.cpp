@@ -24,6 +24,7 @@ namespace diagnostics_space {
       }
     }
     
+    cvNamedWindow("Map", 0);
     cvShowImage("Map", image);
     cvWaitKey(1);
     cvReleaseImage(&image);
@@ -49,4 +50,18 @@ namespace diagnostics_space {
     printf("Target Location: (%lf, %lf, %lf)\n", target_location.x, target_location.y, target_location.z);
   }
 
+  void diagnostics_space::Diagnostics::plotPath(vector<Triplet> my_path) {
+    IplImage *image = cvCreateImage(cvSize(MAP_MAX, MAP_MAX), IPL_DEPTH_8U, 3);
+    
+    for(int i = 0; i < my_path.size(); i++) {
+      int x = (int) my_path[i].x;
+      int y = MAP_MAX - (int) my_path[i].y - 1;
+      cvLine(image, cvPoint(x, y), cvPoint(x, y + 5), CV_RGB(255, 255, 255), 2, CV_AA, 0);
+    }
+    
+    cvNamedWindow("Path", 0);
+    cvShowImage("Path", image);
+    cvWaitKey(1);
+    cvReleaseImage(&image);
+  }
 }

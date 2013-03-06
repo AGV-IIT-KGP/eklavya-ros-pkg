@@ -17,8 +17,7 @@ namespace planner_space {
   class Planner {
   public:
     static void loadPlanner();
-    static vector<Triplet> findPath(Triplet bot, Triplet target);
-    static void closePlanner();
+    static void findPath(Triplet bot, Triplet target);
   };
 }
 

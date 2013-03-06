@@ -26,6 +26,7 @@ Odom odom; // Shared by Encoder, EKF
 char global_map[MAP_MAX][MAP_MAX]; // Shared by Lidar, Planner
 Triplet bot_location; // Shared by EKF, Planner
 Triplet target_location; // Shared by EKF, Planner
+vector<Triplet> path;
 
 int strategy;
 LidarData *laser;
@@ -37,6 +38,7 @@ pthread_mutex_t odom_mutex;
 pthread_mutex_t map_mutex;
 pthread_mutex_t bot_location_mutex;
 pthread_mutex_t target_location_mutex;
+pthread_mutex_t path_mutex;
 
 void createMutex () {
   pthread_mutex_init(&pose_mutex, NULL);
@@ -45,6 +47,7 @@ void createMutex () {
   pthread_mutex_init(&map_mutex, NULL);
   pthread_mutex_init(&bot_location_mutex, NULL);
   pthread_mutex_init(&target_location_mutex, NULL);
+  pthread_mutex_init(&path_mutex, NULL);
   
   pthread_mutex_trylock(&pose_mutex);
   pthread_mutex_unlock(&pose_mutex); 
@@ -63,6 +66,9 @@ void createMutex () {
   
   pthread_mutex_trylock(&target_location_mutex);  
   pthread_mutex_unlock(&target_location_mutex);   
+
+  pthread_mutex_trylock(&path_mutex);  
+  pthread_mutex_unlock(&path_mutex);   
 }
 
 void startThread(pthread_t *thread_id, pthread_attr_t *thread_attr, void *(*thread_name) (void *)) {
@@ -114,9 +120,7 @@ void startThreads() {
 }
 
 void fin() {
-  printf("Closing Planner\n");
-  planner_space::Planner::closePlanner();
-  printf("Planner Closed\n");  
+
 }
 
 void sigHandler(int sig) {
@@ -135,7 +139,7 @@ void init() {
   signal(SIGINT, sigHandler);
   
   printf("Initializing Lidar\n");
-  laser = new LidarData("ttyACM0");  
+  //laser = new LidarData("ttyACM0");  
   printf("\tLidar Initiated\n");
     
   //printf("Initiating Encoder\n");
