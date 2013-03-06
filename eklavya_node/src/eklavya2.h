@@ -14,7 +14,7 @@ enum Strategies {
 };
 
 typedef struct Triplet {
-  double x, y, z;
+  int x, y, z;
 } Triplet;
 typedef struct Pose {
   Triplet position;
@@ -36,6 +36,7 @@ extern Odom odom; // Shared by Encoder, EKF
 extern char global_map[MAP_MAX][MAP_MAX]; // Shared by Lidar, Planner
 extern Triplet bot_location; // Shared by EKF, Planner
 extern Triplet target_location; // Shared by EKF, Planner
+extern vector<Triplet> path; 
 
 extern LidarData *laser;
 extern int strategy;
@@ -47,6 +48,7 @@ extern pthread_mutex_t odom_mutex;
 extern pthread_mutex_t map_mutex;
 extern pthread_mutex_t bot_location_mutex;
 extern pthread_mutex_t target_location_mutex;
+extern pthread_mutex_t path_mutex;
 
 void *imu_thread(void *arg);
 void *lidar_thread(void *arg);

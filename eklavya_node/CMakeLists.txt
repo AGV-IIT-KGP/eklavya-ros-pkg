@@ -44,6 +44,7 @@ find_package(MRPT REQUIRED base slam hwdrivers)# WARNING: Add all the MRPT libs 
 LINK_DIRECTORIES(${MRPT_DIR}/lib)
 LINK_DIRECTORIES(${MRPT_DIR}/lib/otherlibs)
 LINK_DIRECTORIES(${MRPT_SOURCE_DIR}/lib/otherlibs)
+LINK_DIRECTORIES("/usr/local/lib/")
 
 #Options
 option (USE_IMU "Use IMU" ON) 
@@ -118,3 +119,4 @@ target_link_libraries (${PROJECT_NAME} IMULib LidarLib GPSLib EncoderLib EKFLib 
 #target_link_libraries (${PROJECT_NAME}  ${EXTRA_LIBS})
 target_link_libraries( ${PROJECT_NAME} ${OpenCV_LIBS} )
 target_link_libraries( ${PROJECT_NAME} ${MRPT_LIBS} )
+target_link_libraries( ${PROJECT_NAME} "/usr/local/lib/libcvblob.so")

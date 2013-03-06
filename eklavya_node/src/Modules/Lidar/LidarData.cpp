@@ -12,6 +12,7 @@
 #include <mrpt/maps.h>
 #include <opencv2/core/types_c.h>
 #include "../../eklavya2.h"
+#include <cvblob.h>
 
 #define CENTERX 125
 #define CENTERY 500
@@ -20,6 +21,7 @@
 #define HOKUYO_SCALE 100
 #define VIEW_OBSTACLES 0
 #define RADIUS 8
+#define intensity(img,i,j,n) *(uchar*)(img->imageData + img->widthStep*i + j*img->nChannels + n)
 
 using namespace mrpt;
 using namespace mrpt::hwdrivers;
@@ -27,8 +29,13 @@ using namespace mrpt::slam;
 using namespace mrpt::gui;
 using namespace mrpt::utils;
 using namespace std;
+using namespace cvb;
+
+IplConvKernel *ker1, *ker2;
 
 LidarData::LidarData(string serial_name) {
+  ker1 = cvCreateStructuringElementEx(11,11,5,5,CV_SHAPE_ELLIPSE);
+  ker2 = cvCreateStructuringElementEx(11,11,5,5,CV_SHAPE_ELLIPSE);
     //laser.setSerialPort(serial_name);
     //if (!laser.turnOn()) {
         //printf("[TEST] Initialization failed!\n");
@@ -94,9 +101,16 @@ void LidarData::update_map(const sensor_msgs::LaserScan& scan) {
   size_t size = scan.ranges.size();
   float angle = scan.angle_min;
   float maxRangeForContainer = scan.range_max - 0.1f;
-  
-  for (int i = 0; i < MAP_MAX; i++) {
-    for (int j = 0; j < MAP_MAX; j++) {
+  IplImage * filtered_img, * nblobs,*nblobs1, *labelImg;
+  filtered_img = cvCreateImage(cvSize(MAP_X,MAP_Y),8,1);
+  labelImg = cvCreateImage(cvSize(MAP_X,MAP_Y),IPL_DEPTH_LABEL,1);
+  nblobs = cvCreateImage(cvSize(MAP_X,MAP_Y),8,3);
+  nblobs1 = cvCreateImage(cvSize(MAP_X,MAP_Y),8,3);
+  CvBlobs blobs;
+  uchar * ptr;
+  //ptr = (uchar *)malloc(sizeof(uchar));
+  for (int i = 0; i < MAP_X; i++) {
+    for (int j = 0; j < MAP_Y; j++) {
       global_map[i][j] = 0;
     }
   }
@@ -104,27 +118,45 @@ void LidarData::update_map(const sensor_msgs::LaserScan& scan) {
   for (size_t i = 0; i < size; ++i)
   {
     float dist = scan.ranges[i];
-
     if ( (dist > scan.range_min) && (dist < maxRangeForContainer))
     {
       double x1 = cos(angle) * dist;
       double y1 = sin(angle) * dist;
-      
       int x = (int)((-1 * y1 * 200) + CENTERY);
       int y = (int)((x1 * 200) + CENTERX);
       
-      if (x < 900 - RADIUS && x > RADIUS + 50 && y > RADIUS && y < 800 - RADIUS && !(x < 560 && x > 440 && y < 150)) {
-        if (y > CENTERX + 5) {
-          createCircle(x, y, RADIUS);
-        }
+      if(x>=0 && y>=0 && (int)x<MAP_X && (int)y<MAP_Y ) {
+        ptr = (uchar *)(filtered_img->imageData + (MAP_X - (int)x - 1)*filtered_img->widthStep );
+        ptr[(int)y] = 255;
       }
     }
-
     angle += scan.angle_increment;
   }
   
-  //plotMap();
+  cvDilate(filtered_img,filtered_img,ker1,1);
+  cvErode(filtered_img,filtered_img,ker2,1);
+  unsigned int result = cvLabel(filtered_img,labelImg,blobs);
+  cvRenderBlobs(labelImg,blobs,nblobs,nblobs,CV_BLOB_RENDER_COLOR);
+  cvFilterByArea(blobs,55,filtered_img->height*filtered_img->width);
+  cvRenderBlobs(labelImg,blobs,nblobs1,nblobs1,CV_BLOB_RENDER_COLOR);
+  cvCvtColor(nblobs1,filtered_img,CV_RGB2GRAY);
+  cvThreshold(filtered_img,filtered_img,128,255,CV_THRESH_BINARY);
+  cvReleaseImage(&labelImg);
+  cvReleaseImage(&nblobs);
+  cvReleaseImage(&nblobs1);
+  cvReleaseBlobs(blobs);
+  cvDilate(filtered_img,filtered_img,ker1,2);
+  cvNamedWindow("Filtered Image",0);
+  cvShowImage("Filtered Image",filtered_img);
   
+  for(int i = 0;i<MAP_X;i++) {
+    for(int j = 0;j<MAP_Y;j++) {
+      global_map[i][j] = intensity(filtered_img,i,j,0);
+    }
+  }
+  cvReleaseImage(&filtered_img);
+  
+  //plotMap();
   pthread_mutex_unlock(&map_mutex);
 }
 

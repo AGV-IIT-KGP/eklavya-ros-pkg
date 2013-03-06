@@ -16,6 +16,8 @@ void *lidar_thread(void *arg) {
   ros::init(argc, argv, "lidar_thread");
   ros::NodeHandle lidar_node;
   
+  cvNamedWindow("Global Map", 0);
+  
   ros::Subscriber sub = lidar_node.subscribe("scan", 1000, LidarData::update_map);
   
   while(ros::ok()) {

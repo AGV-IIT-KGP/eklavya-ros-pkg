@@ -31,9 +31,12 @@ public:
     LidarData(string serial_name);
     static void update_map(const sensor_msgs::LaserScan&);
     virtual ~LidarData();
+    
+    
 private:
     CHokuyoURG laser;
     static void createCircle(int x, int y, int R);
+    
 };
 
 #endif	/* LIDARDATA_H */
