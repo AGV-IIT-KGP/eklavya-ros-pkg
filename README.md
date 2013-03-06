@@ -23,6 +23,8 @@ Main requirements are:
  * OpenCV (included in ROS) http://opencv.org
  * MRPT http://www.mrpt.org
 
+    sudo apt-get install ros-fuerte-joystick-drivers
+
 ### ROS Setup ###
 
 at <https://github.com/jitrc/eklavya-ros-pkg/wiki/Installing-ROS-in-Ubuntu-12.04-(Precise)>
