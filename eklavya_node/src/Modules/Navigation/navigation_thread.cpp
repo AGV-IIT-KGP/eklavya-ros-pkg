@@ -5,6 +5,7 @@
 void *navigation_thread(void *arg) {
   int iterations = 0;
   double heading;
+  double latitude, longitude;
   Triplet my_target_location;
   Triplet my_bot_location;
   char walkability[MAP_MAX][MAP_MAX];
@@ -40,9 +41,15 @@ void *navigation_thread(void *arg) {
         heading = pose.orientation.z; // Yaw
         pthread_mutex_unlock(&pose_mutex);
         
-        my_target_location = navigation_space::TrackWayPointStrategy::getTargetLocation(heading);
+        pthread_mutex_lock(&lat_long_mutex);        
+        latitude = lat_long.latitude; 
+        longitude = lat_long.longitude; 
+        pthread_mutex_unlock(&lat_long_mutex);
+
+        my_target_location = navigation_space::TrackWayPointStrategy::getTargetLocation(latitude, longitude, heading);
         pthread_mutex_lock(&target_location_mutex);
         target_location = my_target_location; // Target
+        cout << "[NAV] [INFO] Target Location: " << target_location.x << " " << target_location.y << endl;
         pthread_mutex_unlock(&target_location_mutex);
         
         my_bot_location = navigation_space::TrackWayPointStrategy::getBotLocation();

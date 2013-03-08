@@ -14,7 +14,7 @@ namespace navigation_space {
   
   class TrackWayPointStrategy {
   public:
-    static Triplet getTargetLocation(double);
+    static Triplet getTargetLocation(double latitude, double longitude, double heading);
     static Triplet getBotLocation();
   };
 }

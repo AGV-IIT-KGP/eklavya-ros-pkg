@@ -2,6 +2,7 @@
 #define _DIAGNOSTICS_H
 
 #include "ros/ros.h"
+#include "../../eklavya2.h"
 
 namespace diagnostics_space {
 	class Diagnostics {
@@ -12,6 +13,7 @@ namespace diagnostics_space {
     static void printOdom();
     static void printBotLocation();
     static void printTargetLocation();
+    static void plotPath(std::vector<Triplet> my_path);
 	};
 }
 
