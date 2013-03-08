@@ -96,7 +96,7 @@
 
       <collision>
         <eklavya_base_link_mesh>
-            <origin xyz="0 0 0" rpy="0 0 0" />
+            <origin xyz="0 0 0" rpy="0 0 3.1415926535897932384626" />
            <box size = "${base_x_size} ${base_y_size} ${base_z_size}"/> <!--making it slightly bigger in x and z direction-->
         </eklavya_base_link_mesh>
       </collision>
