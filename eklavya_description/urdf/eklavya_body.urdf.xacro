@@ -88,7 +88,7 @@
       <visual>		  
         <eklavya_base_link_mesh>
            <!--<origin xyz="0 0 ${base_x_size/2}" rpy="0 0 0" />-->
-            <origin xyz="0 0 0" rpy="0 0 0" /> 
+            <origin xyz="0 0 0" rpy="0 0 3.1415926535897932384626" /> 
            <box size = "0.001 0.001 0.001"/>
           
         </eklavya_base_link_mesh>
@@ -106,11 +106,11 @@
 
 	 <!-- WHEEL macros -->
    <eklavya_wheel suffix="left" parent="base_link">
-      <origin xyz="${ -1*base_x_origin_to_wheel_origin} ${base_y_origin_to_wheel_origin} ${ -1*base_z_origin_to_wheel_origin}" rpy="${M_PI} 0 0" /> 
+      <origin xyz="${-1*base_x_origin_to_wheel_origin} ${-1*base_y_origin_to_wheel_origin} ${ -1*base_z_origin_to_wheel_origin}" rpy="${M_PI} 0 ${M_PI}" /> 
     </eklavya_wheel>
   
     <eklavya_wheel suffix="right" parent="base_link">
-      <origin xyz="${ -1*base_x_origin_to_wheel_origin} ${-1*base_y_origin_to_wheel_origin} ${ -1*base_z_origin_to_wheel_origin}" rpy="0 0 0" />
+      <origin xyz="${-1*base_x_origin_to_wheel_origin} ${base_y_origin_to_wheel_origin} ${ -1*base_z_origin_to_wheel_origin}" rpy="0 0 ${M_PI}" />
     </eklavya_wheel>
 
     
@@ -120,8 +120,8 @@
     <caster_wheel suffix="front" parent="base_link" />  
 
 	<!-- Controllers -->
-	<!-- <gazebo_eklavya_simple_drive_plugin />    -->
-	<!--  <gazebo_eklavya_drive_plugin_diffdrive /> --><!-- cmd_vel movement -->
+	<!--gazebo_eklavya_simple_drive_plugin /-->
+	<gazebo_eklavya_drive_plugin_diffdrive /><!-- cmd_vel movement -->
 	<gazebo_eklavya_p3d_plugin /> <!-- Ground Truth-->
 	<eklavya_controllers_common /> 
     
