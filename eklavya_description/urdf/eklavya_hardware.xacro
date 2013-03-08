@@ -66,7 +66,7 @@
       <child link="${parent}_caster_support_hinge_${suffix}_link"/>
 
       <axis xyz="0 0 1" />
-      <anchor xyz="0.01 0 0" />
+      <anchor xyz="0 0 0" />
       <limit effort="100" velocity="100" k_velocity="0" />
       <joint_properties damping="0.0" friction="0.0" />
     </joint>
