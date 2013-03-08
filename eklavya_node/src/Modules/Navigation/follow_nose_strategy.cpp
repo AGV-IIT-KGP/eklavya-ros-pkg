@@ -54,7 +54,7 @@ namespace navigation_space {
     Triplet bot_location;
     bot_location.x = 0.5*MAP_MAX;
     bot_location.y = 0.1*MAP_MAX;
-    bot_location.z = 0;
+    bot_location.z = 90;
     return bot_location;
   }
 }
