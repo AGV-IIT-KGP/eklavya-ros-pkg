@@ -35,6 +35,7 @@ void *planner_thread(void *arg) {
     if(iterations > 1000) {
       time_t finish = time(0);
       double fps = (iterations + 0.0) / (finish - start);
+      cout << "[INFO] ITERATIONS: " << iterations << endl;
       cout << "[INFO] FPS: " << fps << endl;
       break;
     }
@@ -44,16 +45,18 @@ void *planner_thread(void *arg) {
     pthread_mutex_unlock(&bot_location_mutex);
     
     my_bot_location.x = 500; my_bot_location.y = 100; my_bot_location.z = 90;
+	
     pthread_mutex_lock(&target_location_mutex);
     my_target_location = target_location; // Target
     pthread_mutex_unlock(&target_location_mutex);
     
     srand(rand() * time(0));
-    double randx = 800; 
-    double randy = 800; 
+    double randx = 500; 
+    double randy = 900; 
     
-    //randx = 100 + rand() % 800; randy = 100 + rand() % 800;
+    //randx = 100 + rand() % 800; randy = 900;
     
+	//printf("haha");
     my_target_location.x = randx; my_target_location.y = randy; my_target_location.z = 90;    
 
     pthread_mutex_lock(&map_mutex);

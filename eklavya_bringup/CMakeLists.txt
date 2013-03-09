@@ -23,12 +23,14 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
 #common commands for building c++ executables and libraries
 #rosbuild_add_library(SerialPortLinuxLib src/serial_lnx.cpp)
-rosbuild_add_boost_directories()
+#rosbuild_add_boost_directories()
 rosbuild_add_executable(diffdrive_robot_controller src/diffdrive_robot_controller.cpp src/serial_lnx.cpp)
 #target_link_libraries (diffdrive_robot_controller SerialPortLinuxLib)
 rosbuild_link_boost(diffdrive_robot_controller thread)
 #target_link_libraries(eklavya_keyboard_teleop boost_thread)
 
+include_directories ("${PROJECT_SOURCE_DIR}/src/VectorNavLib/include")
+rosbuild_add_executable(vn200_gps_ins src/vn200_gps_ins.c)
 
 #rosbuild_add_library(${PROJECT_NAME} src/example.cpp)
 #target_link_libraries(${PROJECT_NAME} another_library)
@@ -36,6 +38,3 @@ rosbuild_link_boost(diffdrive_robot_controller thread)
 #rosbuild_link_boost(${PROJECT_NAME} thread)
 #rosbuild_add_executable(example examples/example.cpp)
 #target_link_libraries(example ${PROJECT_NAME})
-
-
-
