@@ -23,7 +23,7 @@
 	<property name="wheel_iyz_com_cs" value="0.00000000" /> <!-- at center of mass aligned with coordinate system, kg*m^2-->
 	<property name="wheel_izz_com_cs" value="0.04410576" /> <!-- at center of mass aligned with coordinate system, kg*m^2-->
 
-	<property name="base_x_origin_to_wheel_origin" value="0.15" />
+	<property name="base_x_origin_to_wheel_origin" value="-0.18" />
 	<property name="base_y_origin_to_wheel_origin" value="0.225" />
 	<property name="base_z_origin_to_wheel_origin" value="0" />
 	

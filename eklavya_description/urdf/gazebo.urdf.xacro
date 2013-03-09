@@ -122,13 +122,13 @@
      </gazebo>
   </macro>
 
-  <macro name="gazebo_eklavya_drive_plugin">
-	<gazebo>
-    <controller:eklavya_drive_plugin name="differential_drive_controller" plugin="libeklavya_drive_plugin.so">
-      <eklavya_drive_parameters />
-    </controller:eklavya_drive_plugin>
-     </gazebo>
-   </macro>
+	<macro name="gazebo_eklavya_drive_plugin">
+		<gazebo>
+			<controller:eklavya_drive_plugin name="differential_drive_controller" plugin="libeklavya_drive_plugin.so">
+				<eklavya_drive_parameters />
+			</controller:eklavya_drive_plugin>
+		</gazebo>
+	</macro>
 
 	<macro name="gazebo_eklavya_drive_plugin_diffdrive">
         <gazebo>

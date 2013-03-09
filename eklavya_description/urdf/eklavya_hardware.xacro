@@ -35,7 +35,7 @@
  
  <macro name="castor_support" params="suffix parent">
 	<joint type="fixed" name="${parent}_castor_support_${suffix}_joint">
-	  <origin rpy="0 0 0" xyz="${base_x_size/2} 0 0.058"/>
+	  <origin rpy="0 0 0" xyz="${base_x_size/2-0.5} 0 0.058"/>
       <parent link="${parent}"/>
       <child link="${parent}_castor_support_${suffix}_link"/>
     </joint>
@@ -61,12 +61,12 @@
  
  <macro name="caster_support_hinge" params="suffix parent">
 	<joint name="${parent}_caster_support_hinge_${suffix}_joint" type="continuous">
-      <origin rpy="0 0 0" xyz="${base_x_size/2} 0 0.058"/>
+      <origin rpy="0 0 ${M_PI}" xyz="${base_x_size/2-0.5} 0 0.058"/>
       <parent link="${parent}" />
       <child link="${parent}_caster_support_hinge_${suffix}_link"/>
 
       <axis xyz="0 0 1" />
-      <anchor xyz="0.01 0 0" />
+      <anchor xyz="0 0 0" />
       <limit effort="100" velocity="100" k_velocity="0" />
       <joint_properties damping="0.0" friction="0.0" />
     </joint>
@@ -101,7 +101,7 @@
 <macro name="caster_wheel" params="suffix parent">
 	  
 	  <joint name="${parent}_caster_wheel_${suffix}_joint" type="continuous">
-      <origin rpy="0 0 0" xyz="0.066 0 -0.085" />
+      <origin rpy="0 0 0" xyz="${0.066} 0 -0.085" />
       <parent link="${parent}_caster_support_hinge_${suffix}_link" />
       <child link="${parent}_caster_wheel_${suffix}_link" />
 
