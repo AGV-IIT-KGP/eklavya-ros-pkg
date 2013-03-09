@@ -20,7 +20,7 @@ void *lidar_thread(void *arg) {
   
   ros::Subscriber sub = lidar_node.subscribe("scan", 1000, LidarData::update_map);
   
-  while(ros::ok()) {
+  while(1) {
     ros::spinOnce();
   }
 }

@@ -30,11 +30,14 @@ void *diagnostics_thread(void *arg) {
     //pthread_mutex_unlock(&target_location_mutex);
     
     pthread_mutex_lock(&path_mutex);
+    
     vector<Triplet> my_path;
     for(int i = 0; i < path.size(); i++) {
       my_path.push_back(path[i]);
     }
+    
     pthread_mutex_unlock(&path_mutex);
+    
     diagnostics_space::Diagnostics::plotPath(my_path);
   }
 }

@@ -53,10 +53,16 @@ namespace diagnostics_space {
   void diagnostics_space::Diagnostics::plotPath(vector<Triplet> my_path) {
     IplImage *image = cvCreateImage(cvSize(MAP_MAX, MAP_MAX), IPL_DEPTH_8U, 3);
     
-    for(int i = 0; i < my_path.size(); i++) {
+    for(int i = 0; i < (int) my_path.size() - 1; i++) {
       int x = (int) my_path[i].x;
       int y = MAP_MAX - (int) my_path[i].y - 1;
-      cvLine(image, cvPoint(x, y), cvPoint(x, y + 5), CV_RGB(255, 255, 255), 2, CV_AA, 0);
+
+      int x1 = (int) my_path[i + 1].x;
+      int y1 = MAP_MAX - (int) my_path[i + 1].y - 1;
+      
+      srand(i + time(0));
+      
+      cvLine(image, cvPoint(x, y), cvPoint(x1, y1), CV_RGB(rand() % 255, rand() % 255, rand() % 255), 2, CV_AA, 0);
     }
     
     cvNamedWindow("Path", 0);

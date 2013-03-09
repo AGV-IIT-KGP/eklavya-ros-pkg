@@ -6,16 +6,21 @@
 
 #define SIM_SEEDS
 //#define DEBUG
-#define SHOW_PATH
+//#define SHOW_PATH
 
 /**
- * SEEDS: seeds3.txt is valid but gives suboptimal results
- *        seeds1.txt is for validation purposes ONLY
- *        seeds.txt contains the full set of paths
+ * SEEDS: seeds3.txt is valid but gives suboptimal results. Good Path. (6 - 8)
+ *        seeds1.txt is for validation purposes ONLY. Grid A* - like path. Might be useful with DT. (101)
+ *        seeds.txt contains the full set of paths. Almost always 
+
+ stuck in inf loop.
+ *        seeds4.txt contains 5 seeds with arc-length ~75. Works fine. (4)
+ *        seeds5.txt contains 5 seeds with arc-lengths varying from 100 to 50. (2)
+ *        seeds2.txt contains 5 seeds 75 - 100 - 50 (16-20)
  */
 
 #ifdef SIM_SEEDS
-  #define SEEDS_FILE "../src/Modules/Planner/seeds4.txt"
+  #define SEEDS_FILE "../src/Modules/Planner/seeds2.txt"
 #else
   #define SEEDS_FILE "../src/Modules/Planner/seeds1.txt"
 #endif
@@ -72,7 +77,26 @@ namespace planner_space {
   
   struct StateCompare : public std::binary_function<state, state, bool> {
     bool operator() (state const& state_1, state const& state_2) const {
-      return state_1.g + state_1.h > state_2.g + state_2.h;
+      double f1 = state_1.g + state_1.h;
+      double f2 = state_2.g + state_2.h;
+      
+      double diff = sqrt((f1 - f2) * (f1 - f2));
+      
+      //if(diff < 1) {
+        //return state_1.g < state_2.g;
+      //} else {
+        //return f1 > f2;
+      //}
+      
+      //if(f1 > f2) {
+        //return true;
+      //} else if(f1 < f2) {
+        //return false;
+      //} else {
+        //return state_1.g > state_2.g;
+      //}
+      
+      return f1 > f2;
     }
   };
   
@@ -119,8 +143,8 @@ namespace planner_space {
   bool isEqual(state a, state b) {
     double error = sqrt((50 ^ 2) + (50 ^ 2));
     return (sqrt((a.pose.x - b.pose.x) * (a.pose.x - b.pose.x) + 
-                (a.pose.y - b.pose.y) * (a.pose.y - b.pose.y)) < error) && 
-           ((a.pose.z - b.pose.z) * (a.pose.z - b.pose.z) < 25);
+                 (a.pose.y - b.pose.y) * (a.pose.y - b.pose.y)) < error);
+                // && ((a.pose.z - b.pose.z) * (a.pose.z - b.pose.z) < 25);
   }
   
   void plotPoint(IplImage *map_img, Triplet pose) {
@@ -137,9 +161,6 @@ namespace planner_space {
     
     srand(time(0));
     cvLine(map_img, cvPoint(ax, ay), cvPoint(bx, by), CV_RGB(rand() % 255, rand() % 255, rand() % 255), 2, CV_AA, 0);
-    
-    cvShowImage("Map", map_img);
-    cvWaitKey(1);
   }
   
   void reconstructPath(map<Triplet, Triplet, PoseCompare> came_from, IplImage *map_img, state current) {
@@ -156,6 +177,11 @@ namespace planner_space {
       path.insert(path.begin(), current_pose);
       current_pose = came_from[current_pose];
     }
+    
+    #ifdef SHOW_PATH
+      cvShowImage("Map", map_img);
+      cvWaitKey(1);
+    #endif
     
     pthread_mutex_unlock(&path_mutex);
   }
@@ -174,6 +200,8 @@ namespace planner_space {
       neighbour.pose.y = (int) (current.pose.y + 
                                 -sx * cos(current.pose.z * (CV_PI / 180)) + 
                                 sy * sin(current.pose.z * (CV_PI / 180)));
+
+
       neighbour.pose.z = (int) (sz - (90 - current.pose.z));
       neighbour.g = seeds[i].cost;
       neighbour.h = 0;
@@ -194,12 +222,48 @@ namespace planner_space {
          << " }" << endl;
   }
   
-  bool isWalkable(Triplet pose) {
-    return local_map[pose.x][pose.y] == 0;
+  bool isWalkable(state parent, state s) {
+    for (int i = 0; i < seeds[s.seed_id].seed_points.size(); i++) {
+      int x, y;
+      double alpha = parent.pose.z;
+
+      int tx, ty;
+      tx = seeds[s.seed_id].seed_points[i].x;
+      ty = seeds[s.seed_id].seed_points[i].y;
+
+      x = (int)(tx * sin(alpha * (CV_PI / 180)) + ty * cos(alpha * (CV_PI / 180)) + parent.pose.x);
+      y = (int)(-tx * cos(alpha * (CV_PI / 180)) + ty * sin(alpha * (CV_PI / 180)) + parent.pose.y);
+
+      if (((0 <= x) && (x < MAP_MAX)) && ((0 <= y) && (y < MAP_MAX))) {
+        return local_map[x][y] == 0;
+      } else {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   void closePlanner(IplImage *map_img) {
-    cvReleaseImage(&map_img);
+    #if defined(DEBUG) || defined(SHOW_PATH)
+      cvReleaseImage(&map_img);
+    #endif
+  }
+  
+  void addObstacle(IplImage *map_img, int x, int y, int r) {
+    for(int i = -r; i < r; i++) {
+      for(int j = -r; j < r; j++) {
+        local_map[x + i][y + j] = 255;  
+      }
+    }
+    
+    #if defined(DEBUG) || defined(SHOW_PATH)
+      cvCircle(map_img, cvPoint(x, MAP_MAX - y - 1), r, CV_RGB(255, 255, 0), -1, CV_AA, 0);
+    #endif
+  }
+  
+  void loadMap() {
+    
   }
   
   /// ------------------------------------------------------------- ///
@@ -207,9 +271,11 @@ namespace planner_space {
   void Planner::loadPlanner() {
     loadSeeds();
     
-    #ifdef SHOW_PATH
+    #if defined(DEBUG) || defined(SHOW_PATH)
       cvNamedWindow("Map", 0);
     #endif
+	
+    loadMap();
   }
 
   void Planner::findPath(Triplet bot, Triplet target) {
@@ -218,13 +284,15 @@ namespace planner_space {
     start.g = 0; start.h = distance(bot, target); 
     goal.pose = target; goal.g = 0; goal.h = 0; goal.seed_id = 0;
     
-    //cout << "TARGET: " << print(goal);
+    //cout << "TARGET: "; print(goal);
     
     IplImage *map_img;
     
     #if defined(DEBUG) || defined(SHOW_PATH)
       map_img = cvCreateImage(cvSize(MAP_MAX, MAP_MAX), IPL_DEPTH_8U, 3);
     #endif
+    
+    addObstacle(map_img, 500, 500, 100);  
     
     vector<state> open_list;
     open_list.insert(open_list.begin(), start);
@@ -236,6 +304,18 @@ namespace planner_space {
     map<Triplet, Triplet, PoseCompare> came_from;
     
     while(!open_list.empty()) {
+      
+      #if defined(DEBUG) || defined(SHOW_PATH)
+        cvShowImage("Map", map_img);
+      
+        #ifdef DEBUG
+          cvWaitKey(0);
+        #else
+          cvWaitKey(1);
+        #endif
+        
+      #endif
+      
       state current = open_list.front();
       
       #ifdef DEBUG
@@ -282,13 +362,14 @@ namespace planner_space {
           continue;
         }
         
-        if(!isWalkable(neighbor.pose)) {
+        if(!isWalkable(current, neighbor)) {
           continue;
         }
         
         double tentative_g_score = neighbor.g + current.g;
         double admissible = distance(neighbor.pose, goal.pose);
-        double consistent = max(admissible, current.h - neighbor.g);
+        //double consistent = max(admissible, current.h - neighbor.g);
+        double consistent = admissible;
         
         //cout << "[INFO] TENTATIVE: " << tentative_g_score << endl;
         //if((open_map.find(neighbor.pose) != open_map.end()) && 
@@ -297,13 +378,13 @@ namespace planner_space {
         //}
         
         if(!((open_map.find(neighbor.pose) != open_map.end()) && 
-             (open_map[neighbor.pose].membership == OPEN)) || 
-             (tentative_g_score - open_map[neighbor.pose].cost < 100)) {
+             (open_map[neighbor.pose].membership == OPEN))/* || (
+             tentative_g_score < open_map[neighbor.pose].cost)*/) {
           came_from[neighbor.pose] = current.pose;
           neighbor.g = tentative_g_score;
           neighbor.h = consistent;
           
-          //cout << "====> NEIGHBOR: ";  print(neighbor); getchar();
+          //cout << "====> NEIGHBOR: ";  print(neighbor);
       
           if(!((open_map.find(neighbor.pose) != open_map.end()) && 
                (open_map[neighbor.pose].membership == OPEN))) {
