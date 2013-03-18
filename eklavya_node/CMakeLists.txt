@@ -99,7 +99,7 @@ endif ()
 if (USE_PLANNER)
 include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/Planner/")
 #rosbuild_add_library(PlannerLib src/Modules/Planner/Planner.cpp src/Modules/Planner/planner_thread.cpp)
-rosbuild_add_library(PlannerLib src/Modules/Planner/planner.cpp src/Modules/Planner/planner_thread.cpp)
+rosbuild_add_library(PlannerLib src/Modules/Planner/planner.cpp src/Modules/Planner/planner_thread.cpp src/Utils/SerialPortLinux/serial_lnx.cpp)
 endif ()
 
 if (USE_DIAGNOSTICS)
