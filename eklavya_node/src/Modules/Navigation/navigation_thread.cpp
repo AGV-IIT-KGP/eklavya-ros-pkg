@@ -14,6 +14,7 @@ void *navigation_thread(void *arg) {
     iterations++;
     switch(strategy) {
       case FollowNose:
+      {
         pthread_mutex_lock(&pose_mutex);        
         heading = -pose.orientation.z; 
         pthread_mutex_unlock(&pose_mutex);
@@ -35,18 +36,19 @@ void *navigation_thread(void *arg) {
         pthread_mutex_unlock(&bot_location_mutex);
         
         break;
-        
+      }  
       case TrackWayPoint:
+      {
         pthread_mutex_lock(&pose_mutex);        
         heading = pose.orientation.z; // Yaw
+        my_target_location = pose.position;
         pthread_mutex_unlock(&pose_mutex);
         
-        pthread_mutex_lock(&lat_long_mutex);        
-        latitude = lat_long.latitude; 
-        longitude = lat_long.longitude; 
-        pthread_mutex_unlock(&lat_long_mutex);
-
-        my_target_location = navigation_space::TrackWayPointStrategy::getTargetLocation(latitude, longitude, heading);
+        my_target_location = navigation_space::TrackWayPointStrategy::getTargetLocation(
+                                                              my_target_location.x, 
+                                                              my_target_location.y, 
+                                                              heading);
+        
         pthread_mutex_lock(&target_location_mutex);
         target_location = my_target_location; // Target
         cout << "[NAV] [INFO] Target Location: " << target_location.x << " " << target_location.y << endl;
@@ -58,6 +60,7 @@ void *navigation_thread(void *arg) {
         pthread_mutex_unlock(&bot_location_mutex);
         
         break;
+      }
     }
 
     usleep(10);
