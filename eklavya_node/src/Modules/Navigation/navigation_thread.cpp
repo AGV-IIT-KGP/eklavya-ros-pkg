@@ -21,7 +21,7 @@ void *navigation_thread(void *arg) {
         
         navigation_space::FollowNoseStrategy::calibrateReferenceHeading(heading, iterations);
         
-        if(iterations < 50) {
+        if(iterations < 5) {
           break;
         }
         
