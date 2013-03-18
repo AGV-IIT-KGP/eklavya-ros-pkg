@@ -18,6 +18,7 @@ namespace planner_space {
   public:
     static void loadPlanner();
     static void findPath(Triplet bot, Triplet target);
+    static void finBot();
   };
 }
 

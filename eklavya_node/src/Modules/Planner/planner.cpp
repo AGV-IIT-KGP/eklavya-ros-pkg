@@ -2,11 +2,13 @@
 #include "cv.h"
 #include "highgui.h"
 #include "../../eklavya2.h"
+#include "../../Utils/SerialPortLinux/serial_lnx.h"
+#include "../devices.h"
 #include "planner.h"
 
 #define SIM_SEEDS
 //#define DEBUG
-//#define SHOW_PATH
+#define SHOW_PATH
 
 /**
  * SEEDS: seeds3.txt is valid but gives suboptimal results. Good Path. (6 - 8)
@@ -27,6 +29,7 @@
 #define OPEN 1
 #define CLOSED 2
 #define UNASSIGNED 3
+#define VMAX 100
 
 using namespace std;
 
@@ -82,19 +85,19 @@ namespace planner_space {
       
       double diff = sqrt((f1 - f2) * (f1 - f2));
       
-      //if(diff < 1) {
-        //return state_1.g < state_2.g;
-      //} else {
-        //return f1 > f2;
-      //}
+      /*if(diff < 1) {
+        return state_1.g < state_2.g;
+      } else {
+        return f1 > f2;
+      }
       
-      //if(f1 > f2) {
-        //return true;
-      //} else if(f1 < f2) {
-        //return false;
-      //} else {
-        //return state_1.g > state_2.g;
-      //}
+      if(f1 > f2) {
+        return true;
+      } else if(f1 < f2) {
+        return false;
+      } else {
+        return state_1.g > state_2.g;
+      }*/
       
       return f1 > f2;
     }
@@ -102,6 +105,7 @@ namespace planner_space {
   
   Triplet bot, target;
   vector<seed> seeds;
+  Tserial *p;
   
   /// ------------------------------------------------------------- ///
   
@@ -115,8 +119,11 @@ namespace planner_space {
       seed s;
       #ifdef SIM_SEEDS
         fscanf(fp, "%lf %lf %lf %lf %lf\n", &s.k, &x, &y, &z, &s.cost);
+        s.vl = VMAX * s.k / (1 + s.k);
+        s.vr = VMAX / (1 + s.k);
       #else
         fscanf(fp, "%lf %lf %lf %lf %lf %lf\n", &s.vl, &s.vr, &x, &y, &z, &s.cost);
+        s.k = s.vl / s.vr;
       #endif
       
       s.dest.x = (int) x;
@@ -163,20 +170,75 @@ namespace planner_space {
     cvLine(map_img, cvPoint(ax, ay), cvPoint(bx, by), CV_RGB(rand() % 255, rand() % 255, rand() % 255), 2, CV_AA, 0);
   }
   
-  void reconstructPath(map<Triplet, Triplet, PoseCompare> came_from, IplImage *map_img, state current) {
+  void initBot() {
+    #ifndef SIMCTL
+      p = new Tserial();
+      p->connect(BOT_COM_PORT, BOT_BAUD_RATE, spNONE);
+      usleep(100);
+      
+      p->sendChar('w');
+      usleep(100);
+    #endif
+  }
+  
+  void sendCommand(seed s) {
+    #ifndef SIMCTL
+      int left_vel = 0;
+      int right_vel = 0;
+      int left_velocity = s.vl;
+      int right_velocity = s.vr;
+      
+      if((left_velocity == 0) && (right_velocity == 0)) {
+        p->sendChar(' ');
+        usleep(100);
+        return;
+      }
+      
+      if (left_velocity > right_velocity) {
+        left_vel = 28;
+        right_vel = 20;
+      } else if (left_velocity < right_velocity) {
+        left_vel = 20;
+        right_vel = 28;
+      } else if ((left_velocity != 0) || (right_velocity != 0)) {
+        left_vel = 20;
+        right_vel = 20;
+      }
+      
+      right_vel += 4;
+      
+      printf("Velocity: (%d, %d)\n", left_vel, right_vel);
+    
+      p->sendChar('w');
+      usleep(100);
+
+      p->sendChar('0' + left_vel / 10);
+      usleep(100);
+      p->sendChar('0' + left_vel % 10);
+      usleep(100);
+      p->sendChar('0' + right_vel / 10);
+      usleep(100);
+      p->sendChar('0' + right_vel % 10);
+      usleep(100);
+    #endif
+  }
+  
+  void reconstructPath(map<Triplet, state, PoseCompare> came_from, IplImage *map_img, state current) {
     pthread_mutex_lock(&path_mutex);
     
     path.clear();
     
-    Triplet current_pose = current.pose;
-    while (came_from.find(current_pose) != came_from.end()) {
+    state s = current;
+    while (came_from.find(s.pose) != came_from.end()) {
       #ifdef SHOW_PATH
-        plotPoint(map_img, current_pose);
+        plotPoint(map_img, s.pose);
       #endif
       
-      path.insert(path.begin(), current_pose);
-      current_pose = came_from[current_pose];
+      path.insert(path.begin(), s.pose);
+      s = came_from[s.pose];
     }
+    
+    sendCommand(seeds[s.seed_id]);
     
     #ifdef SHOW_PATH
       cvShowImage("Map", map_img);
@@ -276,6 +338,8 @@ namespace planner_space {
     #endif
 	
     loadMap();
+    
+    initBot();
   }
 
   void Planner::findPath(Triplet bot, Triplet target) {
@@ -292,7 +356,7 @@ namespace planner_space {
       map_img = cvCreateImage(cvSize(MAP_MAX, MAP_MAX), IPL_DEPTH_8U, 3);
     #endif
     
-    addObstacle(map_img, 500, 500, 100);  
+    //addObstacle(map_img, 500, 500, 100);  
     
     vector<state> open_list;
     open_list.insert(open_list.begin(), start);
@@ -301,7 +365,7 @@ namespace planner_space {
     open_map[start.pose].membership = OPEN;
     open_map[start.pose].cost = start.g;
     
-    map<Triplet, Triplet, PoseCompare> came_from;
+    map<Triplet, state, PoseCompare> came_from;
     
     while(!open_list.empty()) {
       
@@ -356,7 +420,7 @@ namespace planner_space {
         #ifdef DEBUG
           plotPoint(map_img, neighbor.pose);
         #endif
-        
+
         if(!(((neighbor.pose.x >= 0) && (neighbor.pose.x < MAP_MAX)) &&
              ((neighbor.pose.y >= 0) && (neighbor.pose.y < MAP_MAX)))) {
           continue;
@@ -380,7 +444,7 @@ namespace planner_space {
         if(!((open_map.find(neighbor.pose) != open_map.end()) && 
              (open_map[neighbor.pose].membership == OPEN))/* || (
              tentative_g_score < open_map[neighbor.pose].cost)*/) {
-          came_from[neighbor.pose] = current.pose;
+          came_from[neighbor.pose] = current;
           neighbor.g = tentative_g_score;
           neighbor.h = consistent;
           
@@ -400,4 +464,20 @@ namespace planner_space {
     closePlanner(map_img);
     cout << "[ERROR] NO PATH FOUND" << endl;
   }
+
+  void Planner::finBot() {
+    #ifndef SIMCTL
+      p = new Tserial();
+      p->connect(BOT_COM_PORT, BOT_BAUD_RATE, spNONE);
+      usleep(100);
+      
+      p->sendChar(' ');
+      usleep(100);
+
+      p->disconnect();
+      usleep(100);
+    #endif
+  }
+  
+  
 }
