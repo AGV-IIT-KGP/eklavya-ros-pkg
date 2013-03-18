@@ -16,9 +16,12 @@ enum Strategies {
 typedef struct Triplet {
   int x, y, z;
 } Triplet;
+typedef struct TripletFP {
+  double x, y, z;
+} TripletFP;
 typedef struct Pose {
   Triplet position;
-  Triplet orientation; // Roll - Pitch - Yaw
+  TripletFP orientation; // Roll - Pitch - Yaw
 } Pose;
 typedef struct LatLong {
   double latitude;

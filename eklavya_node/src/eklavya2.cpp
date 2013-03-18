@@ -15,7 +15,7 @@
 #include "ros/ros.h"
 #include "eklavya2.h"
 
-//#define DIAG
+#define DIAG
 
 using namespace cv;
 
@@ -91,9 +91,9 @@ void startThreads() {
   
   switch(strategy) {
     case FollowNose: // Follow a straight line while avoiding obstacles
-      //startThread(&imu_id, &attr, &imu_thread);
+      startThread(&imu_id, &attr, &imu_thread);
       //startThread(&lidar_id, &attr, &lidar_thread);
-      //startThread(&navigation_id, &attr, &navigation_thread);
+      startThread(&navigation_id, &attr, &navigation_thread);
       startThread(&planner_id, &attr, &planner_thread);
       break;
       
@@ -102,7 +102,7 @@ void startThreads() {
       startThread(&gps_id, &attr, &gps_thread);
       //startThread(&lidar_id, &attr, &lidar_thread);
       startThread(&navigation_id, &attr, &navigation_thread);
-      //startThread(&planner_id, &attr, &planner_thread);
+      startThread(&planner_id, &attr, &planner_thread);
       break;
       
     case HectorSLAM:

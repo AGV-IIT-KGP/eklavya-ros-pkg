@@ -5,10 +5,10 @@
 namespace navigation_space {
   double reference_heading;
 	void navigation_space::FollowNoseStrategy::calibrateReferenceHeading(double heading, int iterations) {
-    if (iterations < 50) {
+    if (iterations < 5) {
       reference_heading = heading;
       usleep(200 * 1000);
-    } else if (iterations == 50){
+    } else if (iterations == 5){
       printf("Ref Heading: %lf\n", reference_heading);
     }
   }

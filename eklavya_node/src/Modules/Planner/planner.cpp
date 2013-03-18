@@ -8,9 +8,10 @@
 
 #define ROC_PID 1
 
+#define SIMCTL
 #define SIM_SEEDS
 //#define DEBUG
-#define SHOW_PATH
+//#define SHOW_PATH
 
 /**
  * SEEDS: seeds3.txt is valid but gives suboptimal results. Good Path. (6 - 8)
@@ -122,7 +123,7 @@ namespace planner_space {
 	  double myYaw = 0.5, previousYaw = 1, Kp = 5;
     int left_vel = 0, right_vel = 0;
 	  
-	  while(1) { 
+	  while(0) { 
       pthread_mutex_lock(&controllerMutex);
       myTargetCurvature = targetCurvature;
       pthread_mutex_unlock(&controllerMutex);
@@ -135,21 +136,23 @@ namespace planner_space {
       left_vel = 40 + Kp*(myTargetCurvature - (myYaw - previousYaw)/0.5);
       right_vel = 40 - Kp*(myTargetCurvature - (myYaw - previousYaw)/0.5);
       
-      p->sendChar('w');
-      usleep(100);
+      printf("[INFO] [Controller] %lf , %lf , %d , %d\n", myTargetCurvature, myYaw, left_vel, right_vel);
+      
+      #ifndef SIMCTL
+        p->sendChar('w');
+        usleep(100);
 
-      p->sendChar('0' + left_vel / 10);
-      usleep(100);
-      p->sendChar('0' + left_vel % 10);
-      usleep(100);
-      p->sendChar('0' + right_vel / 10);
-      usleep(100);
-      p->sendChar('0' + right_vel % 10);
-      usleep(100);
+        p->sendChar('0' + left_vel / 10);
+        usleep(100);
+        p->sendChar('0' + left_vel % 10);
+        usleep(100);
+        p->sendChar('0' + right_vel / 10);
+        usleep(100);
+        p->sendChar('0' + right_vel % 10);
+        usleep(100);
+      #endif
       
-      printf("Controller : %lf , %lf\n", myTargetCurvature, myYaw);
-      
-      usleep(1000000);
+      usleep(10000);
 	  }
   }
   
@@ -226,11 +229,10 @@ namespace planner_space {
 	}
 
   void initBot() {
-	  
-	pthread_attr_init(&attr);
-	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
-	startThread(&controller_id, &attr, &controllerThread);
-	
+    pthread_attr_init(&attr);
+    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+    startThread(&controller_id, &attr, &controllerThread);
+    
     #ifndef SIMCTL
       p = new Tserial();
       p->connect(BOT_COM_PORT, BOT_BAUD_RATE, spNONE);
