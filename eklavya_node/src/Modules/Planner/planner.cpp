@@ -119,21 +119,37 @@ namespace planner_space {
 	  /*printf("Controller : hello\n");
 	  usleep(1000000);*/
 	  double myTargetCurvature;
-	  double myYaw = 0.5, previousYaw = 1;
+	  double myYaw = 0.5, previousYaw = 1, Kp = 5;
+    int left_vel = 0, right_vel = 0;
 	  
 	  while(1) { 
-		pthread_mutex_lock(&controllerMutex);
-		myTargetCurvature = targetCurvature;
-		pthread_mutex_unlock(&controllerMutex);
-		
-		previousYaw = myYaw;
-		pthread_mutex_lock(&pose_mutex);
-		myYaw = pose.orientation.z;
-		pthread_mutex_unlock(&pose_mutex);
-		
-		printf("Controller : %lf , %lf\n", myTargetCurvature, myYaw);
-		
-		usleep(1000000);		
+      pthread_mutex_lock(&controllerMutex);
+      myTargetCurvature = targetCurvature;
+      pthread_mutex_unlock(&controllerMutex);
+      
+      previousYaw = myYaw;
+      pthread_mutex_lock(&pose_mutex);
+      myYaw = pose.orientation.z;
+      pthread_mutex_unlock(&pose_mutex);
+      
+      left_vel = 40 + Kp*(myTargetCurvature - (myYaw - previousYaw)/0.5);
+      right_vel = 40 - Kp*(myTargetCurvature - (myYaw - previousYaw)/0.5);
+      
+      p->sendChar('w');
+      usleep(100);
+
+      p->sendChar('0' + left_vel / 10);
+      usleep(100);
+      p->sendChar('0' + left_vel % 10);
+      usleep(100);
+      p->sendChar('0' + right_vel / 10);
+      usleep(100);
+      p->sendChar('0' + right_vel % 10);
+      usleep(100);
+      
+      printf("Controller : %lf , %lf\n", myTargetCurvature, myYaw);
+      
+      usleep(1000000);
 	  }
   }
   
