@@ -38,7 +38,7 @@ namespace IMUspace
   #define UART_BAUD_RATE  57600
 
   /* Change to the serial port you want to use /dev/ttyUSB0, /dev/ttyS0, etc. */
-  #define UART_COMM_PORT IMU_COM_PORT
+  #define UART_COMM_PORT /dev/ttyUSB1
 
   FILE *f1;
   volatile double yawIMU=0;
@@ -138,6 +138,7 @@ namespace IMUspace
     }
 */
     *yawIMUc = convertDataToVal2(data_in);
+    printf("IMU : %lf", *yawIMUc);
   }
 
   void IMUspace::IMU::closeIMU()
@@ -161,6 +162,8 @@ namespace IMUspace
     pose.orientation.x = (double) roll * 180 / 3.14;
     pose.orientation.y = (double) pitch * 180 / 3.14;
     pose.orientation.z = (double) yaw * 180 / 3.14; // Yaw
+    
+    printf("IMU : %lf", yaw);
     
     pthread_mutex_unlock(&pose_mutex);
   }
