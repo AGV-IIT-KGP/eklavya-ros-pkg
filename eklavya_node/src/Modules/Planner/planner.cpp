@@ -6,6 +6,8 @@
 #include "../devices.h"
 #include "planner.h"
 
+#define ROC_PID 1
+
 #define SIM_SEEDS
 //#define DEBUG
 #define SHOW_PATH
@@ -107,6 +109,34 @@ namespace planner_space {
   vector<seed> seeds;
   Tserial *p;
   
+  pthread_mutex_t controllerMutex;
+  pthread_attr_t attr;
+  pthread_t controller_id;
+  
+  volatile double targetCurvature = 1;
+  
+  void *controllerThread(void *arg) {
+	  /*printf("Controller : hello\n");
+	  usleep(1000000);*/
+	  double myTargetCurvature;
+	  double myYaw = 0.5, previousYaw = 1;
+	  
+	  while(1) { 
+		pthread_mutex_lock(&controllerMutex);
+		myTargetCurvature = targetCurvature;
+		pthread_mutex_unlock(&controllerMutex);
+		
+		previousYaw = myYaw;
+		pthread_mutex_lock(&pose_mutex);
+		myYaw = pose.orientation.z;
+		pthread_mutex_unlock(&pose_mutex);
+		
+		printf("Controller : %lf , %lf\n", myTargetCurvature, myYaw);
+		
+		usleep(1000000);		
+	  }
+  }
+  
   /// ------------------------------------------------------------- ///
   
   void loadSeeds() {
@@ -170,7 +200,21 @@ namespace planner_space {
     cvLine(map_img, cvPoint(ax, ay), cvPoint(bx, by), CV_RGB(rand() % 255, rand() % 255, rand() % 255), 2, CV_AA, 0);
   }
   
+  void startThread(pthread_t *thread_id, pthread_attr_t *thread_attr, void *(*thread_name) (void *)) {
+	  if (pthread_create(thread_id, thread_attr, thread_name, NULL)) {
+      fprintf(stderr, "Unable to create thread\n");
+      pthread_attr_destroy(thread_attr);
+      exit(1);
+	  }
+	  sleep(1);
+	}
+
   void initBot() {
+	  
+	pthread_attr_init(&attr);
+	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+	startThread(&controller_id, &attr, &controllerThread);
+	
     #ifndef SIMCTL
       p = new Tserial();
       p->connect(BOT_COM_PORT, BOT_BAUD_RATE, spNONE);
@@ -194,32 +238,39 @@ namespace planner_space {
         return;
       }
       
-      if (left_velocity > right_velocity) {
-        left_vel = 28;
-        right_vel = 20;
-      } else if (left_velocity < right_velocity) {
-        left_vel = 20;
-        right_vel = 28;
-      } else if ((left_velocity != 0) || (right_velocity != 0)) {
-        left_vel = 20;
-        right_vel = 20;
-      }
-      
-      right_vel += 4;
-      
-      printf("Velocity: (%d, %d)\n", left_vel, right_vel);
-    
-      p->sendChar('w');
-      usleep(100);
+      if (ROC_PID == 0) {
+        if (left_velocity > right_velocity) {
+          left_vel = 28;
+          right_vel = 20;
+        } else if (left_velocity < right_velocity) {
+          left_vel = 20;
+          right_vel = 28;
+        } else if ((left_velocity != 0) || (right_velocity != 0)) {
+          left_vel = 20;
+          right_vel = 20;
+        }
+        
+        right_vel += 4;
+          
+        printf("Velocity: (%d, %d)\n", left_vel, right_vel);
+        
+        p->sendChar('w');
+        usleep(100);
 
-      p->sendChar('0' + left_vel / 10);
-      usleep(100);
-      p->sendChar('0' + left_vel % 10);
-      usleep(100);
-      p->sendChar('0' + right_vel / 10);
-      usleep(100);
-      p->sendChar('0' + right_vel % 10);
-      usleep(100);
+        p->sendChar('0' + left_vel / 10);
+        usleep(100);
+        p->sendChar('0' + left_vel % 10);
+        usleep(100);
+        p->sendChar('0' + right_vel / 10);
+        usleep(100);
+        p->sendChar('0' + right_vel % 10);
+        usleep(100);
+      } else {
+        pthread_mutex_lock(&controllerMutex);
+        targetCurvature = 5 * (s.k - 1)/(s.k + 1);
+        printf("Updated\n");
+        pthread_mutex_unlock(&controllerMutex);
+      }
     #endif
   }
   
