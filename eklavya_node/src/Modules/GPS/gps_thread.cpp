@@ -14,7 +14,7 @@ void *gps_thread(void *arg) {
   ros::init(argc, argv, "gps_thread");
   ros::NodeHandle gps_node;
 
-  ros::Subscriber sub = gps_node.subscribe("fix", 1000, gps_space::GPS::updateLatLong);
+  ros::Subscriber sub = gps_node.subscribe("/pose", 1000, gps_space::GPS::updateLatLong);
   
   while(ros::ok()) {
     ros::spinOnce();

@@ -145,6 +145,14 @@ namespace IMUspace
    // p->disconnect();
   }
   
+  void IMUspace::IMU::update_yaw(const std_msgs::Float32& _yaw) {
+    pthread_mutex_lock(&pose_mutex);
+    
+    pose.orientation.z = _yaw.data;
+    
+    pthread_mutex_unlock(&pose_mutex);
+  }
+  
   void IMUspace::IMU::update_pose(const sensor_msgs::Imu& imu_msg) {
     tf::StampedTransform transform_;
     tf::Quaternion tmp_;
