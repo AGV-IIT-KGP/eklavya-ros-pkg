@@ -112,6 +112,26 @@ include_directories ("${PROJECT_SOURCE_DIR}/src/Utils/SerialPortLinux/")
 rosbuild_add_library(SerialPortLinuxLib src/Utils/SerialPortLinux/serial_lnx.cpp)
 endif ()
 
+##cvBlob
+include_directories ("${PROJECT_SOURCE_DIR}/src/ExternalLib/cvBlob/")
+set(cvBlob_CVBLOB  ${PROJECT_SOURCE_DIR}/src/ExternalLib/cvBlob/cvblob.cpp
+                   ${PROJECT_SOURCE_DIR}/src/ExternalLib/cvBlob/cvlabel.cpp
+		   ${PROJECT_SOURCE_DIR}/src/ExternalLib/cvBlob/cvaux.cpp
+		   ${PROJECT_SOURCE_DIR}/src/ExternalLib/cvBlob/cvcontour.cpp
+		   ${PROJECT_SOURCE_DIR}/src/ExternalLib/cvBlob/cvtrack.cpp
+		   ${PROJECT_SOURCE_DIR}/src/ExternalLib/cvBlob/cvcolor.cpp
+)
+
+set_source_files_properties(${cvBlob_SRC}
+                            PROPERTIES
+                            COMPILE_FLAGS "-O3"
+)
+rosbuild_add_library(cvblob SHARED ${cvBlob_CVBLOB})
+target_link_libraries(cvblob ${OpenCV_LIBS})
+##cvBlob end
+
+
+
 
 rosbuild_add_executable(${PROJECT_NAME} src/eklavya2.cpp)
 target_link_libraries (${PROJECT_NAME} IMULib LidarLib GPSLib EncoderLib EKFLib SLAMLib PlannerLib NavigationLib DiagnosticsLib SerialPortLinuxLib)
@@ -119,4 +139,4 @@ target_link_libraries (${PROJECT_NAME} IMULib LidarLib GPSLib EncoderLib EKFLib 
 #target_link_libraries (${PROJECT_NAME}  ${EXTRA_LIBS})
 target_link_libraries( ${PROJECT_NAME} ${OpenCV_LIBS} )
 target_link_libraries( ${PROJECT_NAME} ${MRPT_LIBS} )
-target_link_libraries( ${PROJECT_NAME} "/usr/local/lib/libcvblob.so")
+target_link_libraries( ${PROJECT_NAME} cvblob)
