@@ -13,15 +13,14 @@
 using namespace std;
 
 namespace gps_space {
-  void GPS::updateLatLong(const sensor_msgs::NavSatFix& fix) {
-    pthread_mutex_lock(&lat_long_mutex);
+  void GPS::updateLatLong(const geometry_msgs::Pose::ConstPtr _pose) {
+    pthread_mutex_lock(&pose_mutex);
     
-    lat_long.latitude = fix.latitude;
-    lat_long.longitude = fix.longitude;
+    pose.position.x = _pose->position.x;
+    pose.position.y = _pose->position.y;
     
-    //cout << "[INFO] [GPS] : " << lat_long.latitude << " " << lat_long.longitude << endl; 
-    printf("[INFO] [GPS] : %lf %lf\n", lat_long.latitude, lat_long.longitude);
+    printf("[INFO] [POSE] : %lf %lf\n", pose.position.x, pose.position.y);
     
-    pthread_mutex_unlock(&lat_long_mutex);
+    pthread_mutex_unlock(&pose_mutex);
   }
 }

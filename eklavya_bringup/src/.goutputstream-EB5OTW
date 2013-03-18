@@ -1,0 +1,8 @@
+#include <iostream>
+
+using namespace std;
+
+int main( int argc, char** argv) {
+  ros::init(argc, argv, "vn200_gps_ins");
+  ros::NodeHandle rosnode_robot_controller("vn200_gps_ins");
+}

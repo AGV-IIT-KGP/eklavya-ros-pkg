@@ -63,6 +63,7 @@ namespace navigation_space {
     double x1 = ((double)refE - (double)longitude) * ((double)Long_Dist); 
     
     heading = -(3.142 / 180.0) * heading;
+    
     double x2 = x1 * cos(heading) - y1 * sin(heading);
     double y2 = y1 * cos(heading) + x1 * sin(heading);
 

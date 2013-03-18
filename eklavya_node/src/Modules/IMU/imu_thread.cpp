@@ -10,7 +10,7 @@ void *imu_thread(void *arg) {
   ros::init(argc, argv, "imu_thread");
   ros::NodeHandle imu_node;
   
-  ros::Subscriber sub = imu_node.subscribe("/imu", 1000, IMUspace::IMU::update_pose);
+  ros::Subscriber sub = imu_node.subscribe("/yaw", 1000, IMUspace::IMU::update_yaw);
   
   double heading = 0;
   while(ros::ok()) {
