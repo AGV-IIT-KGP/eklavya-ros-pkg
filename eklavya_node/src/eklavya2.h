@@ -10,7 +10,8 @@
 enum Strategies {
   FollowNose = 0,
   TrackWayPoint,
-  HectorSLAM
+  HectorSLAM,
+  LaserTestOnly
 };
 
 typedef struct Triplet {
@@ -33,7 +34,7 @@ typedef struct Odom {
 extern Pose pose; // Shared by IMU, EKF
 extern LatLong lat_long; // Shared by GPS, EKF
 extern Odom odom; // Shared by Encoder, EKF
-extern char global_map[MAP_MAX][MAP_MAX]; // Shared by Lidar, Planner
+extern unsigned char global_map[MAP_MAX][MAP_MAX]; // Shared by Lidar, Planner
 extern Triplet bot_location; // Shared by EKF, Planner
 extern Triplet target_location; // Shared by EKF, Planner
 extern vector<Triplet> path; 

@@ -15,7 +15,7 @@
 #include "ros/ros.h"
 #include "eklavya2.h"
 
-//#define DIAG
+#define DIAG
 
 using namespace cv;
 
@@ -23,7 +23,7 @@ using namespace cv;
 Pose pose; // Shared by IMU, EKF
 LatLong lat_long; // Shared by GPS, EKF
 Odom odom; // Shared by Encoder, EKF
-char global_map[MAP_MAX][MAP_MAX]; // Shared by Lidar, Planner
+unsigned char global_map[MAP_MAX][MAP_MAX]; // Shared by Lidar, Planner
 Triplet bot_location; // Shared by EKF, Planner
 Triplet target_location; // Shared by EKF, Planner
 vector<Triplet> path;
@@ -110,6 +110,10 @@ void startThreads() {
       startThread(&lidar_id, &attr, &lidar_thread);
       startThread(&slam_id, &attr, &slam_thread);
       break;
+    case LaserTestOnly:
+	startThread(&lidar_id, &attr, &lidar_thread);
+        //startThread(&planner_id, &attr, &planner_thread);
+	break;
   }
 
 #ifdef DIAG  
@@ -169,7 +173,7 @@ int main(int argc, char *argv[]) {
 
   startThreads();
 
-  while(1);
+  while(ros::ok());
   
   return 0;
 }
