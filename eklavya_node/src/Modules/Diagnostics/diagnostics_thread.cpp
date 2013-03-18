@@ -17,9 +17,9 @@ void *diagnostics_thread(void *arg) {
     //diagnostics_space::Diagnostics::printOdom();
     //pthread_mutex_unlock(&odom_mutex);
     
-    //pthread_mutex_lock(&map_mutex);
-    //diagnostics_space::Diagnostics::plotMap();
-    //pthread_mutex_unlock(&map_mutex);
+    pthread_mutex_lock(&map_mutex);
+    diagnostics_space::Diagnostics::plotMap();
+    pthread_mutex_unlock(&map_mutex);
     
     //pthread_mutex_lock(&bot_location_mutex);
     //diagnostics_space::Diagnostics::printBotLocation();
@@ -28,6 +28,7 @@ void *diagnostics_thread(void *arg) {
     //pthread_mutex_lock(&target_location_mutex);
     //diagnostics_space::Diagnostics::printTargetLocation();
     //pthread_mutex_unlock(&target_location_mutex);
+    
     
     pthread_mutex_lock(&path_mutex);
     

@@ -20,6 +20,7 @@ namespace diagnostics_space {
           ptr[3 * j] = 200;
           ptr[3 * j + 1] = 200;
           ptr[3 * j + 2] = 200;
+       
         }
       }
     }
