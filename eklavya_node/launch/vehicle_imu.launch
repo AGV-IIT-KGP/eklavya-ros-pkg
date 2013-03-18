@@ -9,11 +9,11 @@
   </node>
 
 
-  <node pkg="eklavya_imu_sparkfun" type="sparkfun_imu_node.py" name="node" output="screen">
-    <param name="port" value="/dev/ttyUSB1" />
+  <!--node pkg="eklavya_imu_sparkfun" type="sparkfun_imu_node.py" name="node" output="screen">
+    <param name="port" value="/dev/ttyUSB1" /-->
     <!-- <param name="port" value="/dev/serial/by-id/usb-FTDI_FT232R_USB_UART_A700ewWv-if00-port0" /> -->
-    <param name="baudrate" value="57600" />
-  </node>
+    <!--param name="baudrate" value="57600" />
+  </node-->
 
 
   <node pkg="eklavya_node" type="eklavya_node" name="eklavya_node" args="0" output="screen" cwd="node"/>
