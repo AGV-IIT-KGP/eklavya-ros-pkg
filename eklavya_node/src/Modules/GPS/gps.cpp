@@ -9,11 +9,12 @@
 #include <stdio.h>
 #include "gps.h"
 #include "../../eklavya2.h"
+#include "geometry_msgs/Pose.h"
 
 using namespace std;
 
 namespace gps_space {
-  void GPS::updateLatLong(const geometry_msgs::Pose::ConstPtr _pose) {
+  void GPS::updatePose(const geometry_msgs::Pose::ConstPtr _pose) {
     pthread_mutex_lock(&pose_mutex);
     
     pose.position.x = _pose->position.x;

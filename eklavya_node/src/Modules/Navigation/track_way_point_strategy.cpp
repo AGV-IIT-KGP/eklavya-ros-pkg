@@ -58,10 +58,7 @@ namespace navigation_space {
     }
   }
 
-  Triplet navigation_space::TrackWayPointStrategy::getTargetLocation(double latitude, double longitude, double heading) {
-    double y1 = ((double)refN - (double)latitude) * ((double)Lat_Dist); 
-    double x1 = ((double)refE - (double)longitude) * ((double)Long_Dist); 
-    
+  Triplet navigation_space::TrackWayPointStrategy::getTargetLocation(double x1, double y1, double heading) {
     heading = -(3.142 / 180.0) * heading;
     
     double x2 = x1 * cos(heading) - y1 * sin(heading);
@@ -72,6 +69,7 @@ namespace navigation_space {
 
     int tx, ty;
     truncate(x2 * 100, y2 * 100, &tx, &ty);
+    
     Triplet target_location;
     target_location.x = tx;
     target_location.y = ty;

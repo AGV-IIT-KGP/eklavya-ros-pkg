@@ -16,6 +16,7 @@
 #include "../../Utils/SerialPortLinux/serial_lnx.h"
 #include "../devices.h"
 #include "../../eklavya2.h"
+#include "std_msgs/Float32.h"
 
 #define D 0.1
 #define WAIT 50
@@ -149,6 +150,7 @@ namespace IMUspace
     pthread_mutex_lock(&pose_mutex);
     
     pose.orientation.z = _yaw.data;
+    printf("[INFO] [YAW] %lf\n", pose.orientation.z);
     
     pthread_mutex_unlock(&pose_mutex);
   }
