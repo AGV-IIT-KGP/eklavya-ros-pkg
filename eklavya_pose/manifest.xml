@@ -1,0 +1,18 @@
+<package>
+  <description brief="eklavya_pose">
+
+     eklavya_pose
+
+  </description>
+  <author>Sidakpreet Singh Chawla</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/eklavya_pose</url>
+  <depend package="roscpp"/>
+  <depend package="std_msgs"/>
+  <depend package="rospy"/>
+  <depend package="tf"/>
+
+</package>
+
+

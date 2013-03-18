@@ -16,6 +16,7 @@
 #include "../../Utils/SerialPortLinux/serial_lnx.h"
 #include "../devices.h"
 #include "../../eklavya2.h"
+#include "std_msgs/Float32.h"
 
 #define D 0.1
 #define WAIT 50
@@ -144,6 +145,15 @@ namespace IMUspace
   void IMUspace::IMU::closeIMU()
   {
    // p->disconnect();
+  }
+  
+  void IMUspace::IMU::update_yaw(const std_msgs::Float32& _yaw) {
+    pthread_mutex_lock(&pose_mutex);
+    
+    pose.orientation.z = _yaw.data;
+    printf("[INFO] [YAW] %lf\n", pose.orientation.z);
+    
+    pthread_mutex_unlock(&pose_mutex);
   }
   
   void IMUspace::IMU::update_pose(const sensor_msgs::Imu& imu_msg) {
