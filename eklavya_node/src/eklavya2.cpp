@@ -120,7 +120,7 @@ void startThreads() {
 }
 
 void fin() {
-
+  planner_space::Planner::finBot();
 }
 
 void sigHandler(int sig) {
