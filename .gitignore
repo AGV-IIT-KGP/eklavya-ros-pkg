@@ -6,6 +6,7 @@ cmake_install.cmake
 bin
 lib
 *.*~
+*.cpp~
 CMakeFiles
 .project
 .cproject
