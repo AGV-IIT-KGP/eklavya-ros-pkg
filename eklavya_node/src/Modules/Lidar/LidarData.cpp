@@ -145,7 +145,7 @@ void LidarData::update_map(const sensor_msgs::LaserScan& scan) {
   }
   
   //Filtering
-
+/*
   cvDilate(filtered_img,filtered_img,ker1,1);
   cvErode(filtered_img,filtered_img,ker2,1);
  
@@ -160,8 +160,9 @@ void LidarData::update_map(const sensor_msgs::LaserScan& scan) {
   cvReleaseImage(&nblobs);
   cvReleaseImage(&nblobs1);
   cvReleaseBlobs(blobs);
-  cvDilate(filtered_img,filtered_img,ker1,2);
- 
+  
+ */
+ cvDilate(filtered_img,filtered_img,ker1,2);
   cvNamedWindow("Filtered Image",0);
   cvShowImage("Filtered Image",filtered_img);
   //cvWaitKey(1);
