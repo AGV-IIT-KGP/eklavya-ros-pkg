@@ -145,12 +145,12 @@ void LidarData::update_map(const sensor_msgs::LaserScan& scan) {
   }
   
   //Filtering
-
+/*
   cvDilate(filtered_img,filtered_img,ker1,1);
   cvErode(filtered_img,filtered_img,ker2,1);
- 
+  
   unsigned int result = cvLabel(filtered_img,labelImg,blobs);
- // cvRenderBlobs(labelImg,blobs,nblobs,nblobs,CV_BLOB_RENDER_COLOR);
+  //cvRenderBlobs(labelImg,blobs,nblobs,nblobs,CV_BLOB_RENDER_COLOR);
   cvFilterByArea(blobs,6,filtered_img->height*filtered_img->width);
   cvRenderBlobs(labelImg,blobs,nblobs1,nblobs1,CV_BLOB_RENDER_COLOR);
   cvCvtColor(nblobs1,filtered_img,CV_RGB2GRAY);
@@ -160,8 +160,10 @@ void LidarData::update_map(const sensor_msgs::LaserScan& scan) {
   cvReleaseImage(&nblobs);
   cvReleaseImage(&nblobs1);
   cvReleaseBlobs(blobs);
+  cvDilate(filtered_img,filtered_img,ker1,2);  
+*/
+
   cvDilate(filtered_img,filtered_img,ker1,2);
- 
   cvNamedWindow("Filtered Image",0);
   cvShowImage("Filtered Image",filtered_img);
   //cvWaitKey(1);

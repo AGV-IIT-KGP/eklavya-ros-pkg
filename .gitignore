@@ -6,6 +6,10 @@ cmake_install.cmake
 bin
 lib
 *.*~
+<<<<<<< HEAD
+=======
+*.cpp~
+>>>>>>> 181f74a3c8b50bc1083b000eef47838d07ac3bf5
 CMakeFiles
 .project
 .cproject
