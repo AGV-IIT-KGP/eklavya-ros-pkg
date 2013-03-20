@@ -42,6 +42,7 @@ int main(int argc,char** argv)
   ros::Publisher yaw_pub = n.advertise<std_msgs::Float32>("yaw", _POSE_PUBLISHER_BUFFER);
 	ros::Publisher pitch_pub = n.advertise<std_msgs::Float32>("pitch", _POSE_PUBLISHER_BUFFER);
   ros::Publisher roll_pub = n.advertise<std_msgs::Float32>("roll", _POSE_PUBLISHER_BUFFER);
+  
 	// Defining the publih message types    
 	sensor_msgs::NavSatFix _gps;
 	sensor_msgs::Imu _imu;
@@ -79,7 +80,7 @@ int main(int argc,char** argv)
       &speedAccuracy, 
       &timeAccuracy);
 
-		ROS_INFO("Getting data from %d stallites", numberOfSatellites);
+      ROS_INFO("Getting data from %d stallites", numberOfSatellites);
 		
     vn200_getInsSolution(
 			&vn200,
@@ -166,7 +167,7 @@ int main(int argc,char** argv)
 		imu_pub.publish(_imu);
 		gps_pub.publish(_gps);
 		pose_pub.publish(_pose);
-		yaw_pub.publish(_yaw);
+		//yaw_pub.publish(_yaw);
     pitch_pub.publish(_pitch);
     roll_pub.publish(_roll);
 		//sleep(1);
