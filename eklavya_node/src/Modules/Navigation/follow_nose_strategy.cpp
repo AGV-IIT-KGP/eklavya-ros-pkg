@@ -48,6 +48,9 @@ namespace navigation_space {
     }
     target_location.z = 0;
     
+    target_location.x = target_location.x < 100 ? 100 : target_location.x;
+    target_location.y = target_location.y < 100 ? 100 : target_location.y;
+    
     return target_location;
   }
   Triplet navigation_space::FollowNoseStrategy::getBotLocation() {

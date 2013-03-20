@@ -58,26 +58,7 @@ int main(int argc, char **argv)
       
       msg.data = convertDataToVal2(data_in);
 
-/*      i = 0;
-			c = p->getChar();
-      if(c == '!')
-      {
-        c = p->getChar();
-        while(c != '$')
-        {
-          data[i] = c;
-          c = p->getChar();
-          //cout << c;
-          i++;
-        } 
-
-        data[i] = '\0';
-        d = atof(data);
-*/        
-        printf("Yaw: %f\n", msg.data);
-
-        yaw_pub.publish(msg);
-      //}
+      yaw_pub.publish(msg);
     }
     p->disconnect();
     return 0;

@@ -12,10 +12,14 @@
   <node pkg="eklavya_pose" type="eklavya_pose" name="eklavya_pose" output="screen"/>
 -->  
 
+  <node pkg="yaw_pub" type="yaw_publisher" name="yaw_publisher" output="screen"/>
+
+<!--
   <node pkg="eklavya_imu_sparkfun" type="sparkfun_imu_node.py" name="node" output="screen">
     <param name="port" value="/dev/ttyUSB0" />
     <param name="baudrate" value="57600" />
   </node>
+-->
 
 <!--
   <node name="nmea_gps_driver" pkg="nmea_gps_driver" type="nmea_gps_driver.py">

@@ -13,10 +13,9 @@ void *navigation_thread(void *arg) {
   while(ros::ok()) {
     iterations++;
     switch(strategy) {
-      case FollowNose:
-      {
+      case FollowNose: {
         pthread_mutex_lock(&pose_mutex);        
-        heading = -pose.orientation.z; 
+        heading = pose.orientation.z; 
         pthread_mutex_unlock(&pose_mutex);
         
         navigation_space::FollowNoseStrategy::calibrateReferenceHeading(heading, iterations);
@@ -37,11 +36,11 @@ void *navigation_thread(void *arg) {
         
         break;
       }  
-      case TrackWayPoint:
-      {
+      
+      case TrackWayPoint: {
         pthread_mutex_lock(&pose_mutex);        
-        heading = pose.orientation.z; // Yaw
-        my_target_location = pose.position;
+        heading = pose.orientation.z; // Heading
+        my_target_location = pose.position; // Position - xy
         pthread_mutex_unlock(&pose_mutex);
         
         my_target_location = navigation_space::TrackWayPointStrategy::getTargetLocation(
@@ -51,7 +50,6 @@ void *navigation_thread(void *arg) {
         
         pthread_mutex_lock(&target_location_mutex);
         target_location = my_target_location; // Target
-        //cout << "[NAV] [INFO] Target Location: " << target_location.x << " " << target_location.y << endl;
         pthread_mutex_unlock(&target_location_mutex);
         
         my_bot_location = navigation_space::TrackWayPointStrategy::getBotLocation();
@@ -62,7 +60,9 @@ void *navigation_thread(void *arg) {
         break;
       }
     }
-
+    
+    cout << "[NAV] [INFO] Target Location: " << my_target_location.x << " " << my_target_location.y << endl;
+        
     usleep(10);
   }
 }
