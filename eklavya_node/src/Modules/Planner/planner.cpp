@@ -123,7 +123,7 @@ namespace planner_space {
 	  double myYaw = 0.5, previousYaw = 1, Kp = 5;
     int left_vel = 0, right_vel = 0;
 	  
-	  while(0) { 
+	  while(1) { 
       pthread_mutex_lock(&controllerMutex);
       myTargetCurvature = targetCurvature;
       pthread_mutex_unlock(&controllerMutex);
@@ -136,7 +136,7 @@ namespace planner_space {
       left_vel = 40 + Kp*(myTargetCurvature - (myYaw - previousYaw)/0.5);
       right_vel = 40 - Kp*(myTargetCurvature - (myYaw - previousYaw)/0.5);
       
-      printf("[INFO] [Controller] %lf , %lf , %d , %d\n", myTargetCurvature, myYaw, left_vel, right_vel);
+      printf("[INFO] [Controller] %lf , %lf , %d , %d\n", myTargetCurvature, (myYaw - previousYaw)*2, left_vel, right_vel);
       
       #ifndef SIMCTL
         p->sendChar('w');
@@ -229,6 +229,7 @@ namespace planner_space {
 	}
 
   void initBot() {
+	  pthread_mutex_init(&controllerMutex, NULL);
     pthread_attr_init(&attr);
     pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
     startThread(&controller_id, &attr, &controllerThread);
@@ -240,19 +241,23 @@ namespace planner_space {
       
       p->sendChar('w');
       usleep(100);
+      
+      p->sendChar('w');
+      usleep(100);
     #endif
   }
   
   void sendCommand(seed s) {
-    #ifndef SIMCTL
       int left_vel = 0;
       int right_vel = 0;
       int left_velocity = s.vl;
       int right_velocity = s.vr;
       
       if((left_velocity == 0) && (right_velocity == 0)) {
+    #ifndef SIMCTL
         p->sendChar(' ');
         usleep(100);
+        #endif
         return;
       }
       
@@ -272,6 +277,7 @@ namespace planner_space {
           
         printf("Velocity: (%d, %d)\n", left_vel, right_vel);
         
+    #ifndef SIMCTL
         p->sendChar('w');
         usleep(100);
 
@@ -283,13 +289,13 @@ namespace planner_space {
         usleep(100);
         p->sendChar('0' + right_vel % 10);
         usleep(100);
+        #endif
       } else {
         pthread_mutex_lock(&controllerMutex);
-        targetCurvature = 5 * (s.k - 1)/(s.k + 1);
-        printf("Updated\n");
+        targetCurvature = 5.0 * ((double) (s.k - 1.0))/(s.k + 1.0);
+        printf("Updated : %lf, left = %d, right = %d\n", targetCurvature, s.vl, s.vr);
         pthread_mutex_unlock(&controllerMutex);
       }
-    #endif
   }
   
   void reconstructPath(map<Triplet, state, PoseCompare> came_from, IplImage *map_img, state current) {
@@ -305,9 +311,11 @@ namespace planner_space {
       
       path.insert(path.begin(), s.pose);
       s = came_from[s.pose];
+      
     }
     
     sendCommand(seeds[s.seed_id]);
+    printf("[Planner] [Seed] seed_id = %d\n\n", s.seed_id);
     
     #ifdef SHOW_PATH
       cvShowImage("Map", map_img);
@@ -514,6 +522,7 @@ namespace planner_space {
              (open_map[neighbor.pose].membership == OPEN))/* || (
              tentative_g_score < open_map[neighbor.pose].cost)*/) {
           came_from[neighbor.pose] = current;
+          printf("[DEBUG] [Planner] planner.cpp:524 :: current.seed_id = %d\n\n", current.seed_id);
           neighbor.g = tentative_g_score;
           neighbor.h = consistent;
           
