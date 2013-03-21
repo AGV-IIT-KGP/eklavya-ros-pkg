@@ -136,7 +136,7 @@ namespace planner_space {
       left_vel = 40 + Kp*(myTargetCurvature - (myYaw - previousYaw)/0.5);
       right_vel = 40 - Kp*(myTargetCurvature - (myYaw - previousYaw)/0.5);
       
-      printf("[INFO] [Controller] %lf , %lf , %d , %d\n", myTargetCurvature, (myYaw - previousYaw)*2, left_vel, right_vel);
+      //printf("[INFO] [Controller] %lf , %lf , %d , %d\n", myTargetCurvature, (myYaw - previousYaw)*2, left_vel, right_vel);
       
       #ifndef SIMCTL
         p->sendChar('w');
@@ -170,6 +170,7 @@ namespace planner_space {
         fscanf(fp, "%lf %lf %lf %lf %lf\n", &s.k, &x, &y, &z, &s.cost);
         s.vl = VMAX * s.k / (1 + s.k);
         s.vr = VMAX / (1 + s.k);
+        //cout << s.vl << " " << s.vr << endl;
       #else
         fscanf(fp, "%lf %lf %lf %lf %lf %lf\n", &s.vl, &s.vr, &x, &y, &z, &s.cost);
         s.k = s.vl / s.vr;
@@ -250,8 +251,8 @@ namespace planner_space {
   void sendCommand(seed s) {
       int left_vel = 0;
       int right_vel = 0;
-      int left_velocity = s.vl;
-      int right_velocity = s.vr;
+      float left_velocity = s.vl;
+      float right_velocity = s.vr;
       
       if((left_velocity == 0) && (right_velocity == 0)) {
     #ifndef SIMCTL
@@ -293,7 +294,7 @@ namespace planner_space {
       } else {
         pthread_mutex_lock(&controllerMutex);
         targetCurvature = 5.0 * ((double) (s.k - 1.0))/(s.k + 1.0);
-        printf("Updated : %lf, left = %d, right = %d\n", targetCurvature, s.vl, s.vr);
+        //printf("Updated : %lf, k = %lf, left = %lf, right = %lf\n", targetCurvature, s.k, s.vl, s.vr);
         pthread_mutex_unlock(&controllerMutex);
       }
   }
@@ -303,6 +304,7 @@ namespace planner_space {
     
     path.clear();
     
+    int seed_id;
     state s = current;
     while (came_from.find(s.pose) != came_from.end()) {
       #ifdef SHOW_PATH
@@ -310,11 +312,12 @@ namespace planner_space {
       #endif
       
       path.insert(path.begin(), s.pose);
+      seed_id = s.seed_id;
+      //cout << "Seed Id: " << seed_id << endl;
       s = came_from[s.pose];
-      
     }
     
-    sendCommand(seeds[s.seed_id]);
+    sendCommand(seeds[seed_id]);
     
     #ifdef SHOW_PATH
       cvShowImage("Map", map_img);
@@ -521,7 +524,7 @@ namespace planner_space {
              (open_map[neighbor.pose].membership == OPEN))/* || (
              tentative_g_score < open_map[neighbor.pose].cost)*/) {
           came_from[neighbor.pose] = current;
-          printf("[DEBUG] [Planner] planner.cpp:524 :: current.seed_id = %d\n\n", current.seed_id);
+          //printf("[DEBUG] [Planner] planner.cpp:524 :: current.seed_id = %d\n\n", current.seed_id);
           neighbor.g = tentative_g_score;
           neighbor.h = consistent;
           

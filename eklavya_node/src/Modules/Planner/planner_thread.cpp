@@ -74,7 +74,7 @@ void *planner_thread(void *arg) {
     }
     pthread_mutex_unlock(&map_mutex);
     
-    printf("[PLANNER THREAD] Target: (%d, %d, %d)\n", my_target_location.x, my_target_location.y, my_target_location.z);
+    //printf("[PLANNER THREAD] Target: (%d, %d, %d)\n", my_target_location.x, my_target_location.y, my_target_location.z);
     
     planner_space::Planner::findPath(my_bot_location, my_target_location);
     
