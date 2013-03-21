@@ -315,7 +315,6 @@ namespace planner_space {
     }
     
     sendCommand(seeds[s.seed_id]);
-    printf("[Planner] [Seed] seed_id = %d\n\n", s.seed_id);
     
     #ifdef SHOW_PATH
       cvShowImage("Map", map_img);
