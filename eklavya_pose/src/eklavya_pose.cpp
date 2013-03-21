@@ -40,6 +40,7 @@ int main(int argc,char** argv)
   ros::Publisher imu_pub = n.advertise<sensor_msgs::Imu>("imu", _IMU_PUBLISHER_BUFFER);
   ros::Publisher pose_pub = n.advertise<geometry_msgs::Pose>("pose", _POSE_PUBLISHER_BUFFER);
   ros::Publisher yaw_pub = n.advertise<std_msgs::Float32>("yaw", _POSE_PUBLISHER_BUFFER);
+  ros::Publisher yaw_rate_pub = n.advertise<std_msgs::Float32>("yaw_rate", _POSE_PUBLISHER_BUFFER);
 	ros::Publisher pitch_pub = n.advertise<std_msgs::Float32>("pitch", _POSE_PUBLISHER_BUFFER);
   ros::Publisher roll_pub = n.advertise<std_msgs::Float32>("roll", _POSE_PUBLISHER_BUFFER);
   
@@ -48,6 +49,7 @@ int main(int argc,char** argv)
 	sensor_msgs::Imu _imu;
 	geometry_msgs::Pose _pose;
 	std_msgs::Float32 _yaw;
+	std_msgs::Float32 _yaw_rate;
   std_msgs::Float32 _pitch;
   std_msgs::Float32 _roll;
 	btQuaternion tf_angles;
@@ -94,7 +96,7 @@ int main(int argc,char** argv)
 			&positionUncertainty,
 			&velocityUncertainty);
     
-/*    VnVector3 magnetic;
+    VnVector3 magnetic;
     VnVector3 acceleration;
     VnVector3 angularRate;
     float temperature;
@@ -107,8 +109,8 @@ int main(int argc,char** argv)
       &temperature, 
       &pressure);
     
-    cout << magnetic.c0 << endl;
-*/    
+    //ROS_INFO("Angular Rate: %f", angularRate.c0 * (180 / 3.14));
+
     latitude = latitudeLognitudeAltitude.c0;
     longitude = latitudeLognitudeAltitude.c1;
     altitude = latitudeLognitudeAltitude.c2;
@@ -157,6 +159,8 @@ int main(int argc,char** argv)
     _pitch.data = ypr.c1;
     _roll.data = ypr.c2;
     
+    _yaw_rate.data = angularRate.c2;
+    
     /// POSE.POSITION : Position of target w.r.t the bot
     /// POSE.ORIENTATION : Orientation of the bot
     
@@ -187,6 +191,7 @@ int main(int argc,char** argv)
 		gps_pub.publish(_gps);
 		pose_pub.publish(_pose);
 		//yaw_pub.publish(_yaw);
+		yaw_rate_pub.publish(_yaw_rate);
     pitch_pub.publish(_pitch);
     roll_pub.publish(_roll);
 		//sleep(1);
