@@ -93,7 +93,22 @@ int main(int argc,char** argv)
 			&attitudeUncertainty,
 			&positionUncertainty,
 			&velocityUncertainty);
-      
+    
+/*    VnVector3 magnetic;
+    VnVector3 acceleration;
+    VnVector3 angularRate;
+    float temperature;
+    float pressure;
+    vn200_getCalibratedSensorMeasurements(
+      &vn200, 
+      &magnetic, 
+      &acceleration, 
+      &angularRate, 
+      &temperature, 
+      &pressure);
+    
+    cout << magnetic.c0 << endl;
+*/    
     latitude = latitudeLognitudeAltitude.c0;
     longitude = latitudeLognitudeAltitude.c1;
     altitude = latitudeLognitudeAltitude.c2;
@@ -119,6 +134,10 @@ int main(int argc,char** argv)
       altitude);
     
     mrpt::topography::TGeodeticCoords p1(
+      /*22.32079,
+      87.31188,*/
+      /*22.317733,
+      87.309101,*/
       22.319575000000000000, // lat in deg  of origin
       87.298412000000000000, // lon in deg of origin
       6);

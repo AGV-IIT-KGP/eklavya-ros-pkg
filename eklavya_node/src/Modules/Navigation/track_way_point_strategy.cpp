@@ -59,16 +59,22 @@ namespace navigation_space {
   }
 
   Triplet navigation_space::TrackWayPointStrategy::getTargetLocation(double x1, double y1, double heading) {
-    heading = -(3.142 / 180.0) * heading;
+    heading *= (3.142 / 180.0);
     
-    double x2 = x1 * cos(heading) - y1 * sin(heading);
-    double y2 = y1 * cos(heading) + x1 * sin(heading);
+    double alpha = -heading;
+    double x2 = x1 * cos(alpha) + y1 * sin(alpha);
+    double y2 = -x1 * sin(alpha) + y1 * cos(alpha);
 
-    x2 *= 1;
-    y2 *= -1;
-
+    // Adjusting according to map's scale
+    x2 *= 100;
+    y2 *= 100;
+    
+    // Shifting to bot's center
+    x2 += 500;
+    y2 += 100;
+    
     int tx, ty;
-    truncate(x2 * 100, y2 * 100, &tx, &ty);
+    truncate(x2, y2, &tx, &ty);
     
     Triplet target_location;
     target_location.x = tx;

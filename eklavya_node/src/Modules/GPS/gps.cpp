@@ -20,7 +20,7 @@ namespace gps_space {
     pose.position.x = _pose->position.x;
     pose.position.y = _pose->position.y;
     
-    printf("[INFO] [POSE] : %lf %lf\n", pose.position.x, pose.position.y);
+    //printf("[INFO] [POSE] : %lf %lf\n", pose.position.x, pose.position.y);
     
     pthread_mutex_unlock(&pose_mutex);
   }

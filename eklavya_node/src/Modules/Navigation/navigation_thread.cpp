@@ -61,7 +61,7 @@ void *navigation_thread(void *arg) {
       }
     }
     
-    cout << "[NAV] [INFO] Target Location: " << my_target_location.x << " " << my_target_location.y << endl;
+    //cout << "[NAV] [INFO] Target Location: " << my_target_location.x << " " << my_target_location.y << endl;
         
     usleep(10);
   }

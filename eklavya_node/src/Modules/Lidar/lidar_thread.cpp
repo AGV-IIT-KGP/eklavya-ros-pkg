@@ -16,17 +16,13 @@ void *lidar_thread(void *arg) {
   ros::init(argc, argv, "lidar_thread");
   ros::NodeHandle lidar_node;
   
- 
-  
-  ros::Subscriber sub = lidar_node.subscribe("scan_filtered", 1000, LidarData::update_map);
+  ros::Subscriber sub = lidar_node.subscribe("scan", 1000, LidarData::update_map);
   ros::Rate loop_rate(15);
   //ros::spin();
+  
   while(ros::ok()) {
-	
-    ros::spinOnce();
+	  ros::spinOnce();
     loop_rate.sleep();
   }
-
-  printf("Exiting lidar code");
 }
 
