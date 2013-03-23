@@ -11,7 +11,8 @@ enum Strategies {
   FollowNose = 0,
   TrackWayPoint,
   HectorSLAM,
-  LaserTestOnly
+  LaserTestOnly,
+  PlannerTestOnly
 };
 
 typedef struct Triplet {

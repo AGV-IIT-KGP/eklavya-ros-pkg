@@ -2,9 +2,22 @@
 #include "../../eklavya2.h"
 #include "diagnostics.h"
 
+IplImage *map_image, *path_image;
+
 void *diagnostics_thread(void *arg) {
+  map_image = cvCreateImage(cvSize(MAP_MAX, MAP_MAX), IPL_DEPTH_8U, 3);
+  path_image = cvCreateImage(cvSize(MAP_MAX, MAP_MAX), IPL_DEPTH_8U, 3);
   int iterations = 0;
-  while(1) {
+  
+  cvNamedWindow("Diag Path", 0);
+  cvNamedWindow("Diag Map", 0);
+  
+  ros::Time::init();
+  ros::Rate loop_rate(10);
+  
+  while(ros::ok()) {
+      cout << iterations++ << endl;
+      
     //pthread_mutex_lock(&pose_mutex);
     //diagnostics_space::Diagnostics::printPose();
     //pthread_mutex_unlock(&pose_mutex);
@@ -38,8 +51,9 @@ void *diagnostics_thread(void *arg) {
     }
     
     pthread_mutex_unlock(&path_mutex);
-    
     diagnostics_space::Diagnostics::plotPath(my_path);
+    
+    loop_rate.sleep();
   }
 }
 

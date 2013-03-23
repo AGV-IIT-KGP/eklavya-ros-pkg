@@ -7,10 +7,8 @@
 
 namespace diagnostics_space {
   void diagnostics_space::Diagnostics::plotMap() {
-    IplImage *image = cvCreateImage(cvSize(MAP_MAX, MAP_MAX), IPL_DEPTH_8U, 3);
-    
     for (int i = 0; i < MAP_MAX; i++) {
-      uchar* ptr = (uchar *)(image->imageData + i * image->widthStep);
+      uchar* ptr = (uchar *)(map_image->imageData + i * map_image->widthStep);
       for (int j = 0; j < MAP_MAX; j++) {
         if (global_map[j][MAP_MAX - i - 1] > 0) {
           ptr[3 * j] = 0;
@@ -20,15 +18,12 @@ namespace diagnostics_space {
           ptr[3 * j] = 200;
           ptr[3 * j + 1] = 200;
           ptr[3 * j + 2] = 200;
-       
         }
       }
     }
     
-    cvNamedWindow("Map", 0);
-    cvShowImage("Map", image);
+    cvShowImage("Diag Map", map_image);
     cvWaitKey(1);
-    cvReleaseImage(&image);
   }
   
   void diagnostics_space::Diagnostics::printPose() {
@@ -52,7 +47,7 @@ namespace diagnostics_space {
   }
 
   void diagnostics_space::Diagnostics::plotPath(vector<Triplet> my_path) {
-    IplImage *image = cvCreateImage(cvSize(MAP_MAX, MAP_MAX), IPL_DEPTH_8U, 3);
+    cvSetZero(path_image);
     
     for(int i = 0; i < (int) my_path.size() - 1; i++) {
       int x = (int) my_path[i].x;
@@ -63,12 +58,10 @@ namespace diagnostics_space {
       
       srand(i + time(0));
       
-      cvLine(image, cvPoint(x, y), cvPoint(x1, y1), CV_RGB(rand() % 255, rand() % 255, rand() % 255), 2, CV_AA, 0);
+      cvLine(path_image, cvPoint(x, y), cvPoint(x1, y1), CV_RGB(rand() % 255, rand() % 255, rand() % 255), 2, CV_AA, 0);
     }
     
-    cvNamedWindow("Path", 0);
-    cvShowImage("Path", image);
+    cvShowImage("Diag Path", path_image);
     cvWaitKey(1);
-    cvReleaseImage(&image);
   }
 }

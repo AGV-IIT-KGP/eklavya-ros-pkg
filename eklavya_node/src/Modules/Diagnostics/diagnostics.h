@@ -4,6 +4,9 @@
 #include "ros/ros.h"
 #include "../../eklavya2.h"
 
+extern IplImage *map_image;
+extern IplImage *path_image;
+
 namespace diagnostics_space {
 	class Diagnostics {
 	public:

@@ -10,6 +10,9 @@ void *navigation_thread(void *arg) {
   Triplet my_bot_location;
   char walkability[MAP_MAX][MAP_MAX];
   
+  ros::Time::init();
+  ros::Rate loop_rate(10);
+  
   while(ros::ok()) {
     iterations++;
     switch(strategy) {
@@ -59,11 +62,25 @@ void *navigation_thread(void *arg) {
         
         break;
       }
+      
+      case PlannerTestOnly: {
+        pthread_mutex_lock(&target_location_mutex);
+        my_target_location.x = target_location.x = 500; // Target
+        my_target_location.y = target_location.y = 900; // Target
+        my_target_location.z = target_location.z = 90; // Target
+        pthread_mutex_unlock(&target_location_mutex);
+        
+        pthread_mutex_lock(&bot_location_mutex);
+        bot_location.x = 500; // Bot
+        bot_location.y = 100; // Bot
+        bot_location.z = 90; // Bot
+        pthread_mutex_unlock(&bot_location_mutex);
+      }
     }
     
-    //cout << "[NAV] [INFO] Target Location: " << my_target_location.x << " " << my_target_location.y << endl;
+    //printf("[NAV] [INFO] Target Location: %d %d\n", my_target_location.x, my_target_location.y);
         
-    usleep(10);
+    loop_rate.sleep();
   }
 }
 
