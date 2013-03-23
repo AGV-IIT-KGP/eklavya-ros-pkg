@@ -9,8 +9,8 @@
 /// 0: No PID
 /// 1: Yaw PID with NO Thread
 /// 2. Yaw PID with Controller Thread
-#define PID_MODE 0
-#define SIMCTL
+#define PID_MODE 1
+//#define SIMCTL
 #define SIM_SEEDS
 //#define DEBUG
 //#define SHOW_PATH
@@ -39,7 +39,6 @@
 using namespace std;
 
 namespace planner_space {
-
     typedef struct state { // elemental data structure of openset
         Triplet pose;
         double g, h; // costs
@@ -254,10 +253,11 @@ namespace planner_space {
         p->connect(BOT_COM_PORT, BOT_BAUD_RATE, spNONE);
         usleep(100);
 
-        char arr[2];
-        arr[0] = ' ';
-        arr[1] = ' ';
+        char arr[2] = {' ', ' '};
         p->sendArray(arr, 2);
+        usleep(100);
+        
+        p->disconnect();
         usleep(100);
 #endif
     }
@@ -270,11 +270,16 @@ namespace planner_space {
 
         if ((left_velocity == 0) && (right_velocity == 0)) {
 #ifndef SIMCTL
-            p->sendChar(' ');
-            usleep(100);
-#endif
+        p->connect(BOT_COM_PORT, BOT_BAUD_RATE, spNONE);
+        usleep(100);
 
-            return;
+        p->sendChar(' ');
+        usleep(100);
+        
+        p->disconnect();
+        usleep(100);
+#endif
+          return;
         }
 
         switch (PID_MODE) {
@@ -302,7 +307,7 @@ namespace planner_space {
                 static double errorSum = 0;
                 static double previousError;
                 double Kp = 6.4, Kd = 0.01, Ki = 0.0001;
-                int left_vel = 0, right_vel = 0;
+                left_vel = 0; right_vel = 0;
                 int mode = 4;
 
                 double error = (myTargetCurvature - (myYaw - previousYaw) / 0.37);
@@ -322,9 +327,12 @@ namespace planner_space {
                     mode = 4;
                 }
 
-                int hashSpeedLeft[9] = {30, 33, 36, 38, 40, 42, 44, 47, 50};
-                int hashSpeedRight[9] = {50, 47, 44, 42, 40, 38, 36, 33, 30};
-
+                //int hashSpeedLeft[9] = {30, 33, 36, 38, 40, 42, 44, 47, 50};
+                //int hashSpeedRight[9] = {50, 47, 44, 42, 40, 38, 36, 33, 30};
+                
+                int hashSpeedLeft[9] = {23, 30, 35, 38, 40, 42, 45, 50, 57};
+                int hashSpeedRight[9] = {57, 50, 45, 42, 40, 38, 35, 30, 23};
+                
                 previousYaw = myYaw;
 
                 pthread_mutex_lock(&pose_mutex);
@@ -369,14 +377,19 @@ namespace planner_space {
         printf("[Planner] Velocity: (%d, %d)\n", left_vel, right_vel);
 
 #ifndef SIMCTL
-        char arr[5];
-        arr[0] = 'w';
-        arr[1] = '0' + left_vel / 10;
-        arr[2] = '0' + left_vel % 10;
-        arr[3] = '0' + right_vel / 10;
-        arr[4] = '0' + right_vel % 10;
+        p->connect(BOT_COM_PORT, BOT_BAUD_RATE, spNONE);
+        usleep(100);
+        
+        char arr[5] = {'w', 
+                       '0' + left_vel / 10,
+                       '0' + left_vel % 10,
+                       '0' + right_vel / 10,
+                       '0' + right_vel % 10};
 
         p->sendArray(arr, 5);
+        usleep(100);
+        
+        p->disconnect();
         usleep(100);
 #endif
     }
@@ -647,7 +660,7 @@ namespace planner_space {
     void Planner::finBot() {
 #ifndef SIMCTL
         //p = new Tserial();
-        //p->connect(BOT_COM_PORT, BOT_BAUD_RATE, spNONE);
+        p->connect(BOT_COM_PORT, BOT_BAUD_RATE, spNONE);
         usleep(100);
 
         p->sendChar(' ');

@@ -44,7 +44,6 @@ void *planner_thread(void *arg) {
     ros::Rate loop_rate(10);
 
     while (ros::ok()) {
-
 #ifdef FPS_TEST
         if (iterations > 1000) {
             time_t finish = time(0);
@@ -53,7 +52,6 @@ void *planner_thread(void *arg) {
             cout << "[INFO] FPS: " << fps << endl;
             break;
         }
-
         iterations++;
 #endif
 

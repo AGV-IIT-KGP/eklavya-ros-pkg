@@ -19,8 +19,8 @@
  *  1: Blob filter
  */
 
-#define FILTER 1
-#define DEBUG 0
+#define FILTER 0
+#define DEBUG 1
 #define DILATE 1
 
 #define CENTERX 100
@@ -158,11 +158,11 @@ void LidarData::update_map(const sensor_msgs::LaserScan& scan) {
             cvReleaseStructuringElement(&ker1);
             cvReleaseStructuringElement(&ker2);
 
-//            if (DEBUG) {
-//                cvNamedWindow("Blob Filter", 0);
-//                cvShowImage("Blob Filter", img);
-//                cvWaitKey(1);
-//            }
+            if (DEBUG) {
+                cvNamedWindow("Blob Filter", 0);
+                cvShowImage("Blob Filter", img);
+                cvWaitKey(1);
+            }
             break;
         }
     }
