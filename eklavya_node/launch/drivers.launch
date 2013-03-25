@@ -3,7 +3,7 @@
 <launch>
   <arg name="Hokuyo" value="1" />
   <arg name="VectorNav" value="0" />
-  <arg name="Sparkfun_Yaw" value="1" />
+  <arg name="Sparkfun_Yaw" value="0" />
   <arg name="Sparkfun_Quaternion" value="0" />
   <arg name="Atmega" value="0" />
   <arg name="USB_GPS" value="0" />

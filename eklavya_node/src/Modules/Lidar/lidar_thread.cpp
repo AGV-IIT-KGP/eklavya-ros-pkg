@@ -4,8 +4,6 @@
  * 
  * */
 
-#include <stdio.h>
-#include "../../eklavya2.h"
 #include "LidarData.h"
 
 //#define FPS_TEST
@@ -42,5 +40,7 @@ void *lidar_thread(void *arg) {
         ros::spinOnce();
         loop_rate.sleep();
     }
+    
+    return NULL;
 }
 

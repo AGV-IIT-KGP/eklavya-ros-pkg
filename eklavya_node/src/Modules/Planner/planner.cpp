@@ -1,29 +1,27 @@
-#include <iostream>
-#include "cv.h"
-#include "highgui.h"
-#include "../../eklavya2.h"
-#include "../../Utils/SerialPortLinux/serial_lnx.h"
-#include "../devices.h"
 #include "planner.h"
 
-/// 0: No PID
-/// 1: Yaw PID with NO Thread
-/// 2. Yaw PID with Controller Thread
-#define PID_MODE 1
-//#define SIMCTL
+/**
+ * Control Modes:
+ * 0: No PID
+ * 1: Yaw PID with NO Thread
+ * 2: Yaw PID with Controller Thread
+ */
+
+#define PID_MODE 0
+
+#define SIMCTL
 #define SIM_SEEDS
 //#define DEBUG
 //#define SHOW_PATH
 
 /**
- * SEEDS: seeds3.txt is valid but gives suboptimal results. Good Path. (6 - 8
- *        seeds1.txt is for validation purposes ONLY. Grid A* - like path. Might be useful with DT. (101)
- *        seeds.txt contains the full set of paths. Almost always 
-
- stuck in inf loop.
- *        seeds4.txt contains 5 seeds with arc-length ~75. Works fine. (4)
- *        seeds5.txt contains 5 seeds with arc-lengths varying from 100 to 50. (2)
- *        seeds2.txt contains 5 seeds 75 - 100 - 50 (16-20)
+ * Seed Files: 
+ * seeds3.txt is valid but gives suboptimal results. Good Path. (6 - 8
+ * seeds1.txt is for validation purposes ONLY. Grid A* - like path. Might be useful with DT. (101)
+ * seeds.txt contains the full set of paths. Almost always stuck in inf loop.
+ * seeds4.txt contains 5 seeds with arc-length ~75. Works fine. (4)
+ * seeds5.txt contains 5 seeds with arc-lengths varying from 100 to 50. (2)
+ * seeds2.txt contains 5 seeds 75 - 100 - 50 (16-20)
  */
 
 #ifdef SIM_SEEDS
@@ -39,6 +37,7 @@
 using namespace std;
 
 namespace planner_space {
+
     typedef struct state { // elemental data structure of openset
         Triplet pose;
         double g, h; // costs
@@ -80,7 +79,6 @@ namespace planner_space {
             double cantor22 = 0.5 * (cantor21 + k23) * (cantor21 + k23 + 1) + k23;
 
             return cantor12 < cantor22;
-            //return true;
         }
     };
 
@@ -89,22 +87,6 @@ namespace planner_space {
         bool operator() (state const& state_1, state const& state_2) const {
             double f1 = state_1.g + state_1.h;
             double f2 = state_2.g + state_2.h;
-
-            double diff = sqrt((f1 - f2) * (f1 - f2));
-
-            /*if(diff < 1) {
-              return state_1.g < state_2.g;
-            } else {
-              return f1 > f2;
-            }
-      
-            if(f1 > f2) {
-              return true;
-            } else if(f1 < f2) {
-              return false;
-            } else {
-              return state_1.g > state_2.g;
-            }*/
 
             return f1 > f2;
         }
@@ -115,17 +97,16 @@ namespace planner_space {
     Tserial *p;
 
     pthread_mutex_t controllerMutex;
-
     volatile double targetCurvature = 1;
 
+    /// ------------------------------------------------------------- ///
+
     void *controllerThread(void *arg) {
-        /*printf("Controller : hello\n");
-        usleep(1000000);*/
         double myTargetCurvature;
         double myYaw = 0.5, previousYaw = 1, Kp = 5;
         int left_vel = 0, right_vel = 0;
 
-        while (1) {
+        while (ros::ok()) {
             pthread_mutex_lock(&controllerMutex);
             myTargetCurvature = targetCurvature;
             pthread_mutex_unlock(&controllerMutex);
@@ -156,23 +137,35 @@ namespace planner_space {
 
             usleep(10000);
         }
-    }
 
-    /// ------------------------------------------------------------- ///
+        return NULL;
+    }
 
     void loadSeeds() {
         int n_seeds;
-        double x, y, z, theta, g, k;
+        int return_status;
+        double x, y, z;
         FILE *fp = fopen(SEEDS_FILE, "r");
-        fscanf(fp, "%d\n", &n_seeds);
+        return_status = fscanf(fp, "%d\n", &n_seeds);
+        if (return_status == 0) {
+            cout << "Error in reading seeds" << endl;
+            Planner::finBot();
+            exit(1);
+        }
 
         for (int i = 0; i < n_seeds; i++) {
             seed s;
+
 #ifdef SIM_SEEDS
-            fscanf(fp, "%lf %lf %lf %lf %lf\n", &s.k, &x, &y, &z, &s.cost);
+            return_status = fscanf(fp, "%lf %lf %lf %lf %lf\n", &s.k, &x, &y, &z, &s.cost);
+            if (return_status == 0) {
+                cout << "Error in reading seeds" << endl;
+                Planner::finBot();
+                exit(1);
+            }
+
             s.vl = VMAX * s.k / (1 + s.k);
             s.vr = VMAX / (1 + s.k);
-            cout << s.vl << " " << s.vr << endl;
 #else
             fscanf(fp, "%lf %lf %lf %lf %lf %lf\n", &s.vl, &s.vr, &x, &y, &z, &s.cost);
             s.k = s.vl / s.vr;
@@ -183,11 +176,22 @@ namespace planner_space {
             s.dest.z = (int) z;
 
             int n_seed_points;
-            fscanf(fp, "%d\n", &n_seed_points);
+            return_status = fscanf(fp, "%d\n", &n_seed_points);
+            if (return_status == 0) {
+                cout << "Error in reading seeds" << endl;
+                Planner::finBot();
+                exit(1);
+            }
 
             for (int j = 0; j < n_seed_points; j++) {
                 seed_point point;
-                fscanf(fp, "%lf %lf\n", &point.x, &point.y);
+                return_status = fscanf(fp, "%lf %lf\n", &point.x, &point.y);
+                if (return_status == 0) {
+                    cout << "Error in reading seeds" << endl;
+                    Planner::finBot();
+                    exit(1);
+                }
+
                 s.seed_points.insert(s.seed_points.begin(), point);
             }
             seeds.insert(seeds.begin(), s);
@@ -195,15 +199,13 @@ namespace planner_space {
     }
 
     double distance(Triplet a, Triplet b) {
-        return sqrt((a.x - b.x) * (a.x - b.x) +
-                (a.y - b.y) * (a.y - b.y));
+        return sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
     }
 
     bool isEqual(state a, state b) {
         double error = sqrt((50 ^ 2) + (50 ^ 2));
         return (sqrt((a.pose.x - b.pose.x) * (a.pose.x - b.pose.x) +
                 (a.pose.y - b.pose.y) * (a.pose.y - b.pose.y)) < error);
-        // && ((a.pose.z - b.pose.z) * (a.pose.z - b.pose.z) < 25);
     }
 
     void plotPoint(IplImage *map_img, Triplet pose) {
@@ -219,12 +221,19 @@ namespace planner_space {
         by = y + 5 < 0 ? 0 : y + 5;
 
         srand(time(0));
-        cvLine(map_img, cvPoint(ax, ay), cvPoint(bx, by), CV_RGB(rand() % 255, rand() % 255, rand() % 255), 2, CV_AA, 0);
+        cvLine(
+                map_img,
+                cvPoint(ax, ay),
+                cvPoint(bx, by),
+                CV_RGB(rand() % 255, rand() % 255, rand() % 255),
+                2,
+                CV_AA,
+                0);
     }
 
     void startThread(pthread_t *thread_id, pthread_attr_t *thread_attr, void *(*thread_name) (void *)) {
         if (pthread_create(thread_id, thread_attr, thread_name, NULL)) {
-            fprintf(stdout, "Unable to create thread\n");
+            cout << "[PLANNER] Unable to create thread" << endl;
             pthread_attr_destroy(thread_attr);
             exit(1);
         }
@@ -256,7 +265,7 @@ namespace planner_space {
         char arr[2] = {' ', ' '};
         p->sendArray(arr, 2);
         usleep(100);
-        
+
         p->disconnect();
         usleep(100);
 #endif
@@ -269,17 +278,19 @@ namespace planner_space {
         float right_velocity = s.vr;
 
         if ((left_velocity == 0) && (right_velocity == 0)) {
-#ifndef SIMCTL
-        p->connect(BOT_COM_PORT, BOT_BAUD_RATE, spNONE);
-        usleep(100);
 
-        p->sendChar(' ');
-        usleep(100);
-        
-        p->disconnect();
-        usleep(100);
+#ifndef SIMCTL
+            p->connect(BOT_COM_PORT, BOT_BAUD_RATE, spNONE);
+            usleep(100);
+
+            p->sendChar(' ');
+            usleep(100);
+
+            p->disconnect();
+            usleep(100);
 #endif
-          return;
+
+            return;
         }
 
         switch (PID_MODE) {
@@ -307,7 +318,8 @@ namespace planner_space {
                 static double errorSum = 0;
                 static double previousError;
                 double Kp = 6.4, Kd = 0.01, Ki = 0.0001;
-                left_vel = 0; right_vel = 0;
+                left_vel = 0;
+                right_vel = 0;
                 int mode = 4;
 
                 double error = (myTargetCurvature - (myYaw - previousYaw) / 0.37);
@@ -329,10 +341,10 @@ namespace planner_space {
 
                 //int hashSpeedLeft[9] = {30, 33, 36, 38, 40, 42, 44, 47, 50};
                 //int hashSpeedRight[9] = {50, 47, 44, 42, 40, 38, 36, 33, 30};
-                
+
                 int hashSpeedLeft[9] = {23, 30, 35, 38, 40, 42, 45, 50, 57};
                 int hashSpeedRight[9] = {57, 50, 45, 42, 40, 38, 35, 30, 23};
-                
+
                 previousYaw = myYaw;
 
                 pthread_mutex_lock(&pose_mutex);
@@ -340,8 +352,6 @@ namespace planner_space {
                 pthread_mutex_unlock(&pose_mutex);
 
                 mode += (int) (Kp * error + Ki * errorSum + Kd * (error - previousError));
-
-                //previousError = error;
 
                 if (mode < 0) {
                     mode = 0;
@@ -374,24 +384,47 @@ namespace planner_space {
             }
         }
 
-        printf("[Planner] Velocity: (%d, %d)\n", left_vel, right_vel);
-
 #ifndef SIMCTL
         p->connect(BOT_COM_PORT, BOT_BAUD_RATE, spNONE);
         usleep(100);
-        
-        char arr[5] = {'w', 
-                       '0' + left_vel / 10,
-                       '0' + left_vel % 10,
-                       '0' + right_vel / 10,
-                       '0' + right_vel % 10};
+
+        char arr[5] = {'w',
+            '0' + left_vel / 10,
+            '0' + left_vel % 10,
+            '0' + right_vel / 10,
+            '0' + right_vel % 10};
 
         p->sendArray(arr, 5);
         usleep(100);
-        
+
         p->disconnect();
         usleep(100);
-#endif
+#endif  
+
+        printf("[Planner] [COMMAND] : (%d, %d)\n", left_vel, right_vel);
+    }
+
+    void reconstructPath(map<Triplet, state, PoseCompare> came_from, state current) {
+        pthread_mutex_lock(&path_mutex);
+
+        path.clear();
+
+        int seed_id = -1;
+        state s = current;
+        while (came_from.find(s.pose) != came_from.end()) {
+            path.insert(path.begin(), s.pose);
+            seed_id = s.seed_id;
+            s = came_from[s.pose];
+        }
+
+        pthread_mutex_unlock(&path_mutex);
+
+        if (seed_id != -1) {
+            sendCommand(seeds[seed_id]);
+        } else {
+            cout << "Invalid Command Ordered" << endl;
+            Planner::finBot();
+        }
     }
 
     void reconstructPath(map<Triplet, state, PoseCompare> came_from, IplImage *map_img, state current) {
@@ -399,30 +432,31 @@ namespace planner_space {
 
         path.clear();
 
-        int seed_id;
+        int seed_id = -1;
         state s = current;
         while (came_from.find(s.pose) != came_from.end()) {
-#ifdef SHOW_PATH
             plotPoint(map_img, s.pose);
-#endif
-
             path.insert(path.begin(), s.pose);
             seed_id = s.seed_id;
             s = came_from[s.pose];
         }
 
-#ifdef SHOW_PATH
         cvShowImage("Map", map_img);
         cvWaitKey(1);
-#endif
-
+        
         pthread_mutex_unlock(&path_mutex);
-        sendCommand(seeds[seed_id]);
-    }
 
+        if (seed_id != -1) {
+            sendCommand(seeds[seed_id]);
+        } else {
+            cout << "Invalid Command Requested" << endl;
+            Planner::finBot();
+        }
+    }
+    
     vector<state> neighborNodes(state current) {
         vector<state> neighbours;
-        for (int i = 0; i < seeds.size(); i++) {
+        for (unsigned int i = 0; i < seeds.size(); i++) {
             state neighbour;
             double sx = seeds[i].dest.x;
             double sy = seeds[i].dest.y;
@@ -449,15 +483,15 @@ namespace planner_space {
 
     void print(state s) {
         double f = s.g + s.h;
-        cout << "{ " << s.pose.x << " , "
-                << s.pose.y << " , "
-                << s.pose.z << " , "
-                << f
-                << " }" << endl;
+        cout << "{ " <<
+                s.pose.x << " , " <<
+                s.pose.y << " , " <<
+                s.pose.z << " , " <<
+                f << " }" << endl;
     }
 
     bool isWalkable(state parent, state s) {
-        for (int i = 0; i < seeds[s.seed_id].seed_points.size(); i++) {
+        for (unsigned int i = 0; i < seeds[s.seed_id].seed_points.size(); i++) {
             int x, y;
             double alpha = parent.pose.z;
 
@@ -481,7 +515,7 @@ namespace planner_space {
     void closePlanner(IplImage *map_img) {
 #if defined(DEBUG) || defined(SHOW_PATH)
         cvReleaseImage(&map_img);
-#endif
+#endif   
     }
 
     void addObstacle(IplImage *map_img, int x, int y, int r) {
@@ -496,24 +530,15 @@ namespace planner_space {
 #endif
     }
 
-    /*
-     * Loads local map into global map     
-     */
-    //    void loadMap() {
-    //        pthread_mutex_lock(&map_mutex);
-    //        for(int i=0;i<MAP_MAX;i++){
-    //            for(int j=0;j<MAP_MAX;j++){
-    //                local_map[i][j]=global_map[i][j];
-    //            }
-    //        }
-    //        pthread_mutex_unlock(&map_mutex);
-    //    }
-
     /// ------------------------------------------------------------- ///
 
     void Planner::loadPlanner() {
         loadSeeds();
+        cout << "Seeds Loaded" << endl;
+
         initBot();
+        cout << "Vehicle Initiated" << endl;
+
 #if defined(DEBUG) || defined(SHOW_PATH)
         cvNamedWindow("Map", 0);
 #endif
@@ -530,9 +555,6 @@ namespace planner_space {
         goal.h = 0;
         goal.seed_id = 0;
 
-
-        //cout << "TARGET: "; print(goal);
-
         IplImage *map_img;
 
 #if defined(DEBUG) || defined(SHOW_PATH)
@@ -547,33 +569,20 @@ namespace planner_space {
         map<Triplet, state, PoseCompare> came_from;
 
         while (!open_list.empty()) {
+            //TODO: This condition needs to be handled in the strategy module.
             if (local_map[start.pose.x][start.pose.y] > 0) {
                 cout << "Robot is in Obstacles \n";
-                seed s;
-                s.vl = 0.0;
-                s.vr = 0.0;
-                sendCommand(s);
-                ///TODO: This condition needs to be handled here.
+                seed *s = new seed;
+                s->vl = s->vr = 0;
+                sendCommand(*s);
             }
-            //
-            //            if (!isWalkable(start, goal)) {
-            //                
-            //                break;
-            //            }
-#if defined(DEBUG) || defined(SHOW_PATH)
-            cvShowImage("Map", map_img);
-
-#ifdef DEBUG
-            cvWaitKey(0);
-#else
-            cvWaitKey(1);
-#endif
-
-#endif
 
             state current = open_list.front();
 
 #ifdef DEBUG
+            cvShowImage("Map", map_img);
+            cvWaitKey(0);
+
             //cout << "==> CURRENT: ";  print(current);
             plotPoint(map_img, current.pose);
 #endif
@@ -584,11 +593,12 @@ namespace planner_space {
             }
 
             if (isEqual(current, goal)) {
-                reconstructPath(came_from, map_img, current);
-
+                
 #ifdef SHOW_PATH
+                reconstructPath(came_from, map_img, current);
                 cout << "[SUCCESS] PATH FOUND" << endl;
-                cvWaitKey(1);
+#else
+                reconstructPath(came_from, current);
 #endif
 
                 closePlanner(map_img);
@@ -604,8 +614,7 @@ namespace planner_space {
 
             vector<state> neighbors = neighborNodes(current);
 
-            //cout << "N OF NEIGHBORS: " << neighbors.size() << endl;
-            for (int i = 0; i < neighbors.size(); i++) {
+            for (unsigned int i = 0; i < neighbors.size(); i++) {
                 state neighbor = neighbors[i];
 
 #ifdef DEBUG
@@ -626,21 +635,11 @@ namespace planner_space {
                 //double consistent = max(admissible, current.h - neighbor.g);
                 double consistent = admissible;
 
-                //cout << "[INFO] TENTATIVE: " << tentative_g_score << endl;
-                //if((open_map.find(neighbor.pose) != open_map.end()) && 
-                //(open_map[neighbor.pose].membership == OPEN)) {
-                //cout << "[INFO] NEIGHBORG: " << open_map[neighbor.pose].cost << endl;
-                //}
-
                 if (!((open_map.find(neighbor.pose) != open_map.end()) &&
-                        (open_map[neighbor.pose].membership == OPEN))/* || (
-             tentative_g_score < open_map[neighbor.pose].cost)*/) {
+                        (open_map[neighbor.pose].membership == OPEN))) {
                     came_from[neighbor.pose] = current;
-                    //printf("[DEBUG] [Planner] planner.cpp:524 :: current.seed_id = %d\n\n", current.seed_id);
                     neighbor.g = tentative_g_score;
                     neighbor.h = consistent;
-
-                    //cout << "====> NEIGHBOR: ";  print(neighbor);
 
                     if (!((open_map.find(neighbor.pose) != open_map.end()) &&
                             (open_map[neighbor.pose].membership == OPEN))) {
@@ -654,7 +653,12 @@ namespace planner_space {
         }
 
         closePlanner(map_img);
-        cout << "[ERROR] NO PATH FOUND" << endl;
+        cout << "[PLANNER] No Path Found" << endl;
+
+        seed *s1 = new seed;
+        s1->vl = 0.0;
+        s1->vr = 0.0;
+        sendCommand(*s1);
     }
 
     void Planner::finBot() {

@@ -1,18 +1,8 @@
 /*
- * File:   LidarData.cpp
- * Author: bhuvnesh, priyanka
- *
- * Created on 18 September, 2012, 6:56 PM
+ * Authors: Bhuvnesh, Priyanka, Samuel
  */
 
 #include "LidarData.h"
-#include <mrpt/hwdrivers/CHokuyoURG.h>
-#include <mrpt/hwdrivers/CSerialPort.h>
-#include <mrpt/gui.h>
-#include <mrpt/maps.h>
-#include <opencv2/core/types_c.h>
-#include "../../eklavya2.h"
-#include <cvblob.h>
 
 /*  Filter:
  *  0: No filter
@@ -26,24 +16,17 @@
 #define CENTERX 100
 #define CENTERY 500
 #define HOKUYO_SCALE 100
-#define RADIUS 40
-#define EXPAND_ITER 25
-
+#define RADIUS 80
+#define EXPAND_ITER 60
+#define LOWER_MAX 200
+#define UPPER_EXPAND_ITER 80
+#define LOWER_EXPAND_ITER 40
 #define intensity(img,i,j,n) *(uchar*)(img->imageData + img->widthStep*i + j*img->nChannels + n) 
 #define IMGDATA(image,i,j,k) (((uchar *)image->imageData)[(i)*(image->widthStep) + (j)*(image->nChannels) + (k)])
 #define IMGDATAG(image,i,j) (((uchar *)image->imageData)[(i)*(image->widthStep) + (j)])
 
-using namespace mrpt;
-using namespace mrpt::hwdrivers;
-using namespace mrpt::slam;
-using namespace mrpt::gui;
-using namespace mrpt::utils;
 using namespace std;
 using namespace cvb;
-
-LidarData::LidarData(string serial_name) {
-
-}
 
 int checksum(char **localmap, int x, int y) {
     int threshold = 3;
@@ -66,9 +49,8 @@ int checksum(char **localmap, int x, int y) {
 
 }
 
-void LidarData::createCircle(int x, int y, int R) {
+void LidarData::createCircle(int x, int y) {
     //TODO: optimize using circle drawing alogrithm    
-
     for (int i = -RADIUS; i < RADIUS; i++) {
         if ((x + i >= 0) && (x + i <= MAP_MAX)) {
             for (int j = -RADIUS; j < RADIUS; j++) {
@@ -88,10 +70,13 @@ void LidarData::update_map(const sensor_msgs::LaserScan& scan) {
 
     //initialize variables
 
-    IplImage *img, *nblobs, *nblobs1, *labelImg;
-    img = cvCreateImage(cvSize(MAP_MAX, MAP_MAX), 8, 1);
-    cvSet(img, cvScalar(0));
-
+    IplImage *img, *nblobs, *nblobs1, *labelImg, *topimg, *lowerimg;
+    //img = cvCreateImage(cvSize(MAP_MAX, MAP_MAX), 8, 1);
+    lowerimg = cvCreateImage(cvSize(LOWER_MAX, MAP_MAX), 8, 1);
+    topimg = cvCreateImage(cvSize(MAP_MAX - LOWER_MAX, MAP_MAX), 8, 1);
+    //cvSet(img, cvScalar(0));
+    cvSet(topimg, cvScalar(0));
+    cvSet(lowerimg, cvScalar(0));
     //TODO: put kernel initialization in constructor
     IplConvKernel *ker1, *ker2;
 
@@ -103,6 +88,7 @@ void LidarData::update_map(const sensor_msgs::LaserScan& scan) {
     size_t size = scan.ranges.size();
     float angle = scan.angle_min;
     float maxRangeForContainer = scan.range_max - 0.1f;
+    cout << scan.range_min << endl;
 
     for (size_t i = 0; i < size; ++i) {
         float dist = scan.ranges[i];
@@ -116,8 +102,15 @@ void LidarData::update_map(const sensor_msgs::LaserScan& scan) {
                 int x2 = (MAP_MAX - x - 1);
                 int y2 = y;
 
-                ptr = (uchar *) (img->imageData + x2 * img->widthStep);
-                ptr[y2] = 255;
+                //       ptr = (uchar *) (img->imageData + x2 * img->widthStep);
+                //     ptr[y2] = 255;
+                if (y2 < LOWER_MAX) {
+                    ptr = (uchar *) (lowerimg->imageData + x2 * lowerimg->widthStep);
+                    ptr[y2] = 255;
+                } else {
+                    ptr = (uchar *) (topimg->imageData + x2 * topimg->widthStep);
+                    ptr[y2 - LOWER_MAX] = 255;
+                }
             }
         }
         angle += scan.angle_increment;
@@ -141,7 +134,6 @@ void LidarData::update_map(const sensor_msgs::LaserScan& scan) {
 
             cvDilate(img, img, ker1, 1);
             //cvErode(filtered_img,filtered_img,ker2,1);
-            unsigned int result = cvLabel(img, labelImg, blobs);
             cvRenderBlobs(labelImg, blobs, nblobs, nblobs, CV_BLOB_RENDER_COLOR);
             cvFilterByArea(blobs, 500, img->height * img->width);
             cvRenderBlobs(labelImg, blobs, nblobs1, nblobs1, CV_BLOB_RENDER_COLOR);
@@ -169,24 +161,36 @@ void LidarData::update_map(const sensor_msgs::LaserScan& scan) {
 
     if (DILATE) {
         ker1 = cvCreateStructuringElementEx(3, 3, 1, 1, CV_SHAPE_ELLIPSE);
-        cvDilate(img, img, ker1, EXPAND_ITER);
+        // cvDilate(img, img, ker1, EXPAND_ITER);
+        cvDilate(topimg, topimg, ker1, UPPER_EXPAND_ITER);
+        cvDilate(lowerimg, lowerimg, ker1, LOWER_EXPAND_ITER);
         cvReleaseStructuringElement(&ker1);
     }
-    
+
     if (DEBUG) {
-        cvNamedWindow("Dilate Filter", 0);
-        cvShowImage("Dilate Filter", img);
+        //  cvNamedWindow("Dilate Filter", 0);
+        // cvShowImage("Dilate Filter", img);
+        cvNamedWindow("UPPER image", 0);
+        cvShowImage("UPPER image", topimg);
+        cvNamedWindow("LOWER image", 0);
+        cvShowImage("LOWER image", lowerimg);
         cvWaitKey(1);
     }
 
     pthread_mutex_lock(&map_mutex);
     for (int i = 0; i < MAP_MAX; i++) {
         for (int j = 0; j < MAP_MAX; j++) {
-            global_map[i][j] = IMGDATA(img, i, j, 0);
+            if (j < LOWER_MAX)
+                global_map[i][j] = IMGDATA(lowerimg, i, j, 0);
+            else
+                global_map[i][j] = IMGDATA(topimg, i, j - LOWER_MAX, 0);
+            //global_map[i][j] = IMGDATA(img, i, j, 0);
         }
     }
     pthread_mutex_unlock(&map_mutex);
-    cvReleaseImage(&img);
+    //cvReleaseImage(&img);
+    cvReleaseImage(&topimg);
+    cvReleaseImage(&lowerimg);
 }
 
 LidarData::~LidarData() {

@@ -3,7 +3,9 @@
 #include "ekf.h"
 
 void *ekf_thread(void *arg) {
-  while(ros::ok()) {
-  }
+    while (ros::ok()) {
+    }
+
+    return NULL;
 }
 

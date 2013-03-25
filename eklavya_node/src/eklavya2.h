@@ -1,37 +1,50 @@
 #ifndef _EKLAVYA2_H_
 #define _EKLAVYA2_H_
 
+#include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
+#include <signal.h>
 #include <unistd.h>   /* Needed for sleep() and usleep() */
 #include <pthread.h>  /* Needed for all pthread library calls */
-
-#include "Modules/Lidar/LidarData.h"
+#include <vector>
+#include <ros/ros.h>
+#include <opencv/cv.h>
+#include <opencv/highgui.h>
+#include "Modules/devices.h"
+#include "Utils/SerialPortLinux/serial_lnx.h"
 
 #define MAP_MAX 1000
+
 enum Strategies {
-  FollowNose = 0,
-  TrackWayPoint,
-  HectorSLAM,
-  LaserTestOnly,
-  PlannerTestOnly
+    FollowNose = 0,
+    TrackWayPoint,
+    HectorSLAM,
+    LaserTestOnly,
+    PlannerTestOnly
 };
 
 typedef struct Triplet {
-  int x, y, z;
+    int x, y, z;
 } Triplet;
+
 typedef struct TripletFP {
-  double x, y, z;
+    double x, y, z;
 } TripletFP;
+
 typedef struct Pose {
-  Triplet position;
-  TripletFP orientation; // Roll - Pitch - Yaw
+    Triplet position;
+    TripletFP orientation; // Roll - Pitch - Yaw
 } Pose;
+
 typedef struct LatLong {
-  double latitude;
-  double longitude;
+    double latitude;
+    double longitude;
 } LatLong;
+
 typedef struct Odom {
-  double left_velocity;
-  double right_velocity;
+    double left_velocity;
+    double right_velocity;
 } Odom;
 
 /* Global data structures to be shared by all threads */
@@ -41,9 +54,8 @@ extern Odom odom; // Shared by Encoder, EKF
 extern unsigned char global_map[MAP_MAX][MAP_MAX]; // Shared by Lidar, Planner
 extern Triplet bot_location; // Shared by EKF, Planner
 extern Triplet target_location; // Shared by EKF, Planner
-extern vector<Triplet> path; 
+extern std::vector<Triplet> path;
 
-extern LidarData *laser;
 extern int strategy;
 
 /* mutex for mutually exclusive updating of the shared data structures */
@@ -64,5 +76,7 @@ void *slam_thread(void *arg);
 void *navigation_thread(void *arg);
 void *planner_thread(void *arg);
 void *diagnostics_thread(void *arg);
+
+using namespace std;
 
 #endif

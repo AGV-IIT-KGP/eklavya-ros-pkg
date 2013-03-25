@@ -13,6 +13,44 @@
 #define VERBOSE false
 #define AUTOSTOP 0 // 0 for no autostop , 3 for autostop in 3 seconds.. or any integer.
 int kbhit(void);
+
+void sendCommand1(Tserial *p) {
+      p->connect(UART_COMM_PORT, UART_BAUD_RATE, spNONE,VERBOSE);
+      char array1[5] = {'w', '3', 
+                             '2', 
+                             '2', 
+                             '8'};
+    
+      p->sendArray(array1, 5);
+      usleep(100);
+      p->disconnect();  
+}
+
+void sendCommand3(Tserial *p) {
+      p->connect(UART_COMM_PORT, UART_BAUD_RATE, spNONE,VERBOSE);
+      srand(time(0));
+      char array1[5] = {'w', '0' + rand() % 10, 
+                             '0' + rand() % 10, 
+                             '0' + rand() % 10, 
+                             '0' + rand() % 10};
+    
+      p->sendArray(array1, 5);
+      usleep(100);
+      p->disconnect();  
+}
+
+void sendCommand2(Tserial *p) {
+      p->connect(UART_COMM_PORT, UART_BAUD_RATE, spNONE,VERBOSE);
+      char array1[5] = {'w', '2', 
+                             '0', 
+                             '2', 
+                             '4'};
+    
+      p->sendArray(array1, 5);
+      usleep(100);
+      p->disconnect();  
+}
+
 int main()
 {
     Tserial* p;
@@ -26,18 +64,15 @@ int main()
     
     srand(time(0));
     
-    for(int i = 0; i < 100; i++) {      
-      p->connect(UART_COMM_PORT, UART_BAUD_RATE, spNONE,VERBOSE);
-      char array1[5] = {'w', '3', 
-                             '0', 
-                             '3', 
-                             '0'};
-    
-      p->sendArray(array1, 5);
-      usleep(100);
-      p->disconnect();
-    
-      usleep(100 * 1000);
+    for(int j = 0; j < 5; j++) {
+      for(int i = 0; i < 10; i++) {      
+        sendCommand3(p);
+        usleep(100 * 1000);
+      }
+      for(int i = 0; i < 10; i++) {      
+        sendCommand1(p);
+        usleep(100 * 1000);
+      }
     }
     
     p->connect(UART_COMM_PORT, UART_BAUD_RATE, spNONE,VERBOSE);

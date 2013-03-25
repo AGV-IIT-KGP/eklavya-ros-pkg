@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <iostream>
 
 #include "opencv/cv.h"
 #include "opencv2/highgui/highgui.hpp"
@@ -27,23 +27,36 @@ namespace diagnostics_space {
   }
   
   void diagnostics_space::Diagnostics::printPose() {
-    printf("Pose: [Position: (%lf, %lf, %lf); Orientation: (%lf, %lf, %lf)]\n", pose.position.x, pose.position.y, pose.position.z, pose.orientation.x, pose.orientation.y, pose.orientation.z);
+    cout << "[DIAG] [POSE] [POSITION] : (" << 
+            pose.position.x << ", " <<
+            pose.position.y << ", " << 
+            pose.position.z << ") " <<
+            "[ORIENTATION] : (" << 
+            pose.orientation.x << ", " << 
+            pose.orientation.y << ", " <<
+            pose.orientation.z << ")" << endl;
   }
   
   void diagnostics_space::Diagnostics::printLatLong() {
-    printf("LatLong: (%lf, %lf)\n", lat_long.latitude, lat_long.longitude);
+    cout << "[DIAG] [LATLNG] : " << lat_long.latitude << ", " << lat_long.longitude << endl;
   }
   
   void diagnostics_space::Diagnostics::printOdom() {
-    printf("Odom: (%lf, %lf)\n", odom.left_velocity, odom.right_velocity);
+    cout << "[DIAG] [ODOM] : " << odom.left_velocity << ", " << odom.right_velocity << endl;
   }
   
   void diagnostics_space::Diagnostics::printBotLocation() {
-    printf("Bot Location: (%lf, %lf, %lf)\n", bot_location.x, bot_location.y, bot_location.z);
+    cout << "[DIAG] [BOT] : (" << 
+            bot_location.x << ", " <<
+            bot_location.y << ", " <<
+            bot_location.z << ")" << endl;
   }
 
   void diagnostics_space::Diagnostics::printTargetLocation() {
-    printf("Target Location: (%lf, %lf, %lf)\n", target_location.x, target_location.y, target_location.z);
+    cout << "[DIAG] [TARGET] : (" << 
+            target_location.x << ", " <<
+            target_location.y << ", " <<
+            target_location.z << ")" << endl;
   }
 
   void diagnostics_space::Diagnostics::plotPath(vector<Triplet> my_path) {
@@ -61,7 +74,7 @@ namespace diagnostics_space {
       cvLine(path_image, cvPoint(x, y), cvPoint(x1, y1), CV_RGB(rand() % 255, rand() % 255, rand() % 255), 2, CV_AA, 0);
     }
     
-    cvShowImage("Diag Path", path_image);
+    cvShowImage("[DIAG] Path", path_image);
     cvWaitKey(1);
   }
 }

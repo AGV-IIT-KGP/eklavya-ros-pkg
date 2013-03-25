@@ -68,48 +68,57 @@ endif ()
 if (USE_LIDAR)
 include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/Lidar")
 rosbuild_add_library(LidarLib src/Modules/Lidar/LidarData.cpp src/Modules/Lidar/lidar_thread.cpp)
+target_link_libraries(LidarLib ${OpenCV_LIBS})
 endif ()
 
 if (USE_GPS)
 include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/GPS/")
 #rosbuild_add_library(GPSLib src/Modules/GPS/GPS.cpp src/Modules/GPS/gps_thread.cpp)
 rosbuild_add_library(GPSLib src/Modules/GPS/gps.cpp src/Modules/GPS/gps_thread.cpp)
+target_link_libraries(GPSLib ${OpenCV_LIBS})
 endif ()
 
 if (USE_ENCODER)
 include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/Encoder/")
 rosbuild_add_library(EncoderLib src/Modules/Encoder/encoder_thread.cpp)
+target_link_libraries(EncoderLib ${OpenCV_LIBS})
 endif ()
 
 if (USE_EKF)
 include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/EKF/")
 rosbuild_add_library(EKFLib src/Modules/EKF/ekf_thread.cpp)
+target_link_libraries(EKFLib ${OpenCV_LIBS})
 endif ()
 
 if (USE_SLAM)
 include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/SLAM/")
 rosbuild_add_library(SLAMLib src/Modules/SLAM/slam.cpp src/Modules/SLAM/slam_thread.cpp)
+target_link_libraries(SLAMLib ${OpenCV_LIBS})
 endif ()
 
 if (USE_NAVIGATION)
 include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/Navigation/")
 rosbuild_add_library(NavigationLib src/Modules/Navigation/navigation.cpp                                    src/Modules/Navigation/follow_nose_strategy.cpp src/Modules/Navigation/track_way_point_strategy.cpp                                    src/Modules/Navigation/navigation_thread.cpp)
+target_link_libraries(LidarLib ${OpenCV_LIBS})
 endif ()
 
 if (USE_PLANNER)
 include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/Planner/")
 #rosbuild_add_library(PlannerLib src/Modules/Planner/Planner.cpp src/Modules/Planner/planner_thread.cpp)
 rosbuild_add_library(PlannerLib src/Modules/Planner/planner.cpp src/Modules/Planner/planner_thread.cpp src/Utils/SerialPortLinux/serial_lnx.cpp)
+target_link_libraries(PlannerLib ${OpenCV_LIBS})
 endif ()
 
 if (USE_DIAGNOSTICS)
 include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/Diagnostics/")
 rosbuild_add_library(DiagnosticsLib src/Modules/Diagnostics/diagnostics.cpp src/Modules/Diagnostics/diagnostics_thread.cpp)
+target_link_libraries(DiagnosticsLib ${OpenCV_LIBS})
 endif ()
 
 if (USE_SERIAL_PORT)
 include_directories ("${PROJECT_SOURCE_DIR}/src/Utils/SerialPortLinux/")
 rosbuild_add_library(SerialPortLinuxLib src/Utils/SerialPortLinux/serial_lnx.cpp)
+target_link_libraries(SerialPortLinuxLib ${OpenCV_LIBS})
 endif ()
 
 ##cvBlob
@@ -129,9 +138,6 @@ set_source_files_properties(${cvBlob_SRC}
 rosbuild_add_library(cvblob SHARED ${cvBlob_CVBLOB})
 target_link_libraries(cvblob ${OpenCV_LIBS})
 ##cvBlob end
-
-
-
 
 rosbuild_add_executable(${PROJECT_NAME} src/eklavya2.cpp)
 target_link_libraries (${PROJECT_NAME} IMULib LidarLib GPSLib EncoderLib EKFLib SLAMLib PlannerLib NavigationLib DiagnosticsLib SerialPortLinuxLib)

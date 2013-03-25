@@ -8,5 +8,7 @@ void *slam_thread(void *arg) {
     // Interact with other modules in this thread
     // Implement algo in the Hector class in slam_space in slam.cpp
   }
+  
+  return NULL;
 }
 

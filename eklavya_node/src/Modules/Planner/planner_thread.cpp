@@ -1,7 +1,3 @@
-#include <stdio.h>
-#include <ros/ros.h>
-#include <geometry_msgs/Twist.h>
-#include "../../eklavya2.h"
 #include "planner.h"
 
 //#define FPS_TEST
@@ -9,12 +5,8 @@
 char **local_map;
 
 void *planner_thread(void *arg) {
-    double heading;
     Triplet my_bot_location;
     Triplet my_target_location;
-
-    int argc;
-    char *argv[0];
 
     //initializing local map
     local_map = new char*[MAP_MAX];
@@ -22,14 +14,9 @@ void *planner_thread(void *arg) {
         local_map[i] = new char[MAP_MAX];
     }
 
-    //ros::init(argc, argv, "planner");
-    //ros::NodeHandle n;
-
-    //ros::Publisher planner_pub = n.advertise<geometry_msgs::Twist>("cmd_vel", 1000);
-
     printf("Initiating Planner\n");
     planner_space::Planner::loadPlanner();
-    printf("\tPlanner Initiated\n");
+    printf("Planner Initiated\n");
 
     cout << "Waiting for Target" << endl;
     usleep(999999);
@@ -43,7 +30,7 @@ void *planner_thread(void *arg) {
     ros::Time::init();
     ros::Rate loop_rate(10);
 
-    while (ros::ok()) {
+    while (1) {
 #ifdef FPS_TEST
         if (iterations > 1000) {
             time_t finish = time(0);
@@ -89,11 +76,13 @@ void *planner_thread(void *arg) {
         }
         pthread_mutex_unlock(&map_mutex);
 
-        printf("[PLANNER THREAD] Target: (%d, %d, %d)\n", my_target_location.x, my_target_location.y, my_target_location.z);
-
         planner_space::Planner::findPath(my_bot_location, my_target_location);
 
         loop_rate.sleep();
     }
+    
+    cout << "Planner Exited" << endl;
+    
+    return NULL;
 }
 

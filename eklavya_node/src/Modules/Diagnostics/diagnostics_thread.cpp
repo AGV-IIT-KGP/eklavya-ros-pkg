@@ -46,7 +46,7 @@ void *diagnostics_thread(void *arg) {
     pthread_mutex_lock(&path_mutex);
     
     vector<Triplet> my_path;
-    for(int i = 0; i < path.size(); i++) {
+    for(unsigned int i = 0; i < path.size(); i++) {
       my_path.push_back(path[i]);
     }
     
@@ -55,5 +55,7 @@ void *diagnostics_thread(void *arg) {
     
     loop_rate.sleep();
   }
+  
+  return NULL;
 }
 
