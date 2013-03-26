@@ -13,8 +13,8 @@
 #define DEBUG 1
 #define DILATE 1
 
-#define CENTERX 100
-#define CENTERY 500
+#define CENTERX 500
+#define CENTERY 100
 #define HOKUYO_SCALE 100
 #define RADIUS 80
 #define EXPAND_ITER 60
@@ -153,20 +153,20 @@ void LidarData::update_map(const sensor_msgs::LaserScan& scan) {
     cvDilate(img, img, ker1, EXPAND_ITER);
     cvReleaseStructuringElement(&ker1);
 
-   if (DEBUG) {
-       cvNamedWindow("Dilate Filter", 0);
-       cvShowImage("Dilate Filter", img);
-       cvWaitKey(1);
-   }
+    if (DEBUG) {
+        cvNamedWindow("Dilate Filter", 0);
+        cvShowImage("Dilate Filter", img);
+        cvWaitKey(1);
+    }
 
-   pthread_mutex_lock(&map_mutex);
-   for (int i = 0; i < MAP_MAX; i++) {
-       for (int j = 0; j < MAP_MAX; j++) {
-           global_map[i][j] = IMGDATA(img, MAP_MAX-j-1, i, 0);
-       }
-   }
-   pthread_mutex_unlock(&map_mutex);
-   cvReleaseImage(&img);
+    pthread_mutex_lock(&map_mutex);
+    for (int i = 0; i < MAP_MAX; i++) {
+        for (int j = 0; j < MAP_MAX; j++) {
+            global_map[i][j] = IMGDATA(img, MAP_MAX - j - 1, i, 0);
+        }
+    }
+    pthread_mutex_unlock(&map_mutex);
+    cvReleaseImage(&img);
 }
 
 LidarData::~LidarData() {

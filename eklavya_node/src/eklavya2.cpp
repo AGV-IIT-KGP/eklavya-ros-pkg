@@ -112,7 +112,7 @@ void startThreads() {
             break;
 
         case PlannerTestOnly:
-            //      startThread(&imu_id, &attr, &imu_thread);
+            startThread(&lidar_id, &attr, &lidar_thread);
             startThread(&navigation_id, &attr, &navigation_thread);
             startThread(&planner_id, &attr, &planner_thread);
             break;
