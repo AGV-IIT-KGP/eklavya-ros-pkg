@@ -63,7 +63,7 @@ void *navigation_thread(void *arg) {
       
       case PlannerTestOnly: {
         pthread_mutex_lock(&target_location_mutex);
-        my_target_location.x = target_location.x = 500;
+        my_target_location.x = target_location.x = 900;
         my_target_location.y = target_location.y = 900; 
         my_target_location.z = target_location.z = 90; 
         pthread_mutex_unlock(&target_location_mutex);

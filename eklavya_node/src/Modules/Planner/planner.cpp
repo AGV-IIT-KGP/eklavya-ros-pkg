@@ -296,17 +296,22 @@ namespace planner_space {
         switch (PID_MODE) {
             case 0:
             {
-                if (left_velocity > right_velocity) {
-                    left_vel = 28;
-                    right_vel = 20;
-                } else if (left_velocity < right_velocity) {
-                    left_vel = 20;
+                if (s.k > 1.3) {
+                    left_vel = 33;
+                    right_vel = 25;
+                } else if (s.k > 1) {
+                    left_vel = 29;
                     right_vel = 28;
-                } else if ((left_velocity != 0) || (right_velocity != 0)) {
-                    left_vel = 20;
-                    right_vel = 20;
+                } else if (s.k < 0.77) {
+                    left_vel = 25;
+                    right_vel = 36;
+                } else if (s.k < 1) {
+                    left_vel = 28;
+                    right_vel = 32;
+                } else {
+                    left_vel = 25;
+                    right_vel = 27;
                 }
-                right_vel += 4;
 
                 break;
             }
@@ -425,7 +430,7 @@ namespace planner_space {
 #if defined(DEBUG) || defined(SHOW_PATH)
 
         cvShowImage("[PLANNER] Map", map_img);
-        
+
 #ifdef DEBUG
         cvWaitKey(0);
 #else
