@@ -11,8 +11,6 @@
 
 #define SIMCTL
 #define SIM_SEEDS
-//#define DEBUG
-//#define SHOW_PATH
 
 /**
  * Seed Files: 
@@ -512,10 +510,7 @@ namespace planner_space {
         return true;
     }
 
-    void closePlanner(IplImage *map_img) {
-#if defined(DEBUG) || defined(SHOW_PATH)
-        cvReleaseImage(&map_img);
-#endif   
+    void closePlanner() {
     }
 
     void addObstacle(IplImage *map_img, int x, int y, int r) {
@@ -524,10 +519,6 @@ namespace planner_space {
                 local_map[x + i][y + j] = 255;
             }
         }
-
-#if defined(DEBUG) || defined(SHOW_PATH)
-        cvCircle(map_img, cvPoint(x, MAP_MAX - y - 1), r, CV_RGB(255, 255, 0), -1, CV_AA, 0);
-#endif
     }
 
     /// ------------------------------------------------------------- ///
@@ -538,10 +529,6 @@ namespace planner_space {
 
         initBot();
         cout << "Vehicle Initiated" << endl;
-
-#if defined(DEBUG) || defined(SHOW_PATH)
-        cvNamedWindow("Map", 0);
-#endif
     }
 
     void Planner::findPath(Triplet bot, Triplet target) {
@@ -555,11 +542,6 @@ namespace planner_space {
         goal.h = 0;
         goal.seed_id = 0;
 
-        IplImage *map_img;
-
-#if defined(DEBUG) || defined(SHOW_PATH)
-        map_img = cvCreateImage(cvSize(MAP_MAX, MAP_MAX), IPL_DEPTH_8U, 3);
-#endif
         vector<state> open_list;
         open_list.insert(open_list.begin(), start);
         map<Triplet, open_map_element, PoseCompare> open_map;
@@ -579,29 +561,15 @@ namespace planner_space {
 
             state current = open_list.front();
 
-#ifdef DEBUG
-            cvShowImage("Map", map_img);
-            cvWaitKey(0);
-
-            //cout << "==> CURRENT: ";  print(current);
-            plotPoint(map_img, current.pose);
-#endif
-
             if ((open_map.find(current.pose) != open_map.end()) &&
                     (open_map[current.pose].membership == CLOSED)) {
                 continue;
             }
 
             if (isEqual(current, goal)) {
-                
-#ifdef SHOW_PATH
-                reconstructPath(came_from, map_img, current);
-                cout << "[SUCCESS] PATH FOUND" << endl;
-#else
                 reconstructPath(came_from, current);
-#endif
 
-                closePlanner(map_img);
+                closePlanner();
                 return;
             }
 
@@ -616,10 +584,6 @@ namespace planner_space {
 
             for (unsigned int i = 0; i < neighbors.size(); i++) {
                 state neighbor = neighbors[i];
-
-#ifdef DEBUG
-                plotPoint(map_img, neighbor.pose);
-#endif
 
                 if (!(((neighbor.pose.x >= 0) && (neighbor.pose.x < MAP_MAX)) &&
                         ((neighbor.pose.y >= 0) && (neighbor.pose.y < MAP_MAX)))) {
@@ -652,7 +616,7 @@ namespace planner_space {
             }
         }
 
-        closePlanner(map_img);
+        closePlanner();
         cout << "[PLANNER] No Path Found" << endl;
 
         seed *s1 = new seed;
