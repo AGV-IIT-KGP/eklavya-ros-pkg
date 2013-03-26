@@ -11,6 +11,8 @@
 
 #define SIMCTL
 #define SIM_SEEDS
+//#define DEBUG
+#define SHOW_PATH
 
 /**
  * Seed Files: 
@@ -146,7 +148,7 @@ namespace planner_space {
         FILE *fp = fopen(SEEDS_FILE, "r");
         return_status = fscanf(fp, "%d\n", &n_seeds);
         if (return_status == 0) {
-            cout << "Error in reading seeds" << endl;
+            cout << "[PLANNER] [ERROR] Incorrect seed file format" << endl;
             Planner::finBot();
             exit(1);
         }
@@ -157,7 +159,7 @@ namespace planner_space {
 #ifdef SIM_SEEDS
             return_status = fscanf(fp, "%lf %lf %lf %lf %lf\n", &s.k, &x, &y, &z, &s.cost);
             if (return_status == 0) {
-                cout << "Error in reading seeds" << endl;
+                cout << "[PLANNER] [ERROR] Incorrect seed file format" << endl;
                 Planner::finBot();
                 exit(1);
             }
@@ -176,7 +178,7 @@ namespace planner_space {
             int n_seed_points;
             return_status = fscanf(fp, "%d\n", &n_seed_points);
             if (return_status == 0) {
-                cout << "Error in reading seeds" << endl;
+                cout << "[PLANNER] [ERROR] Incorrect seed file format" << endl;
                 Planner::finBot();
                 exit(1);
             }
@@ -185,7 +187,7 @@ namespace planner_space {
                 seed_point point;
                 return_status = fscanf(fp, "%lf %lf\n", &point.x, &point.y);
                 if (return_status == 0) {
-                    cout << "Error in reading seeds" << endl;
+                    cout << "[PLANNER] [ERROR] Incorrect seed file format" << endl;
                     Planner::finBot();
                     exit(1);
                 }
@@ -206,7 +208,7 @@ namespace planner_space {
                 (a.pose.y - b.pose.y) * (a.pose.y - b.pose.y)) < error);
     }
 
-    void plotPoint(IplImage *map_img, Triplet pose) {
+    void plotPoint(Triplet pose) {
         int x = pose.x;
         int y = MAP_MAX - pose.y - 1;
         int ax = x > MAP_MAX ? MAP_MAX - 1 : x;
@@ -231,7 +233,7 @@ namespace planner_space {
 
     void startThread(pthread_t *thread_id, pthread_attr_t *thread_attr, void *(*thread_name) (void *)) {
         if (pthread_create(thread_id, thread_attr, thread_name, NULL)) {
-            cout << "[PLANNER] Unable to create thread" << endl;
+            cout << "[PLANNER] [ERROR] Unable to create thread" << endl;
             pthread_attr_destroy(thread_attr);
             exit(1);
         }
@@ -399,7 +401,7 @@ namespace planner_space {
         usleep(100);
 #endif  
 
-        printf("[Planner] [COMMAND] : (%d, %d)\n", left_vel, right_vel);
+        cout << "[Planner] [COMMAND] : (" << left_vel << ", " << right_vel << ")" << endl;
     }
 
     void reconstructPath(map<Triplet, state, PoseCompare> came_from, state current) {
@@ -410,6 +412,9 @@ namespace planner_space {
         int seed_id = -1;
         state s = current;
         while (came_from.find(s.pose) != came_from.end()) {
+#if defined SHOW_PATH || defined DEBUG
+            plotPoint(s.pose);
+#endif
             path.insert(path.begin(), s.pose);
             seed_id = s.seed_id;
             s = came_from[s.pose];
@@ -417,10 +422,22 @@ namespace planner_space {
 
         pthread_mutex_unlock(&path_mutex);
 
+#if defined(DEBUG) || defined(SHOW_PATH)
+
+        cvShowImage("[PLANNER] Map", map_img);
+        
+#ifdef DEBUG
+        cvWaitKey(0);
+#else
+        cvWaitKey(1);
+#endif
+
+#endif
+
         if (seed_id != -1) {
             sendCommand(seeds[seed_id]);
         } else {
-            cout << "Invalid Command Ordered" << endl;
+            cout << "[PLANNER] [ERROR] Invalid Command Requested" << endl;
             Planner::finBot();
         }
     }
@@ -433,25 +450,25 @@ namespace planner_space {
         int seed_id = -1;
         state s = current;
         while (came_from.find(s.pose) != came_from.end()) {
-            plotPoint(map_img, s.pose);
+            plotPoint(s.pose);
             path.insert(path.begin(), s.pose);
             seed_id = s.seed_id;
             s = came_from[s.pose];
         }
 
-        cvShowImage("Map", map_img);
+        cvShowImage("[PLANNER] Map", map_img);
         cvWaitKey(1);
-        
+
         pthread_mutex_unlock(&path_mutex);
 
         if (seed_id != -1) {
             sendCommand(seeds[seed_id]);
         } else {
-            cout << "Invalid Command Requested" << endl;
+            cout << "[PLANNER] [ERROR] Invalid Command Requested" << endl;
             Planner::finBot();
         }
     }
-    
+
     vector<state> neighborNodes(state current) {
         vector<state> neighbours;
         for (unsigned int i = 0; i < seeds.size(); i++) {
@@ -511,6 +528,9 @@ namespace planner_space {
     }
 
     void closePlanner() {
+#if defined(DEBUG)
+        cvReleaseImage(&map_img);
+#endif
     }
 
     void addObstacle(IplImage *map_img, int x, int y, int r) {
@@ -525,10 +545,10 @@ namespace planner_space {
 
     void Planner::loadPlanner() {
         loadSeeds();
-        cout << "Seeds Loaded" << endl;
+        cout << "[PLANNER] Seeds Loaded" << endl;
 
         initBot();
-        cout << "Vehicle Initiated" << endl;
+        cout << "[PLANNER] Vehicle Initiated" << endl;
     }
 
     void Planner::findPath(Triplet bot, Triplet target) {
@@ -553,13 +573,19 @@ namespace planner_space {
         while (!open_list.empty()) {
             //TODO: This condition needs to be handled in the strategy module.
             if (local_map[start.pose.x][start.pose.y] > 0) {
-                cout << "Robot is in Obstacles \n";
+                cout << "[PLANNER] Robot is in Obstacles" << endl;
                 seed *s = new seed;
                 s->vl = s->vr = 0;
                 sendCommand(*s);
             }
 
             state current = open_list.front();
+
+#ifdef DEBUG
+            //cout << "==> CURRENT: ";  print(current);
+            plotPoint(current.pose);
+
+#endif
 
             if ((open_map.find(current.pose) != open_map.end()) &&
                     (open_map[current.pose].membership == CLOSED)) {
@@ -568,6 +594,12 @@ namespace planner_space {
 
             if (isEqual(current, goal)) {
                 reconstructPath(came_from, current);
+
+#ifdef DEBUG
+                cout << "[PLANNER] Path Found" << endl;
+                cvShowImage("[PLANNER] Map", map_img);
+                cvWaitKey(0);
+#endif
 
                 closePlanner();
                 return;
@@ -584,6 +616,10 @@ namespace planner_space {
 
             for (unsigned int i = 0; i < neighbors.size(); i++) {
                 state neighbor = neighbors[i];
+
+#ifdef DEBUG
+                plotPoint(neighbor.pose);
+#endif
 
                 if (!(((neighbor.pose.x >= 0) && (neighbor.pose.x < MAP_MAX)) &&
                         ((neighbor.pose.y >= 0) && (neighbor.pose.y < MAP_MAX)))) {

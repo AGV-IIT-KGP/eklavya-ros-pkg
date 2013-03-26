@@ -4,6 +4,7 @@
 #include "../../eklavya2.h"
 
 extern char** local_map;
+extern IplImage *map_img;
 
 namespace planner_space {
   typedef struct command {

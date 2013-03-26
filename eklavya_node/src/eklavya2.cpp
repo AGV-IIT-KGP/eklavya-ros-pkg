@@ -10,7 +10,7 @@
 #include "Modules/Planner/planner.h"
 #include "Modules/SLAM/slam.h"
 
-#define DIAG
+//#define DIAG
 
 using namespace cv;
 
