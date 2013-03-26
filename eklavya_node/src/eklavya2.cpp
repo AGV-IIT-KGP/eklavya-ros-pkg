@@ -140,6 +140,8 @@ void sigHandler(int sig) {
 }
 
 void init() {
+    //ros::Time::init();
+  
     cout << "Setting up signal handler" << endl;
 
     signal(SIGINT, sigHandler);
@@ -160,8 +162,10 @@ int main(int argc, char *argv[]) {
 
     createMutex();
 
+    ros::init(argc, argv, "eklavya_node");
+    
     init();
-
+    
     startThreads();
 
     while (1);

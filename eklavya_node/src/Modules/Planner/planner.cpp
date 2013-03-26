@@ -296,19 +296,19 @@ namespace planner_space {
         switch (PID_MODE) {
             case 0:
             {
-                if (s.k > 1.3) {
+                if (s.k > 1.3) {  // Extreme Right
                     left_vel = 33;
                     right_vel = 25;
-                } else if (s.k > 1) {
+                } else if (s.k > 1) { // Right
                     left_vel = 29;
                     right_vel = 28;
-                } else if (s.k < 0.77) {
+                } else if (s.k < 0.77) {  // Left
                     left_vel = 25;
                     right_vel = 36;
-                } else if (s.k < 1) {
+                } else if (s.k < 1) { // Left
                     left_vel = 28;
                     right_vel = 32;
-                } else {
+                } else {  // Straight
                     left_vel = 25;
                     right_vel = 27;
                 }

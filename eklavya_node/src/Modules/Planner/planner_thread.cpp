@@ -31,7 +31,6 @@ void *planner_thread(void *arg) {
     time_t start = time(0);
 #endif
 
-    ros::Time::init();
     ros::Rate loop_rate(10);
 
     while (1) {

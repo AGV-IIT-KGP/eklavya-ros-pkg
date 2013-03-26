@@ -14,12 +14,24 @@
 #define AUTOSTOP 0 // 0 for no autostop , 3 for autostop in 3 seconds.. or any integer.
 int kbhit(void);
 
+void sendCommand0(Tserial *p) {
+      p->connect(UART_COMM_PORT, UART_BAUD_RATE, spNONE,VERBOSE);
+      char array1[5] = {'w', '2', 
+                             '6', 
+                             '3', 
+                             '1'};
+    
+      p->sendArray(array1, 5);
+      usleep(100);
+      p->disconnect();  
+}
+
 void sendCommand1(Tserial *p) {
       p->connect(UART_COMM_PORT, UART_BAUD_RATE, spNONE,VERBOSE);
-      char array1[5] = {'w', '3', 
-                             '2', 
-                             '2', 
-                             '8'};
+      char array1[5] = {'w', '4', 
+                             '3', 
+                             '1', 
+                             '5'};
     
       p->sendArray(array1, 5);
       usleep(100);
@@ -41,10 +53,10 @@ void sendCommand3(Tserial *p) {
 
 void sendCommand2(Tserial *p) {
       p->connect(UART_COMM_PORT, UART_BAUD_RATE, spNONE,VERBOSE);
-      char array1[5] = {'w', '2', 
-                             '0', 
-                             '2', 
-                             '4'};
+      char array1[5] = {'w', '1', 
+                             '5', 
+                             '4', 
+                             '6'};
     
       p->sendArray(array1, 5);
       usleep(100);
@@ -64,13 +76,15 @@ int main()
     
     srand(time(0));
     
-    for(int j = 0; j < 5; j++) {
-      for(int i = 0; i < 10; i++) {      
-        sendCommand3(p);
+    for(int j = 0; j < 15; j++) {
+      for(int i = 0; i < 5; i++) {      
+        printf("sendCommand2\n");
+        sendCommand0(p);
         usleep(100 * 1000);
       }
-      for(int i = 0; i < 10; i++) {      
-        sendCommand1(p);
+      for(int i = 0; i < 5; i++) {    
+        printf("sendCommand1\n"); 
+        sendCommand0(p);
         usleep(100 * 1000);
       }
     }

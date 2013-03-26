@@ -25,7 +25,7 @@ void *lidar_thread(void *arg) {
     int iterations = 0;
     time_t start = time(0);
 #endif
-    while (ros::ok()) {
+    while (1) {
 #ifdef FPS_TEST
         if (iterations > 100) {
             time_t finish = time(0);
