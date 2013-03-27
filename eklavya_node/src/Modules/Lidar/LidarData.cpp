@@ -65,6 +65,9 @@ void LidarData::update_map(const sensor_msgs::LaserScan& scan) {
     //TODO: Fusion needs to be implemented in the STRATEGY module
 
     //initialize variables
+    //ros::NodeHandle n;
+	int minblob_lidar=200;
+	//n.param<int>("minblob_lidar", minblob_lidar, 200);
 
     IplImage *img, *nblobs, *nblobs1, *labelImg;
     img = cvCreateImage(cvSize(MAP_MAX, MAP_MAX), 8, 1);
@@ -123,7 +126,7 @@ void LidarData::update_map(const sensor_msgs::LaserScan& scan) {
             //cvErode(filtered_img,filtered_img,ker2,1);
             unsigned int result = cvLabel(img, labelImg, blobs);
             cvRenderBlobs(labelImg, blobs, nblobs, nblobs, CV_BLOB_RENDER_COLOR);
-            cvFilterByArea(blobs, 100, img->height * img->width);
+            cvFilterByArea(blobs, minblob_lidar, img->height * img->width);
             cvRenderBlobs(labelImg, blobs, nblobs1, nblobs1, CV_BLOB_RENDER_COLOR);
             //converts nblobs1 to filtered_img(grayscale)
             cvCvtColor(nblobs1, img, CV_RGB2GRAY);
