@@ -1,5 +1,5 @@
 /*
- * Authors: Bhuvnesh, Priyanka, Samuel
+ * Authors: Bhuvnesh, Priyanka, Samuel , Jit
  */
 
 #include "LidarData.h"
@@ -10,7 +10,7 @@
  */
 
 #define FILTER 1
-#define DEBUG 0
+#define DEBUG 1
 
 #define CENTERX 500
 #define CENTERY 100
@@ -78,6 +78,8 @@ void LidarData::update_map(const sensor_msgs::LaserScan& scan) {
 
     //initilize variables ended
 
+    //Taking data from hokuyo node
+
     size_t size = scan.ranges.size();
     float angle = scan.angle_min;
     float maxRangeForContainer = scan.range_max - 0.1f;
@@ -102,7 +104,7 @@ void LidarData::update_map(const sensor_msgs::LaserScan& scan) {
     }
 
     //Filtering
-
+   
     switch (FILTER) {
         case 0:
         {
@@ -113,6 +115,7 @@ void LidarData::update_map(const sensor_msgs::LaserScan& scan) {
             labelImg = cvCreateImage(cvSize(MAP_MAX, MAP_MAX), IPL_DEPTH_LABEL, 1);
             nblobs = cvCreateImage(cvSize(MAP_MAX, MAP_MAX), 8, 3);
             nblobs1 = cvCreateImage(cvSize(MAP_MAX, MAP_MAX), 8, 3);
+ 	    cvSet(labelImg, cvScalar(0));
 
             ker1 = cvCreateStructuringElementEx(5, 5, 2, 2, CV_SHAPE_ELLIPSE);
             ker2 = cvCreateStructuringElementEx(7, 7, 3, 3, CV_SHAPE_ELLIPSE);
@@ -120,7 +123,7 @@ void LidarData::update_map(const sensor_msgs::LaserScan& scan) {
             //cvErode(filtered_img,filtered_img,ker2,1);
             unsigned int result = cvLabel(img, labelImg, blobs);
             cvRenderBlobs(labelImg, blobs, nblobs, nblobs, CV_BLOB_RENDER_COLOR);
-            cvFilterByArea(blobs, 400, img->height * img->width);
+            cvFilterByArea(blobs, 100, img->height * img->width);
             cvRenderBlobs(labelImg, blobs, nblobs1, nblobs1, CV_BLOB_RENDER_COLOR);
             //converts nblobs1 to filtered_img(grayscale)
             cvCvtColor(nblobs1, img, CV_RGB2GRAY);
@@ -136,6 +139,7 @@ void LidarData::update_map(const sensor_msgs::LaserScan& scan) {
             cvReleaseStructuringElement(&ker2);
 
             if (DEBUG) {
+		cvNamedWindow("Blob Filter", 0);
                 cvShowImage("Blob Filter", img);
                 cvWaitKey(WAIT_TIME);
             }

@@ -24,9 +24,7 @@ void *lidar_thread(void *arg) {
     int iterations = 0;
     time_t start = time(0);
 #endif
-    
-    cvNamedWindow("Blob Filter", 0);
-                
+        
     while (1) {
 #ifdef FPS_TEST
         if (iterations > 100) {
