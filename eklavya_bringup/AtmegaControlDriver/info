@@ -1,0 +1,43 @@
+apt-get install binutils-avr gcc-avr avr-libc avrdude
+sudo apt-get install gcc-avr avr-libc avrdude
+
+/etc/udev/rules.d/40-permissions.rules:
+#AVRISP mkII
+SUBSYSTEM=="usb_device",SYSFS{idVendor}=="03eb",SYSFS{idProduct}=="2104",MODE="0666"
+SYSFS{idVendor}=="16c0",  SYSFS{idProduct}=="05dc", MODE="0660", GROUP="users"
+
+avrdude –c usbasp –p m16 –u –U flash:w:io.hex 
+avrdude -c usbasp -p atmega32 -U flash:w:main.hex  -v 
+
+
+-c : Indicates the programmer type. Since we are using the USBasp programmer, argument “usbasp” is mentioned.
+
+-p : Processor. We are using ATmega16, hence “m16”. Note ATmega16 has two variants, one is “ATmega16L” (slow speed version) and “ATmega16” normal 16MHz version. However their device signature is same and hence you will have to use “m16” as parameter for both the AVRs. This applies to all AVRs having “L” variants.
+
+-u : Disables the default behavior of reading out the fuses three times before programming, then verifying at the end of programming that the fuses have not changed. Always use this option. Many times it happens that we forget to switch on the AVR’s +5V power supply, then at the end of programming cycle, avrdude detects inconsistent fuses and tries to reprogram them. Since there is no power supply, fuses gets programmed incorrectly and entire microcontroller gets screwed up(means becomes useless). Thus always use this option.
+
+-U  :  memtype:op:filename[:format]
+
+
+MCU = atmega32
+defines which device you are using.
+
+F_CPU = 16000000
+defines the clock of the microcontroller
+
+TARGET = main
+defines the target. This basically is the name of your C source file (e.g. main.c) without the .c file extension
+
+AVRDUDE_PROGRAMMER = usbasp
+is the programmer you’re using. See avrdude --help for all available programmers
+
+AVRDUDE_PORT = usb
+is the port that your programmer is connected to
+
+
+
+To compile the program simply type into you terminal:
+make all
+
+To program the AVR type:
+sudo make program
