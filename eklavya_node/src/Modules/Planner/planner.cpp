@@ -434,7 +434,7 @@ namespace planner_space {
 #ifdef DEBUG
         cvWaitKey(0);
 #else
-        cvWaitKey(1);
+        cvWaitKey(WAIT_TIME);
 #endif
 
 #endif
@@ -462,7 +462,7 @@ namespace planner_space {
         }
 
         cvShowImage("[PLANNER] Map", map_img);
-        cvWaitKey(1);
+        cvWaitKey(WAIT_TIME);
 
         pthread_mutex_unlock(&path_mutex);
 

@@ -13,11 +13,10 @@ char **laser_scan;
 void *lidar_thread(void *arg) {
     int argc;
     char *argv[0];
-    ros::init(argc, argv, "lidar_thread");
     ros::NodeHandle lidar_node;
 
     ros::Subscriber sub = lidar_node.subscribe("scan", 1000, LidarData::update_map);
-    ros::Rate loop_rate(15);
+    ros::Rate loop_rate(LOOP_RATE);
     //ros::spin();
 
 #ifdef FPS_TEST
@@ -25,6 +24,9 @@ void *lidar_thread(void *arg) {
     int iterations = 0;
     time_t start = time(0);
 #endif
+    
+    cvNamedWindow("Blob Filter", 0);
+                
     while (1) {
 #ifdef FPS_TEST
         if (iterations > 100) {

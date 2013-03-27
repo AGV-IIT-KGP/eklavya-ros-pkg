@@ -9,8 +9,8 @@
  *  1: Blob filter
  */
 
-#define FILTER 0
-#define DEBUG 1
+#define FILTER 1
+#define DEBUG 0
 
 #define CENTERX 500
 #define CENTERY 100
@@ -114,19 +114,18 @@ void LidarData::update_map(const sensor_msgs::LaserScan& scan) {
             nblobs = cvCreateImage(cvSize(MAP_MAX, MAP_MAX), 8, 3);
             nblobs1 = cvCreateImage(cvSize(MAP_MAX, MAP_MAX), 8, 3);
 
-            ker1 = cvCreateStructuringElementEx(9, 9, 4, 4, CV_SHAPE_ELLIPSE);
+            ker1 = cvCreateStructuringElementEx(5, 5, 2, 2, CV_SHAPE_ELLIPSE);
             ker2 = cvCreateStructuringElementEx(7, 7, 3, 3, CV_SHAPE_ELLIPSE);
-
-            cvDilate(img, img, ker1, 5);
+            cvDilate(img, img, ker1, 1);
             //cvErode(filtered_img,filtered_img,ker2,1);
             unsigned int result = cvLabel(img, labelImg, blobs);
             cvRenderBlobs(labelImg, blobs, nblobs, nblobs, CV_BLOB_RENDER_COLOR);
-            cvFilterByArea(blobs, 500, img->height * img->width);
+            cvFilterByArea(blobs, 400, img->height * img->width);
             cvRenderBlobs(labelImg, blobs, nblobs1, nblobs1, CV_BLOB_RENDER_COLOR);
             //converts nblobs1 to filtered_img(grayscale)
             cvCvtColor(nblobs1, img, CV_RGB2GRAY);
             //thresholds the filtered_img based on threshold value
-            cvThreshold(img, img, 5, 255, CV_THRESH_BINARY);
+            cvThreshold(img, img, 125, 255, CV_THRESH_BINARY);
 
             cvReleaseImage(&labelImg);
             cvReleaseImage(&nblobs);
@@ -137,9 +136,8 @@ void LidarData::update_map(const sensor_msgs::LaserScan& scan) {
             cvReleaseStructuringElement(&ker2);
 
             if (DEBUG) {
-                cvNamedWindow("Blob Filter", 0);
                 cvShowImage("Blob Filter", img);
-                cvWaitKey(1);
+                cvWaitKey(WAIT_TIME);
             }
             break;
         }
@@ -152,7 +150,7 @@ void LidarData::update_map(const sensor_msgs::LaserScan& scan) {
     if (DEBUG) {
         cvNamedWindow("Dilate Filter", 0);
         cvShowImage("Dilate Filter", img);
-        cvWaitKey(1);
+        cvWaitKey(WAIT_TIME);
     }
 
     pthread_mutex_lock(&map_mutex);

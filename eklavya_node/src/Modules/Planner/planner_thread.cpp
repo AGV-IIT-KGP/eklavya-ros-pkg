@@ -31,7 +31,7 @@ void *planner_thread(void *arg) {
     time_t start = time(0);
 #endif
 
-    ros::Rate loop_rate(10);
+    ros::Rate loop_rate(LOOP_RATE);
 
     while (1) {
 #ifdef FPS_TEST
@@ -86,7 +86,7 @@ void *planner_thread(void *arg) {
         pthread_mutex_unlock(&map_mutex);
 
         cvShowImage("[PLANNER] Map", map_img);
-        cvWaitKey(1);
+        cvWaitKey(WAIT_TIME);
 
         planner_space::Planner::findPath(my_bot_location, my_target_location);
 

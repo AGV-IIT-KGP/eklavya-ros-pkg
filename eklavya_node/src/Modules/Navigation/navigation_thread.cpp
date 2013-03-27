@@ -8,7 +8,7 @@ void *navigation_thread(void *arg) {
   Triplet my_target_location;
   Triplet my_bot_location;
   
-  ros::Rate loop_rate(10);
+  ros::Rate loop_rate(LOOP_RATE);
   
   while(1) {
     iterations++;

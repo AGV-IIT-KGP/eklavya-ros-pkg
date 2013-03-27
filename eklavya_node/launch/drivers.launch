@@ -2,7 +2,7 @@
 
 <launch>
   <arg name="Hokuyo" value="1" />
-  <arg name="VectorNav" value="0" />
+  <arg name="VectorNav" value="1" />
   <arg name="Sparkfun_Yaw" value="1" />
   <arg name="Sparkfun_Quaternion" value="0" />
   <arg name="Atmega" value="0" />
@@ -14,7 +14,7 @@
     <param name="max_ang" value="  1.57" />
   </node>
 
-  <node if="$(arg VectorNav)" pkg="eklavya_pose" type="eklavya_pose" name="eklavya_pose" />
+  <node if="$(arg VectorNav)" pkg="eklavya_pose" type="eklavya_pose" name="eklavya_pose" output="screen"/>
 
   <node if="$(arg Sparkfun_Yaw)" pkg="yaw_pub" type="yaw_publisher" name="yaw_publisher" />
 

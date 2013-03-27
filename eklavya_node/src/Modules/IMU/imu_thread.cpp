@@ -6,7 +6,7 @@ void *imu_thread(void *arg) {
     
     ros::Subscriber sub = imu_node.subscribe("/yaw", 1000, IMUspace::IMU::update_yaw);
 
-    ros::Rate loop_rate(10);
+    ros::Rate loop_rate(LOOP_RATE);
 
     while (1) {
         ros::spinOnce();
