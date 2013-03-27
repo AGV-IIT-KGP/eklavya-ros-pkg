@@ -2,10 +2,10 @@
 
 <launch>
 
-  <node pkg="rosbag" type="play" name="rosbagplay" args=" -d 3 -l /home/jit/bagfiles/2013-03-20-13-35-58.bag" >
+  <node pkg="rosbag" type="play" name="rosbagplay" args=" -d 3 -l ~/bagfiles/2013-03-20-13-35-58.bag" >
     <remap from="scan_filtered" to="/scan_filter_old"/>
   </node>
-<!--2013-03-20-13-35-58.bag  /home/jit/bagfiles/laser1.bag--> 
+<!-- keep bag files in your_home/bagfiles from https://www.dropbox.com/sh/q2urfmen0hhmcte/VcEqB0iqYO--> 
 
   <node pkg="laser_filters" type="scan_to_scan_filter_chain"
       name="laser_filter">
