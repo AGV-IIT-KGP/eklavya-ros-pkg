@@ -17,13 +17,14 @@
 #include <math.h>
 
 /*Define Definitions here*/
-int  Kp=220;
-int  Ki=10;
+int Gcount=0;
+float  Kp=220;
+float  Ki=10;
 //12
-int  Kd=15;
+float  Kd=15;
 int tuning_temp=0;
 //15
-#define Ko 10000.0
+float Ko=12000.0;
 #define PID_PWM_SCALE 1
 #define PID 1
 /* Define the robot paramters */
@@ -335,17 +336,18 @@ void PID_exec(void)
 	
 	setMotors(L_PWM,R_PWM);
 	
-	
-	
 	USARTWriteChar('\n');
 	USARTWriteChar('\r');
+	
+/*	
+	
 	USARTWriteChar('m');
 	USARTWriteChar(':');
 	USARTWriteChar('L');
 	USARTWriteInt(lCount);
 	USARTWriteChar('R');
 	USARTWriteInt(rCount);
-	
+*/	
 	USARTWriteChar(' ');
 	USARTWriteChar('o');
 	USARTWriteChar(':');
@@ -353,7 +355,7 @@ void PID_exec(void)
 	USARTWriteInt(lCountOut);
 	USARTWriteChar('R');
 	USARTWriteInt(rCountOut);
-	
+/*	
 	USARTWriteChar(' ');
 	USARTWriteChar('w');
 	USARTWriteChar(':');
@@ -401,7 +403,7 @@ void PID_exec(void)
 	USARTWriteInt(lCount2+lCount);
 	USARTWriteChar('R');
 	USARTWriteInt(rCount2+rCount);
-
+*/
 	
 	
 	
@@ -486,9 +488,13 @@ int main(void)
 		{
 			USARTWriteChar('.');
 			USARTWriteInt(state);
+
+			USARTWriteChar('c');
+			USARTWriteInt(Gcount);
+            Gcount=0;
 			tempTest=0;
 		}
-		
+		/*
         if (lastMotorCommand == 0) 
         { 
             lastMotorCommand = AUTO_STOP_INTERVAL + millis(); 
@@ -499,12 +505,13 @@ int main(void)
 			resetState();
 			lastMotorCommand=-1;
         } 
-		
+		*/
 		if (millis() > nextPID) {
 			if(PID)
 			{
 				uint8_t oldSREG = SREG;
 				cli();
+				Gcount++;
 				PID_exec();
 				SREG=oldSREG;
 			}
