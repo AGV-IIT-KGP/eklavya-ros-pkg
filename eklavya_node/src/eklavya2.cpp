@@ -93,11 +93,11 @@ void startThreads() {
             break;
 
         case TrackWayPoint: // Reach a target GPS waypoint while avoiding obstacles
-            startThread(&imu_id, &attr, &imu_thread);
-            startThread(&gps_id, &attr, &gps_thread);
+//            startThread(&imu_id, &attr, &imu_thread);
+//            startThread(&gps_id, &attr, &gps_thread);
             startThread(&lidar_id, &attr, &lidar_thread);
-            startThread(&navigation_id, &attr, &navigation_thread);
-            startThread(&planner_id, &attr, &planner_thread);
+//            startThread(&navigation_id, &attr, &navigation_thread);
+//            startThread(&planner_id, &attr, &planner_thread);
             break;
 
         case HectorSLAM:
@@ -112,8 +112,8 @@ void startThreads() {
             break;
 
         case PlannerTestOnly:
-            startThread(&lidar_id, &attr, &lidar_thread);
-            startThread(&navigation_id, &attr, &navigation_thread);
+//            startThread(&lidar_id, &attr, &lidar_thread);
+//            startThread(&navigation_id, &attr, &navigation_thread);
             startThread(&planner_id, &attr, &planner_thread);
             break;
     }

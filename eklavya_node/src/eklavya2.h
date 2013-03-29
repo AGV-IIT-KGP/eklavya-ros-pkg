@@ -15,7 +15,7 @@
 #include "Utils/SerialPortLinux/serial_lnx.h"
 
 #define MAP_MAX 1000
-#define LOOP_RATE 5
+#define LOOP_RATE 10
 #define WAIT_TIME 1
 
 enum Strategies {

@@ -262,12 +262,7 @@ namespace planner_space {
         p->connect(BOT_COM_PORT, BOT_BAUD_RATE, spNONE);
         usleep(100);
 
-        char arr[2] = {' ', ' '};
-        p->sendArray(arr, 2);
-        usleep(100);
-
-        p->disconnect();
-        usleep(100);
+  
 #endif
     }
 
@@ -280,14 +275,14 @@ namespace planner_space {
         if ((left_velocity == 0) && (right_velocity == 0)) {
 
 #ifndef SIMCTL
-            p->connect(BOT_COM_PORT, BOT_BAUD_RATE, spNONE);
-            usleep(100);
+//            p->connect(BOT_COM_PORT, BOT_BAUD_RATE, spNONE);
+//            usleep(100);
 
             p->sendChar(' ');
             usleep(100);
 
-            p->disconnect();
-            usleep(100);
+//            p->disconnect();
+//            usleep(100);
 #endif
 
             return;
@@ -296,7 +291,11 @@ namespace planner_space {
         switch (PID_MODE) {
             case 0:
             {
-                if (s.k > 1.3) {  // Extreme Right
+                double vavg = 60;
+                left_vel = (int) 2 * vavg * s.k / (1 + s.k);
+                right_vel = (int) (2 * vavg - left_vel);
+                /*
+                if (s.k == 1) {  // Extreme Right
                     left_vel = 33;
                     right_vel = 25;
                 } else if (s.k > 1) { // Right
@@ -312,7 +311,10 @@ namespace planner_space {
                     left_vel = 25;
                     right_vel = 27;
                 }
-
+                
+                left_vel = (int) (left_vel * 0.7);
+                right_vel = (int) (right_vel * 0.7);
+                */
                 break;
             }
             case 1:
@@ -390,20 +392,20 @@ namespace planner_space {
         }
 
 #ifndef SIMCTL
-        p->connect(BOT_COM_PORT, BOT_BAUD_RATE, spNONE);
-        usleep(100);
+//        p->connect(BOT_COM_PORT, BOT_BAUD_RATE, spNONE);
+//        usleep(100);
 
-        char arr[5] = {'w',
+        char arr[] = {'w',
             '0' + left_vel / 10,
             '0' + left_vel % 10,
             '0' + right_vel / 10,
-            '0' + right_vel % 10};
+            '0' + right_vel % 10,'\0'};
 
         p->sendArray(arr, 5);
         usleep(100);
 
-        p->disconnect();
-        usleep(100);
+//        p->disconnect();
+//        usleep(100);
 #endif  
 
         cout << "[Planner] [COMMAND] : (" << left_vel << ", " << right_vel << ")" << endl;
@@ -669,14 +671,16 @@ namespace planner_space {
     void Planner::finBot() {
 #ifndef SIMCTL
         //p = new Tserial();
-        p->connect(BOT_COM_PORT, BOT_BAUD_RATE, spNONE);
-        usleep(100);
+//        p->connect(BOT_COM_PORT, BOT_BAUD_RATE, spNONE);
+//        usleep(100);
 
         p->sendChar(' ');
         usleep(100);
-
-        p->disconnect();
+    p->sendChar(' ');
         usleep(100);
+
+//        p->disconnect();
+//        usleep(100);
 #endif
     }
 
