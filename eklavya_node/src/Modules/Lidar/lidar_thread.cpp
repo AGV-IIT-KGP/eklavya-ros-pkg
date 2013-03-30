@@ -11,13 +11,12 @@
 char **laser_scan;
 
 void *lidar_thread(void *arg) {
-    int argc;
-    char *argv[0];
     ros::NodeHandle lidar_node;
 
-    ros::Subscriber sub = lidar_node.subscribe("scan", 1000, LidarData::update_map);
+    ros::Subscriber sub = lidar_node.subscribe("scan", 5, LidarData::update_map);
     ros::Rate loop_rate(LOOP_RATE);
-    //ros::spin();
+
+    ROS_INFO("Lidar thread started");
 
 #ifdef FPS_TEST
     cout << "[LIDAR] Conducting an FPS Test" << endl;
@@ -25,7 +24,7 @@ void *lidar_thread(void *arg) {
     time_t start = time(0);
 #endif
 
-    while (1) {
+    while (ros::ok()) {
 #ifdef FPS_TEST
         if (iterations > 100) {
             time_t finish = time(0);

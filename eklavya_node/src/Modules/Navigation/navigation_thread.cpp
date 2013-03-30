@@ -10,7 +10,7 @@ void *navigation_thread(void *arg) {
   
   ros::Rate loop_rate(LOOP_RATE);
   
-  while(1) {
+  while(ros::ok()) {
     iterations++;
     switch(strategy) {
       case FollowNose: {
@@ -75,14 +75,12 @@ void *navigation_thread(void *arg) {
       }
     }
     
-    /*cout << "[NAV] [TARGET] " <<
-            my_target_location.x << ", " <<
-            my_target_location.y << endl;
-      */  
+//    ROS_INFO("[NAV] [TARGET] : (%d, %d)", my_target_location.x, my_target_location.y);
+    
     loop_rate.sleep();
   }
   
-  cout << "Navigation Exited" << endl;
+  ROS_INFO("Navigation Exited");
   
   return NULL;
 }

@@ -98,6 +98,7 @@ namespace planner_space {
 
     pthread_mutex_t controllerMutex;
     volatile double targetCurvature = 1;
+    seed brake;
 
     /// ------------------------------------------------------------- ///
 
@@ -203,9 +204,10 @@ namespace planner_space {
     }
 
     bool isEqual(state a, state b) {
-        double error = sqrt((50 ^ 2) + (50 ^ 2));
-        return (sqrt((a.pose.x - b.pose.x) * (a.pose.x - b.pose.x) +
-                (a.pose.y - b.pose.y) * (a.pose.y - b.pose.y)) < error);
+        double error = sqrt((a.pose.x - b.pose.x) * (a.pose.x - b.pose.x) +
+                (a.pose.y - b.pose.y) * (a.pose.y - b.pose.y));
+
+        return error < 35;
     }
 
     void plotPoint(Triplet pose) {
@@ -262,7 +264,7 @@ namespace planner_space {
         p->connect(BOT_COM_PORT, BOT_BAUD_RATE, spNONE);
         usleep(100);
 
-  
+
 #endif
     }
 
@@ -275,14 +277,14 @@ namespace planner_space {
         if ((left_velocity == 0) && (right_velocity == 0)) {
 
 #ifndef SIMCTL
-//            p->connect(BOT_COM_PORT, BOT_BAUD_RATE, spNONE);
-//            usleep(100);
+            //            p->connect(BOT_COM_PORT, BOT_BAUD_RATE, spNONE);
+            //            usleep(100);
 
             p->sendChar(' ');
             usleep(100);
 
-//            p->disconnect();
-//            usleep(100);
+            //            p->disconnect();
+            //            usleep(100);
 #endif
 
             return;
@@ -314,7 +316,7 @@ namespace planner_space {
                 
                 left_vel = (int) (left_vel * 0.7);
                 right_vel = (int) (right_vel * 0.7);
-                */
+                 */
                 break;
             }
             case 1:
@@ -392,23 +394,23 @@ namespace planner_space {
         }
 
 #ifndef SIMCTL
-//        p->connect(BOT_COM_PORT, BOT_BAUD_RATE, spNONE);
-//        usleep(100);
+        //        p->connect(BOT_COM_PORT, BOT_BAUD_RATE, spNONE);
+        //        usleep(100);
 
         char arr[] = {'w',
             '0' + left_vel / 10,
             '0' + left_vel % 10,
             '0' + right_vel / 10,
-            '0' + right_vel % 10,'\0'};
+            '0' + right_vel % 10, '\0'};
 
         p->sendArray(arr, 5);
         usleep(100);
 
-//        p->disconnect();
-//        usleep(100);
+        //        p->disconnect();
+        //        usleep(100);
 #endif  
 
-        cout << "[Planner] [COMMAND] : (" << left_vel << ", " << right_vel << ")" << endl;
+        ROS_INFO("[Planner] [COMMAND] : (%d, %d)", left_vel, right_vel);
     }
 
     void reconstructPath(map<Triplet, state, PoseCompare> came_from, state current) {
@@ -535,6 +537,7 @@ namespace planner_space {
     }
 
     void closePlanner() {
+        Planner::finBot();
 #if defined(DEBUG)
         cvReleaseImage(&map_img);
 #endif
@@ -577,13 +580,18 @@ namespace planner_space {
 
         map<Triplet, state, PoseCompare> came_from;
 
+        if (isEqual(start, goal)) {
+            ROS_INFO("TARGET REACHED \\M/");
+            Planner::finBot();
+            return;
+        }
+
         while (!open_list.empty()) {
             //TODO: This condition needs to be handled in the strategy module.
             if (local_map[start.pose.x][start.pose.y] > 0) {
-                cout << "[PLANNER] Robot is in Obstacles" << endl;
-                seed *s = new seed;
-                s->vl = s->vr = 0;
-                sendCommand(*s);
+                ROS_WARN("[PLANNER] Robot is in Obstacles");
+                Planner::finBot();
+                return;
             }
 
             state current = open_list.front();
@@ -591,7 +599,6 @@ namespace planner_space {
 #ifdef DEBUG
             //cout << "==> CURRENT: ";  print(current);
             plotPoint(current.pose);
-
 #endif
 
             if ((open_map.find(current.pose) != open_map.end()) &&
@@ -603,7 +610,7 @@ namespace planner_space {
                 reconstructPath(came_from, current);
 
 #ifdef DEBUG
-                cout << "[PLANNER] Path Found" << endl;
+                ROS_INFO("[PLANNER] Path Found");
                 cvShowImage("[PLANNER] Map", map_img);
                 cvWaitKey(0);
 #endif
@@ -659,30 +666,11 @@ namespace planner_space {
             }
         }
 
+        ROS_WARN("[PLANNER] No Path Found");
         closePlanner();
-        cout << "[PLANNER] No Path Found" << endl;
-
-        seed *s1 = new seed;
-        s1->vl = 0.0;
-        s1->vr = 0.0;
-        sendCommand(*s1);
     }
 
     void Planner::finBot() {
-#ifndef SIMCTL
-        //p = new Tserial();
-//        p->connect(BOT_COM_PORT, BOT_BAUD_RATE, spNONE);
-//        usleep(100);
-
-        p->sendChar(' ');
-        usleep(100);
-    p->sendChar(' ');
-        usleep(100);
-
-//        p->disconnect();
-//        usleep(100);
-#endif
+        sendCommand(brake);
     }
-
-
 }

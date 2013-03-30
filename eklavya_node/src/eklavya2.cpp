@@ -93,11 +93,11 @@ void startThreads() {
             break;
 
         case TrackWayPoint: // Reach a target GPS waypoint while avoiding obstacles
-//            startThread(&imu_id, &attr, &imu_thread);
-//            startThread(&gps_id, &attr, &gps_thread);
+            startThread(&imu_id, &attr, &imu_thread);
+            startThread(&gps_id, &attr, &gps_thread);
             startThread(&lidar_id, &attr, &lidar_thread);
-//            startThread(&navigation_id, &attr, &navigation_thread);
-//            startThread(&planner_id, &attr, &planner_thread);
+            startThread(&navigation_id, &attr, &navigation_thread);
+            startThread(&planner_id, &attr, &planner_thread);
             break;
 
         case HectorSLAM:
@@ -112,8 +112,8 @@ void startThreads() {
             break;
 
         case PlannerTestOnly:
-//            startThread(&lidar_id, &attr, &lidar_thread);
-//            startThread(&navigation_id, &attr, &navigation_thread);
+            //            startThread(&lidar_id, &attr, &lidar_thread);
+            startThread(&navigation_id, &attr, &navigation_thread);
             startThread(&planner_id, &attr, &planner_thread);
             break;
     }
@@ -129,48 +129,37 @@ void fin() {
     planner_space::Planner::finBot();
 }
 
-void sigHandler(int sig) {
-    printf("\n Closing AGV\n");
-
-    signal(sig, SIG_IGN);
-
-    fin();
-
-    exit(0);
-}
-
 void init() {
-    //ros::Time::init();
-  
-    cout << "Setting up signal handler" << endl;
-
-    signal(SIGINT, sigHandler);
+    createMutex();
+    ROS_INFO("Mutexes created");
 }
 
 void printUsage() {
-    printf("Incorrect Input Format\n");
 }
 
 int main(int argc, char *argv[]) {
+    ros::init(argc, argv, "eklavya_node");
+    ros::Time::init();
+    
     if (argc < 2) {
+        ROS_ERROR("Incorrect input format");
         printUsage();
-        exit(0);
+        ros::shutdown();
     } else {
         strategy = atoi(argv[1]);
-        cout << "Using the strategy: " << strategy << endl;
+        ROS_INFO("Using the strategy: %d", strategy);
     }
 
-    createMutex();
-
-    ros::init(argc, argv, "eklavya_node");
-    
     init();
-    
-    startThreads();
+    ROS_INFO("Eklavya initiated successfully");
 
-    //while (1);
-	ros::spin();
-    cout << "Eklavya Exiting" << endl;
+    startThreads();
+    ROS_INFO("Threads have been started");
+
+    ROS_INFO("Spinning");
+    ros::spin();
+
+    ROS_INFO("Eklavya Exiting");
 
     return 0;
 }

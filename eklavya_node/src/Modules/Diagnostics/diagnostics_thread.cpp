@@ -12,7 +12,6 @@ void *diagnostics_thread(void *arg) {
   cvNamedWindow("Diag Path", 0);
   cvNamedWindow("Diag Map", 0);
   
-  ros::Time::init();
   ros::Rate loop_rate(10);
   
   while(ros::ok()) {
