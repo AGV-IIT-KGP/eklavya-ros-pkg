@@ -75,7 +75,7 @@ void *navigation_thread(void *arg) {
       }
     }
     
-//    ROS_INFO("[NAV] [TARGET] : (%d, %d)", my_target_location.x, my_target_location.y);
+    ROS_DEBUG("[NAV] [TARGET] : (%d, %d)", my_target_location.x, my_target_location.y);
     
     loop_rate.sleep();
   }
