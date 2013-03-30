@@ -136,12 +136,12 @@ int main(int argc,char** argv)
       altitude);
     
     mrpt::topography::TGeodeticCoords p1(
-      /*22.32079,
-      87.31188,*/
+      22.32079,
+      87.31188,
       /*22.317733,
       87.309101,*/
-      22.319575000000000000, // lat in deg  of origin
-      87.298412000000000000, // lon in deg of origin
+      /*22.319575000000000000, // lat in deg  of origin
+      87.298412000000000000,*/ // lon in deg of origin
       6);
     
     mrpt::poses::TPoint3D p;

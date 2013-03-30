@@ -1,4 +1,5 @@
 #include "planner.h"
+#include "../devices.h"
 
 //#define FPS_TEST
 
@@ -25,7 +26,7 @@ void *planner_thread(void *arg) {
     cout << "Waiting for Target" << endl;
     usleep(999999);
     usleep(999999);
-
+    
 #ifdef FPS_TEST
     int iterations = 0;
     time_t start = time(0);
@@ -89,7 +90,7 @@ void *planner_thread(void *arg) {
         cvWaitKey(WAIT_TIME);
 
         planner_space::Planner::findPath(my_bot_location, my_target_location);
-
+        
         loop_rate.sleep();
     }
 

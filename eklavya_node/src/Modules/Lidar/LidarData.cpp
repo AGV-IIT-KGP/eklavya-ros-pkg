@@ -9,7 +9,7 @@
  *  1: Blob filter
  */
 
-#define FILTER 1
+#define FILTER 0
 #define DEBUG 1
 
 #define CENTERX 500
@@ -66,8 +66,8 @@ void LidarData::update_map(const sensor_msgs::LaserScan& scan) {
 
     //initialize variables
     //ros::NodeHandle n;
-	int minblob_lidar=200;
-	//n.param<int>("minblob_lidar", minblob_lidar, 200);
+    int minblob_lidar = 200;
+    //n.param<int>("minblob_lidar", minblob_lidar, 200);
 
     IplImage *img, *nblobs, *nblobs1, *labelImg;
     img = cvCreateImage(cvSize(MAP_MAX, MAP_MAX), 8, 1);
@@ -107,7 +107,7 @@ void LidarData::update_map(const sensor_msgs::LaserScan& scan) {
     }
 
     //Filtering
-   
+
     switch (FILTER) {
         case 0:
         {
@@ -118,7 +118,7 @@ void LidarData::update_map(const sensor_msgs::LaserScan& scan) {
             labelImg = cvCreateImage(cvSize(MAP_MAX, MAP_MAX), IPL_DEPTH_LABEL, 1);
             nblobs = cvCreateImage(cvSize(MAP_MAX, MAP_MAX), 8, 3);
             nblobs1 = cvCreateImage(cvSize(MAP_MAX, MAP_MAX), 8, 3);
- 	    cvSet(labelImg, cvScalar(0));
+            cvSet(labelImg, cvScalar(0));
 
             ker1 = cvCreateStructuringElementEx(5, 5, 2, 2, CV_SHAPE_ELLIPSE);
             ker2 = cvCreateStructuringElementEx(7, 7, 3, 3, CV_SHAPE_ELLIPSE);
@@ -142,7 +142,7 @@ void LidarData::update_map(const sensor_msgs::LaserScan& scan) {
             cvReleaseStructuringElement(&ker2);
 
             if (DEBUG) {
-		cvNamedWindow("Blob Filter", 0);
+                cvNamedWindow("Blob Filter", 0);
                 cvShowImage("Blob Filter", img);
                 cvWaitKey(WAIT_TIME);
             }
