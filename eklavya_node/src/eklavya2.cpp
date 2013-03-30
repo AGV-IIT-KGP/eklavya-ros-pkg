@@ -140,7 +140,7 @@ void printUsage() {
 int main(int argc, char *argv[]) {
     ros::init(argc, argv, "eklavya_node");
     ros::Time::init();
-    
+
     if (argc < 2) {
         ROS_ERROR("Incorrect input format");
         printUsage();

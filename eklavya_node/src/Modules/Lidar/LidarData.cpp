@@ -9,8 +9,8 @@
  *  1: Blob filter
  */
 
-#define FILTER 1
-#define DEBUG 0
+#define FILTER 0
+#define DEBUG 1
 
 #define CENTERX 500
 #define CENTERY 100

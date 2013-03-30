@@ -9,7 +9,7 @@
 
 #define PID_MODE 0
 
-#define SIMCTL
+//#define SIMCTL
 #define SIM_SEEDS
 //#define DEBUG
 #define SHOW_PATH
@@ -263,8 +263,6 @@ namespace planner_space {
         p = new Tserial();
         p->connect(BOT_COM_PORT, BOT_BAUD_RATE, spNONE);
         usleep(100);
-
-
 #endif
     }
 
@@ -277,14 +275,8 @@ namespace planner_space {
         if ((left_velocity == 0) && (right_velocity == 0)) {
 
 #ifndef SIMCTL
-            //            p->connect(BOT_COM_PORT, BOT_BAUD_RATE, spNONE);
-            //            usleep(100);
-
             p->sendChar(' ');
             usleep(100);
-
-            //            p->disconnect();
-            //            usleep(100);
 #endif
 
             return;
@@ -293,7 +285,7 @@ namespace planner_space {
         switch (PID_MODE) {
             case 0:
             {
-                double vavg = 60;
+                double vavg = 70;
                 left_vel = (int) 2 * vavg * s.k / (1 + s.k);
                 right_vel = (int) (2 * vavg - left_vel);
                 /*
@@ -394,19 +386,26 @@ namespace planner_space {
         }
 
 #ifndef SIMCTL
-        //        p->connect(BOT_COM_PORT, BOT_BAUD_RATE, spNONE);
-        //        usleep(100);
+        //        char arr[] = {'w',
+        //            '0' + left_vel / 10,
+        //            '0' + left_vel % 10,
+        //            '0' + right_vel / 10,
+        //            '0' + right_vel % 10, '/0'};
+        //        cout << arr << endl;
 
-        char arr[] = {'w',
-            '0' + left_vel / 10,
-            '0' + left_vel % 10,
-            '0' + right_vel / 10,
-            '0' + right_vel % 10, '\0'};
-
-        p->sendArray(arr, 5);
+        p->sendChar('w');
         usleep(100);
 
-        //        p->disconnect();
+        p->sendChar('0' + left_vel / 10);
+        usleep(100);
+        p->sendChar('0' + left_vel % 10);
+        usleep(100);
+        p->sendChar('0' + right_vel / 10);
+        usleep(100);
+        p->sendChar('0' + right_vel % 10);
+        usleep(100);
+
+        //        p->sendArray(arr, 5);
         //        usleep(100);
 #endif  
 
@@ -537,7 +536,6 @@ namespace planner_space {
     }
 
     void closePlanner() {
-        Planner::finBot();
 #if defined(DEBUG)
         cvReleaseImage(&map_img);
 #endif
@@ -571,6 +569,7 @@ namespace planner_space {
         goal.g = 0;
         goal.h = 0;
         goal.seed_id = 0;
+        brake.vl = brake.vr = 0;
 
         vector<state> open_list;
         open_list.insert(open_list.begin(), start);
@@ -666,8 +665,9 @@ namespace planner_space {
             }
         }
 
-        ROS_WARN("[PLANNER] No Path Found");
+        ROS_INFO("[PLANNER] No Path Found");
         closePlanner();
+        Planner::finBot();
     }
 
     void Planner::finBot() {
