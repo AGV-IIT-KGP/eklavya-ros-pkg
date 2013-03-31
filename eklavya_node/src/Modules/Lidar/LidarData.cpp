@@ -65,21 +65,17 @@ void LidarData::update_map(const sensor_msgs::LaserScan& scan) {
     //TODO: Fusion needs to be implemented in the STRATEGY module
 
     //initialize variables
-    //ros::NodeHandle n;
     int minblob_lidar = 200;
-    //n.param<int>("minblob_lidar", minblob_lidar, 200);
-
     IplImage *img, *nblobs, *nblobs1, *labelImg;
     img = cvCreateImage(cvSize(MAP_MAX, MAP_MAX), 8, 1);
     cvSet(img, cvScalar(0));
 
     //TODO: put kernel initialization in constructor
     IplConvKernel *ker1, *ker2;
-
     CvBlobs blobs;
     uchar * ptr;
 
-    //initilize variables ended
+    //initialize variables ended
 
     //Taking data from hokuyo node
 

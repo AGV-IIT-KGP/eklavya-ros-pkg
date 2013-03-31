@@ -26,7 +26,7 @@ void *planner_thread(void *arg) {
     cout << "Waiting for Target" << endl;
     usleep(999999);
     usleep(999999);
-    
+
 #ifdef FPS_TEST
     int iterations = 0;
     time_t start = time(0);
@@ -34,7 +34,7 @@ void *planner_thread(void *arg) {
 
     ros::Rate loop_rate(LOOP_RATE);
 
-    while (1) {
+    while (ros::ok()) {
 #ifdef FPS_TEST
         if (iterations > 1000) {
             time_t finish = time(0);
@@ -90,7 +90,7 @@ void *planner_thread(void *arg) {
         cvWaitKey(WAIT_TIME);
 
         planner_space::Planner::findPath(my_bot_location, my_target_location);
-        
+
         loop_rate.sleep();
     }
 

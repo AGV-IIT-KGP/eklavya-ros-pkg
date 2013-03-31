@@ -1,7 +1,7 @@
 #ifndef _GPS_H
 #define _GPS_H
 
-#include "ros/ros.h"
+#include "../../eklavya2.h"
 #include "geometry_msgs/Pose.h"
 
 namespace gps_space {

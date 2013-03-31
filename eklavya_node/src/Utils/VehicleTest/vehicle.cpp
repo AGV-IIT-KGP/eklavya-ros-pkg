@@ -2,9 +2,9 @@
 #include <stdio.h>
 #include "../SerialPortLinux/serial_lnx.h"
 #include <stdexcept>
-#include "../../Modules/devices.h"
+//#include "../../Modules/devices.h"
 
-#define UART_COMM_PORT BOT_PATH
+#define UART_COMM_PORT "/dev/ttyUSB0"
 #define UART_BAUD_RATE 19200
 
 Tserial *p;
@@ -15,8 +15,8 @@ void Init()
   p->connect(UART_COMM_PORT, UART_BAUD_RATE, spNONE);
   usleep(100);
 
-  p->sendChar('w');
-  usleep(100);
+  //p->sendChar('w');
+  //usleep(100);
 }
 
 void Turn(int l, int r)
@@ -47,9 +47,11 @@ int main()
 {
   int i;
   Init();
-
-  Turn(40, 20);
-
+while(1)
+{
+  Turn(10, 10);
+  //usleep(100*1000);
+}
   p->disconnect();
   usleep(5000 * 1000);
   
