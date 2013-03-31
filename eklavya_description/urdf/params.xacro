@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<robot name="eklavya_params" xmlns:xacro="http://ros.org/wiki/xacro">
+   <!-- Main Body-base-->
+    <!-- Location of com : center of mass -->
+    <property name="base_x_com" value="0" />
+    <property name="base_y_com" value="0" />
+    <property name="base_z_com" value="0" />
+
+    <!-- Size of the base-->
+   <!-- <property name="base_x_size" value="0.62324000" /> 
+    <property name="base_y_size" value="0.61033000" /> 
+    <property name="base_z_size" value="0.39120000" />-->
+    <property name="base_x_size" value="0.62" /> 
+    <property name="base_y_size" value="0.61" /> 
+    <property name="base_z_size" value="0.40" />
+    <property name="base_z_offset" value="0.20000000" />
+    <!--Weight of the base-->
+    <property name="base_mass" value="34.000000" /> <!-- in kg-->
+    
+    <property name="wheel_x_size" value="0.22000000" /> 
+	<property name="wheel_y_size" value="0.22000000" />
+	<property name="wheel_z_size" value="0.09000000" />
+	
+	<property name="base_x_origin_to_wheel_origin" value="-0.16" />
+	<property name="base_y_origin_to_wheel_origin" value="0.220" />
+	<property name="base_z_origin_to_wheel_origin" value="0" />
+	
+	<property name="base_x_origin_to_caster_wheel_origin" value="-0.068" />
+	<property name="base_y_origin_to_caster_wheel_origin" value="0.0" />
+	<property name="base_z_origin_to_caster_wheel_origin" value="-0.085" />
+	<property name="castor_x_size" value="0.16000000" /> 
+	<property name="castor_y_size" value="0.16000000" /> 
+	<property name="castor_z_size" value="0.09000000" />
+	
+	<property name="wheelhub_x_size" value="0.15000000" /> 
+	<property name="wheelhub_y_size" value="0.12000000" />
+	<property name="wheelhub_z_size" value="0.12000000" />
+	<property name="caster_support_hinge_z_offset" value="0.05325" /> <!-- 0.06275 0.05325 .058-->
+	 
+
+</robot>
