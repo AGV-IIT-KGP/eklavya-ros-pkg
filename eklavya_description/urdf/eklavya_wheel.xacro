@@ -4,29 +4,13 @@
   xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
   xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
   xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface">
-    <property name="wheel_x_com" value="0.00000000" /> <!-- com : center of mass -->
-	<property name="wheel_y_com" value="0.00000000" /> <!-- com : center of mass -->
-	<property name="wheel_z_com" value="0.00019000" /> <!-- com : center of mass -->
-
-	<!--property name="wheel_x_size" value="0.30550000" /--> 
-	<!--property name="wheel_y_size" value="0.30550000" /-->
-	<property name="wheel_x_size" value="0.22" /> 
-	<property name="wheel_y_size" value="0.22" />
-	<property name="wheel_z_size" value="0.11430000" />
+    <include filename="$(find eklavya_description)/urdf/params.xacro"/>
 
 	<property name="wheel_mass" value="2.63657000" /> <!-- in kg-->
 
-	<property name="wheel_ixx_com_cs" value="0.02466885" /> <!-- at center of mass aligned with coordinate system, kg*m^2-->
-	<property name="wheel_ixy_com_cs" value="0.00000000" /> <!-- at center of mass aligned with coordinate system, kg*m^2-->
-	<property name="wheel_ixz_com_cs" value="0.00000000" /> <!-- at center of mass aligned with coordinate system, kg*m^2-->
-	<property name="wheel_iyy_com_cs" value="0.02466885" /> <!-- at center of mass aligned with coordinate system, kg*m^2-->
-	<property name="wheel_iyz_com_cs" value="0.00000000" /> <!-- at center of mass aligned with coordinate system, kg*m^2-->
-	<property name="wheel_izz_com_cs" value="0.04410576" /> <!-- at center of mass aligned with coordinate system, kg*m^2-->
-
-	<property name="base_x_origin_to_wheel_origin" value="-0.18" />
-	<property name="base_y_origin_to_wheel_origin" value="0.225" />
-	<property name="base_z_origin_to_wheel_origin" value="0" />
 	
+
+
   <macro name="eklavya_wheel" params="suffix parent *origin">
     <joint name="${parent}_${suffix}_wheel_joint" type="continuous">
       <insert_block name="origin" />
@@ -39,20 +23,17 @@
     </joint>
 
     <link name="${parent}_${suffix}_wheel_link">
-      <inertial>
-			<mass value="${wheel_mass}" />
-			<origin xyz="${wheel_x_com} ${wheel_y_com} ${wheel_z_com}" />
-			<inertia  ixx="${wheel_ixx_com_cs}" ixy="${wheel_ixy_com_cs}" ixz="${wheel_ixz_com_cs}"
-				iyy="${wheel_iyy_com_cs}" iyz="${wheel_iyz_com_cs}" izz="${wheel_izz_com_cs}" />
-		</inertial>
-
-      <visual>
+      <cylinder_inertial_with_origin_wheel radius="${wheel_x_size/2}" length="${wheel_z_size}" mass="${wheel_mass}" origin="0 0 0" />
+	  <visual>
         <eklavya_wheel_mesh suffix="${suffix}" />  
 		<material name="Red" />
       </visual>
 
       <collision>
-        <eklavya_wheel_mesh suffix="${suffix}" />
+		  <origin xyz="0 0 0" rpy="1.570796327 0 0" />
+		  <geometry>
+			 <cylinder radius="${wheel_x_size/2}" length="0.09"/>
+	      </geometry>
       </collision>
     </link>
 

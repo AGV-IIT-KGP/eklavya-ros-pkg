@@ -4,7 +4,7 @@
   xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
   xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
   xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface">
-
+  <include filename="$(find eklavya_description)/urdf/params.xacro"/>
  
   <macro name="gazebo_eklavya_base_link_surface">
     <gazebo reference="base_link">
@@ -13,7 +13,7 @@
       <kp  value="1000000.0" />
       <kd  value="1.0" />-->
       <!--material name="Eklavya/GunMetalBrushedAluminum   Gazebo/Blue" />-->
-    <material>Eklavya/GunMetalBrushedAluminum</material>
+    <!--<material>Eklavya/GunMetalBrushedAluminum</material>-->
     
     </gazebo>
   </macro>
@@ -30,25 +30,42 @@
   <macro name="eklavya_base_link_mesh"  params="*origin *box" >
 	  <insert_block name="origin" /> 
      <geometry>
-    <!-- mesh filename="package://eklavya_description/meshes/rmp50-base-link.dae" scale="0.0254 0.0254 0.0254"/ -->
-    <mesh filename="package://eklavya_description/meshes/body.dae" />
-  	<!-- <insert_block name="box" /> -->
+     <mesh filename="package://eklavya_description/meshes/body.dae" />
+      <!--   <box size="${base_x_size} ${base_y_size} ${base_z_size}" />  -->
+  	 <!-- <insert_block name="box" /> -->
     </geometry>
-     
-   
      <material name="GunMetalBrushedAluminum"/>  
   </macro>
 
 
 
-  <macro name="eklavya_castor_wheel_link_mesh">
-    <origin xyz="0 0 0" rpy="0 0 0" />
+  <macro name="eklavya_castor_support_link_mesh">
+    <origin xyz="0 0 0" rpy="0 0 ${M_PI}" />
     <geometry>
-      <!--mesh filename="package://eklavya_description/meshes/rmp50-castor-wheel.dae"/-->
-      <mesh filename="package://eklavya_description/meshes/castorWheel.dae" scale="2 2 2"/>
+      <mesh filename="package://eklavya_description/meshes/wheelhub.dae"/>  
+     <!--  <box size="0.14715 0.12074 0.12065" /> -->
+      
     </geometry>
+     <material name="Blue"/>
   </macro>
-
+  <macro name="eklavya_castor_wheel_link_mesh">
+	  <origin xyz="0 0 0" rpy="1.570796327 0 0" />
+    <!--<origin xyz="0 0 0" rpy="0 0 0" /> -->
+    <geometry>
+      <mesh filename="package://eklavya_description/meshes/castorWheel.dae" />   
+      <!-- <cylinder radius="${castor_x_size/2}" length="${castor_z_size}"/>  --> 
+    </geometry>
+     
+  </macro>
+ <macro name="eklavya_wheel_mesh" params="suffix">
+    <origin xyz="0 0 0" rpy="1.570796327 0 0" />
+    <geometry>
+      <mesh filename="package://eklavya_description/meshes/wheel.dae" /> 
+    <!-- <cylinder radius="${wheel_x_size/2}" length="${wheel_z_size}" />-->
+    </geometry>
+    <material name="DarkGray" />
+  </macro>
+  
   <macro name="eklavya_collision_none">
     <origin xyz="0 0 0" rpy="0 0 0" />
     <geometry>
@@ -56,23 +73,8 @@
     </geometry>
   </macro>
 
-  <macro name="eklavya_castor_support_link_mesh">
-    <origin xyz="0 0 0" rpy="0 0 0" />
-    <geometry>
-      <!--mesh filename="package://eklavya_description/meshes/rmp50-castor-link.dae" scale="0.0220 0.0220 0.0220"/-->
-      <mesh filename="package://eklavya_description/meshes/wheelhub.dae"/> <!-- scale="0.0220 0.0220 0.0220"-->
-    </geometry>
-  </macro>
 
-  <macro name="eklavya_wheel_mesh" params="suffix">
-    <origin xyz="0 0 0" rpy="0 0 1.570796327" />
-    <geometry>
-     <!-- <mesh filename="package://eklavya_description/meshes/rmp50-${suffix}-wheel.dae" scale="0.0150 0.0150 0.0150"/>-->
-     <!-- <mesh filename="package://eklavya_description/meshes/wheel.stl" /> -->
-    <mesh filename="package://eklavya_description/meshes/wheel.dae" />
-    </geometry>
-    <material name="DarkGray" />
-  </macro>
+  
 
   <macro name="eklavya_wheel_surface" params="suffix parent">
     <gazebo reference="${parent}_${suffix}_wheel_link" >
@@ -105,8 +107,8 @@
     <alwaysOn>true</alwaysOn>
     <update>100</update>
     <updateRate>100.0</updateRate>
-    <leftJoint>base_link_right_wheel_joint</leftJoint>
-    <rightJoint>base_link_left_wheel_joint</rightJoint>
+    <leftJoint>base_link_left_wheel_joint</leftJoint>
+    <rightJoint>base_link_right_wheel_joint</rightJoint>
     <wheelSeparation>${base_y_size}</wheelSeparation>
     <wheelDiameter>${wheel_x_size/2}</wheelDiameter>
     <torque>30</torque>
@@ -136,11 +138,11 @@
                 <alwaysOn>true</alwaysOn>
                 <update>100</update>
                 <updateRate>100.0</updateRate>
-                <leftJoint>base_link_right_wheel_joint</leftJoint>
-                <rightJoint>base_link_left_wheel_joint</rightJoint>
+                <leftJoint>base_link_left_wheel_joint</leftJoint>
+                <rightJoint>base_link_right_wheel_joint</rightJoint>
                 <wheelSeparation>${base_y_size}</wheelSeparation>
                 <wheelDiameter>${wheel_x_size}</wheelDiameter>
-                <torque>35</torque>
+                <torque>30</torque>
                 <interface:position name="position_iface_0"/>
                 <robotNamespace>/</robotNamespace>
                 <topicName>cmd_vel</topicName>

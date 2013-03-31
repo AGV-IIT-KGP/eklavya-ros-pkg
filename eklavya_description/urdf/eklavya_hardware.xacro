@@ -4,69 +4,18 @@
   xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
   xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
   xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface">
-    
-  <macro name="eklavya_support_bar" params="suffix parent length *origin">
-	<joint type="fixed" name="${parent}_support_bar_${suffix}_joint">
-      <insert_block name="origin" />
-      <parent link="${parent}"/>
-      <child link="${parent}_support_bar_${suffix}"/>
-    </joint>
-    
-    <link name="${parent}_support_bar_${suffix}">  
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <inertial>
-        <mass value="2.01" />
-        <inertia ixx="1" ixy="0.0" ixz="0.0" iyy="1" iyz="0.0" izz="1"/>
-      </inertial>
-      <collision >
-        <geometry>
-          <box size=".03 .03 ${length}"/>
-        </geometry>
-      </collision>
-      <visual >
-	    <geometry>
-          <box size=".03 .03 ${length}"/>
-        </geometry>
-        <!--<material name="White"/>-->
-        <material name="GunMetalBrushedAluminum"/>  
-      </visual>
-    </link>
- </macro>
+    <include filename="$(find eklavya_description)/urdf/params.xacro"/>  
+
  
- <macro name="castor_support" params="suffix parent">
-	<joint type="fixed" name="${parent}_castor_support_${suffix}_joint">
-	  <origin rpy="0 0 0" xyz="${base_x_size/2-0.5} 0 0.058"/>
-      <parent link="${parent}"/>
-      <child link="${parent}_castor_support_${suffix}_link"/>
-    </joint>
-    <link name="${parent}_castor_support_${suffix}_link">
-      <origin rpy="0 0 0" xyz="0 0 0"/>
-      <inertial>
-        <mass value="0.01" />
-        <inertia ixx="1" ixy="0.0" ixz="0.0" iyy="1" iyz="0.0" izz="1"/>
-      </inertial>
-      <collision name='extrusion_collision'>
-        <geometry>
-          <box size="0 0 0"/>
-        </geometry>
-      </collision>
-      <visual name='extrusion_visual'>	
-        <geometry>
-          <box size="0 0 0"/>
-        </geometry>
-        <material name="GunMetalBrushedAluminum"/>  
-      </visual>
-    </link>
- </macro>
  
  <macro name="caster_support_hinge" params="suffix parent">
 	<joint name="${parent}_caster_support_hinge_${suffix}_joint" type="continuous">
-      <origin rpy="0 0 ${M_PI}" xyz="${base_x_size/2-0.5} 0 0.058"/>
+      <origin rpy="0 0 0" xyz="${base_x_size/2-0.5} 0 ${caster_support_hinge_z_offset}"/> 
       <parent link="${parent}" />
       <child link="${parent}_caster_support_hinge_${suffix}_link"/>
 
       <axis xyz="0 0 1" />
-      <anchor xyz="0 0 0" />
+      <anchor xyz="0 0 ${M_PI}" />
       <limit effort="100" velocity="100" k_velocity="0" />
       <joint_properties damping="0.0" friction="0.0" />
     </joint>
@@ -85,23 +34,19 @@
           iyy="0.00375" iyz="0.0"
           izz="0.00375" />
       </inertial>
-
       <visual>
-        <eklavya_castor_support_link_mesh />
+        <eklavya_castor_support_link_mesh />        
       </visual>
-
       <collision>
-        <eklavya_castor_support_link_mesh />
+        <eklavya_collision_none />
       </collision>
-
     </link>
 </macro>
-
-
+	
 <macro name="caster_wheel" params="suffix parent">
 	  
-	  <joint name="${parent}_caster_wheel_${suffix}_joint" type="continuous">
-      <origin rpy="0 0 0" xyz="${0.066} 0 -0.085" />
+	 <joint name="${parent}_caster_wheel_${suffix}_joint" type="continuous">
+      <origin rpy="0 0 0" xyz="${base_x_origin_to_caster_wheel_origin} ${base_y_origin_to_caster_wheel_origin} ${base_z_origin_to_caster_wheel_origin } " />
       <parent link="${parent}_caster_support_hinge_${suffix}_link" />
       <child link="${parent}_caster_wheel_${suffix}_link" />
 
@@ -118,20 +63,18 @@
     </transmission>
 
     <link name="${parent}_caster_wheel_${suffix}_link">
-      <inertial>
-        <mass value="1" /> 
-        <origin xyz="0 0 0" rpy="0 0 0" />
-        <inertia  ixx="0.003" ixy="0.0" ixz="0.0"
-          iyy="0.00581" iyz="0.0"
-          izz="0.003" />
-      </inertial>
-
+    
+	<cylinder_inertial_with_origin_wheel radius="${castor_x_size/2}" length="${castor_z_size}" mass="1" origin="0 0 0" />
       <visual>
         <eklavya_castor_wheel_link_mesh />
       </visual>
 
       <collision>
-        <eklavya_castor_wheel_link_mesh />
+		<origin xyz="0 0 0" rpy="1.570796327 0 0" />
+		<!--<origin xyz="0 0 0" rpy="0 0 0" /> -->
+		<geometry>   
+			<cylinder radius="${castor_x_size/2}" length="${castor_z_size}"/>
+		</geometry>
       </collision>
     </link>
     <gazebo_eklavya_castor_wheel_link_surface suffix="${suffix}" parent="${parent}" />

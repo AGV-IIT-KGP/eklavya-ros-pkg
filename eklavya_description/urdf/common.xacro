@@ -29,6 +29,16 @@
     </inertial>
   </macro>
 
+ <macro name="cylinder_inertial_with_origin_wheel" params="radius length mass origin">
+    <inertial>
+      <mass value="${mass}" />
+      <origin xyz="${origin}" />
+      <inertia ixx="${0.0833333 * mass * (3 * radius * radius + length * length)}" ixy="0.0" ixz="0.0" 
+        iyy="${0.0833333 * mass * (3 * radius * radius + length * length)}" iyz="0.0" 
+        izz="${0.5 * mass * radius * radius}" />
+    </inertial>
+  </macro>
+  
   <macro name="box_inertial" params="x y z mass">
     <inertial>
       <mass value="${mass}" />
