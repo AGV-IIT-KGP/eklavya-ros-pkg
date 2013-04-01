@@ -182,7 +182,7 @@ int min(int value) {
 
 void populateLanes(IplImage *img) {
     int i, j, index, k;
-    pthread_mutex_lock(&laser_scan_mutex);
+    pthread_mutex_lock(&cam_input_mutex);
     for (i = 0; i < img->height; i++) {
         uchar *data = (uchar *) (img->imageData + i * img->widthStep);
         for (j = 0; j < img->width; j++) {
@@ -190,7 +190,7 @@ void populateLanes(IplImage *img) {
                 cam_input[(int) (min((0.5 * MAP_MAX) + (scale * (j - img->width / 2)) + k)) ] [(int) (img->height - (i) + (0.1 * MAP_MAX)) ] = (data[j] == 255) ? 255 : 0;
         }
     }
-    pthread_mutex_unlock(&laser_scan_mutex);
+    pthread_mutex_unlock(&cam_input_mutex);
 
 }
 
@@ -258,8 +258,7 @@ void LaneDetection::markLane(const sensor_msgs::ImageConstPtr& image) {
     //cvDilate(warp_img,warp_img,0,10);
     //getDestinationPosition(warp_img);
 
-    pthread_mutex_lock(&laser_scan_mutex);
-    pthread_mutex_unlock(&laser_scan_mutex);
+  
     //populateLanes(warp_img);
 
     //Release warp_img and input frame and lane.

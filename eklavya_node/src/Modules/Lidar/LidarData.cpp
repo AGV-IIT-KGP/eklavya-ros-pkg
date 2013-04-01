@@ -52,7 +52,7 @@ void LidarData::createCircle(int x, int y) {
             for (int j = -RADIUS; j < RADIUS; j++) {
                 if ((y + j >= 0) && (y + j <= MAP_MAX)) {
                     if (i * i + j * j <= RADIUS * RADIUS) {
-                        global_map[x + i][y + j] = 255;
+                        g_laser_scan[x + i][y + j] = 255;
                     }
                 }
             }

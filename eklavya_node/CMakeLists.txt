@@ -49,6 +49,7 @@ LINK_DIRECTORIES("/usr/local/lib/")
 #Options
 option (USE_IMU "Use IMU" ON) 
 option (USE_LIDAR "Use Lidar" ON) 
+option (USE_LANE "Use Lane" ON) 
 option (USE_GPS "Use GPS" ON)
 option (USE_ENCODER "Use Encoder" ON)
 option (USE_EKF "Use EKF" ON)
@@ -69,6 +70,11 @@ if (USE_LIDAR)
 include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/Lidar")
 rosbuild_add_library(LidarLib src/Modules/Lidar/LidarData.cpp src/Modules/Lidar/lidar_thread.cpp)
 target_link_libraries(LidarLib ${OpenCV_LIBS})
+endif ()
+
+if (USE_LANE)
+include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/Lane")
+rosbuild_add_library(LaneLib src/Modules/Lane/lane_data.cpp src/Modules/Lane/lane_thread.cpp)
 endif ()
 
 if (USE_GPS)
@@ -140,7 +146,7 @@ target_link_libraries(cvblob ${OpenCV_LIBS})
 ##cvBlob end
 
 rosbuild_add_executable(${PROJECT_NAME} src/eklavya2.cpp)
-target_link_libraries (${PROJECT_NAME} IMULib LidarLib GPSLib EncoderLib EKFLib SLAMLib PlannerLib NavigationLib DiagnosticsLib SerialPortLinuxLib)
+target_link_libraries (${PROJECT_NAME} IMULib LidarLib LaneLib GPSLib EncoderLib EKFLib SLAMLib PlannerLib NavigationLib DiagnosticsLib SerialPortLinuxLib)
 
 #target_link_libraries (${PROJECT_NAME}  ${EXTRA_LIBS})
 target_link_libraries( ${PROJECT_NAME} ${OpenCV_LIBS} )

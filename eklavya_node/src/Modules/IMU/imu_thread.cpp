@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include "IMU.h"
 
 void *imu_thread(void *arg) {
@@ -10,7 +9,7 @@ void *imu_thread(void *arg) {
 
     ros::Rate loop_rate(LOOP_RATE);
 
-    while (1) {
+    while (ros::ok()) {
         ros::spinOnce();
         loop_rate.sleep();
     }

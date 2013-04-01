@@ -10,9 +10,6 @@
 char **lane_scan;
 
 void *lane_thread(void *arg) {
-  int argc;
-  char *argv[0]; 
-  ros::init(argc, argv, "lane_thread");
   ros::NodeHandle lane_node;
   cvNamedWindow("view");
   cvNamedWindow("view_orig");
@@ -30,5 +27,7 @@ void *lane_thread(void *arg) {
   }
 
   printf("Exiting lane code");
+  
+  return NULL;
 }
 
