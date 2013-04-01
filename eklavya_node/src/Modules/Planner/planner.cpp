@@ -479,6 +479,8 @@ namespace planner_space {
     }
 
     bool isWalkable(state parent, state s) {
+        int flag = 1;
+        
         for (unsigned int i = 0; i < seeds[s.seed_id].seed_points.size(); i++) {
             int x, y;
             double alpha = parent.pose.z;
@@ -491,13 +493,13 @@ namespace planner_space {
             y = (int) (-tx * cos(alpha * (CV_PI / 180)) + ty * sin(alpha * (CV_PI / 180)) + parent.pose.y);
 
             if (((0 <= x) && (x < MAP_MAX)) && ((0 <= y) && (y < MAP_MAX))) {
-                return local_map[x][y] == 0;
+                local_map[x][y] == 0 ? flag *= 1 : flag *= 0;
             } else {
                 return false;
             }
         }
-
-        return true;
+        
+        return flag == 1;
     }
 
     void closePlanner() {
