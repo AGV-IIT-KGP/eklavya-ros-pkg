@@ -68,7 +68,7 @@ void createMutex() {
 
 void startThread(pthread_t *thread_id, pthread_attr_t *thread_attr, void *(*thread_name) (void *)) {
     if (pthread_create(thread_id, thread_attr, thread_name, NULL)) {
-        fprintf(stderr, "Unable to create thread\n");
+        ROS_ERROR("Unable to create thread");
         pthread_attr_destroy(thread_attr);
         exit(1);
     }

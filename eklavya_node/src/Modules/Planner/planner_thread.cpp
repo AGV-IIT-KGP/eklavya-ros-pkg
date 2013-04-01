@@ -1,5 +1,4 @@
 #include "planner.h"
-#include "../devices.h"
 
 //#define FPS_TEST
 
@@ -19,11 +18,11 @@ void *planner_thread(void *arg) {
         local_map[i] = new char[MAP_MAX];
     }
 
-    printf("Initiating Planner\n");
+    ROS_INFO("Initiating Planner");
     planner_space::Planner::loadPlanner();
-    printf("Planner Initiated\n");
+    ROS_INFO("Planner Initiated");
 
-    cout << "Waiting for Target" << endl;
+    ROS_INFO("Waiting for Target");
     usleep(999999);
     usleep(999999);
 
@@ -39,8 +38,8 @@ void *planner_thread(void *arg) {
         if (iterations > 1000) {
             time_t finish = time(0);
             double fps = (iterations + 0.0) / (finish - start);
-            cout << "[INFO] ITERATIONS: " << iterations << endl;
-            cout << "[INFO] FPS: " << fps << endl;
+            ROS_INFO("[INFO] Iterations: %d", iterations);
+            ROS_INFO("[INFO] FPS: %lf", fps);
             break;
         }
         iterations++;
@@ -94,7 +93,7 @@ void *planner_thread(void *arg) {
         loop_rate.sleep();
     }
 
-    cout << "Planner Exited" << endl;
+    ROS_INFO("Planner Exited");
 
     return NULL;
 }

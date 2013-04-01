@@ -1,72 +1,6 @@
-#include <stdio.h>
-
 #include "navigation.h"
 
 namespace navigation_space {
-    void truncate1(double xt, double yt, int *xtt, int *ytt) {
-        double xp, yp;
-        int xb = 500;
-        int yb = 100;
-
-        if ((yt <= 0.95 * MAP_MAX && yt >= 0.05 * MAP_MAX) && (xt <= 0.95 * MAP_MAX && xt >= 0.05 * MAP_MAX)) {
-            *xtt = xt;
-            *ytt = yt;
-            return;
-        }
-
-        if (xt <= 0.05 * MAP_MAX) {
-            if (yt <= 0.05 * MAP_MAX) {
-                //Truncate to bottom
-                yp = 0.05 * MAP_MAX;
-                xp = ((yp - yb) * (xt - xb) / (yt - yb)) + xb;
-            } else if (yt > 0.05 * MAP_MAX && yt <= 0.95 * MAP_MAX) {
-                //Truncate to left
-                xp = 0.05 * MAP_MAX;
-                yp = ((xp - xb) * (yt - yb) / (xt - xb)) + yb;
-            } else {
-                //Truncate to top
-                yp = 0.95 * MAP_MAX;
-                xp = ((yp - yb) * (xt - xb) / (yt - yb)) + xb;
-            }
-            *xtt = xp;
-            *ytt = yp;
-            return;
-        } else if (xt >= 0.95 * MAP_MAX) {
-            if (yt <= 0.05 * MAP_MAX) {
-                //Truncate to bottom
-                yp = 0.05 * MAP_MAX;
-                xp = ((yp - yb) * (xt - xb) / (yt - yb)) + xb;
-            } else if (yt > 0.05 * MAP_MAX && yt <= 0.95 * MAP_MAX) {
-                //Truncate to right
-                xp = 0.95 * MAP_MAX;
-                yp = ((xp - xb) * (yt - yb) / (xt - xb)) + yb;
-            } else {
-                //Truncate to top
-                yp = 0.95 * MAP_MAX;
-                xp = ((yp - yb) * (xt - xb) / (yt - yb)) + xb;
-            }
-            *xtt = xp;
-            *ytt = yp;
-            return;
-        } else {
-            if (yt <= 0.05 * MAP_MAX) {
-                //Truncate to bottom
-                yp = 0.05 * MAP_MAX;
-                xp = ((yp - yb) * (xt - xb) / (yt - yb)) + xb;
-            } else if (yt > 0.05 * MAP_MAX && yt <= 0.95 * MAP_MAX) {
-                //Truncate to right
-                xp = xt;
-                yp = yt;
-            } else {
-                //Truncate to top
-                yp = 0.95 * MAP_MAX;
-                xp = ((yp - yb) * (xt - xb) / (yt - yb)) + xb;
-            }
-            *xtt = xp;
-            *ytt = yp;
-            return;
-        }
-    }
 
     void truncate(double xt, double yt, int *xtt, int *ytt) {
         if ((yt <= 0.9 * MAP_MAX && yt >= 0.1 * MAP_MAX) && (xt <= 0.9 * MAP_MAX && xt >= 0.1 * MAP_MAX)) {
@@ -74,14 +8,14 @@ namespace navigation_space {
             *ytt = yt;
             return;
         }
-        
+
         double xp, yp;
         int xb = 500;
         int yb = 100;
-        
-        if ( yt < 0.1 * MAP_MAX) {
+
+        if (yt < 0.1 * MAP_MAX) {
             *ytt = 0.05 * MAP_MAX;
-            *xtt=(xt<xb)?0.25 * MAP_MAX:0.75 * MAP_MAX;
+            *xtt = (xt < xb) ? 0.25 * MAP_MAX : 0.75 * MAP_MAX;
             return;
         }
 
