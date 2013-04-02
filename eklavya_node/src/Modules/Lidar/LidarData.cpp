@@ -1,7 +1,3 @@
-/*
- * Authors: Bhuvnesh, Priyanka, Samuel , Jit
- */
-
 #include "LidarData.h"
 
 /*  Filter:

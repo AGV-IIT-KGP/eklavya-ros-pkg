@@ -1,5 +1,3 @@
-#include <stdio.h>
-#include "../../eklavya2.h"
 #include "navigation.h"
 
 void *navigation_thread(void *arg) {
@@ -10,6 +8,8 @@ void *navigation_thread(void *arg) {
 
     ros::Rate loop_rate(LOOP_RATE);
 
+    ROS_INFO("Navigation thread started");
+    
     while (ros::ok()) {
         iterations++;
         switch (strategy) {

@@ -120,9 +120,10 @@ namespace planner_space {
             left_vel = 40 + Kp * (myTargetCurvature - (myYaw - previousYaw) / 0.5);
             right_vel = 40 - Kp * (myTargetCurvature - (myYaw - previousYaw) / 0.5);
 
-            printf("[INFO] [Controller] %lf , %lf , %d , %d\n", myTargetCurvature, (myYaw - previousYaw)*2, left_vel, right_vel);
+            ROS_INFO("[INFO] [Controller] %lf , %lf , %d , %d", myTargetCurvature, (myYaw - previousYaw)*2, left_vel, right_vel);
 
 #ifndef SIMCTL
+
             p->sendChar('w');
             usleep(100);
 
@@ -288,27 +289,6 @@ namespace planner_space {
                 double vavg = 70;
                 left_vel = (int) 2 * vavg * s.k / (1 + s.k);
                 right_vel = (int) (2 * vavg - left_vel);
-                /*
-                if (s.k == 1) {  // Extreme Right
-                    left_vel = 33;
-                    right_vel = 25;
-                } else if (s.k > 1) { // Right
-                    left_vel = 29;
-                    right_vel = 28;
-                } else if (s.k < 0.77) {  // Left
-                    left_vel = 25;
-                    right_vel = 36;
-                } else if (s.k < 1) { // Left
-                    left_vel = 28;
-                    right_vel = 32;
-                } else {  // Straight
-                    left_vel = 25;
-                    right_vel = 27;
-                }
-                
-                left_vel = (int) (left_vel * 0.7);
-                right_vel = (int) (right_vel * 0.7);
-                 */
                 break;
             }
             case 1:
@@ -340,9 +320,6 @@ namespace planner_space {
                     mode = 4;
                 }
 
-                //int hashSpeedLeft[9] = {30, 33, 36, 38, 40, 42, 44, 47, 50};
-                //int hashSpeedRight[9] = {50, 47, 44, 42, 40, 38, 36, 33, 30};
-
                 int hashSpeedLeft[9] = {23, 30, 35, 38, 40, 42, 45, 50, 57};
                 int hashSpeedRight[9] = {57, 50, 45, 42, 40, 38, 35, 30, 23};
 
@@ -364,7 +341,7 @@ namespace planner_space {
                 left_vel = hashSpeedLeft[mode];
                 right_vel = hashSpeedRight[mode];
 
-                printf("[PID] %lf, %lf,  %lf, %lf, %d, %d\n",
+                ROS_INFO("[PID] %lf, %lf, %lf, %lf, %d, %d",
                         myTargetCurvature,
                         (myYaw - previousYaw) / 0.37,
                         left_velocity,
@@ -378,7 +355,7 @@ namespace planner_space {
             {
                 pthread_mutex_lock(&controllerMutex);
                 targetCurvature = 5.0 * ((double) (s.k - 1.0)) / (s.k + 1.0);
-                printf("Updated : %lf, k = %lf, left = %lf, right = %lf\n", targetCurvature, s.k, s.vl, s.vr);
+                ROS_INFO("Updated : %lf, k = %lf, left = %lf, right = %lf", targetCurvature, s.k, s.vl, s.vr);
                 pthread_mutex_unlock(&controllerMutex);
 
                 break;
@@ -386,27 +363,15 @@ namespace planner_space {
         }
 
 #ifndef SIMCTL
-        //        char arr[] = {'w',
-        //            '0' + left_vel / 10,
-        //            '0' + left_vel % 10,
-        //            '0' + right_vel / 10,
-        //            '0' + right_vel % 10, '/0'};
-        //        cout << arr << endl;
+        char arr[] = {'w',
+            '0' + left_vel / 10,
+            '0' + left_vel % 10,
+            '0' + right_vel / 10,
+            '0' + right_vel % 10, '/0'};
+        cout << arr << endl;
 
-        p->sendChar('w');
+        p->sendArray(arr, 5);
         usleep(100);
-
-        p->sendChar('0' + left_vel / 10);
-        usleep(100);
-        p->sendChar('0' + left_vel % 10);
-        usleep(100);
-        p->sendChar('0' + right_vel / 10);
-        usleep(100);
-        p->sendChar('0' + right_vel % 10);
-        usleep(100);
-
-        //        p->sendArray(arr, 5);
-        //        usleep(100);
 #endif  
 
         ROS_INFO("[Planner] [COMMAND] : (%d, %d)", left_vel, right_vel);
@@ -445,7 +410,7 @@ namespace planner_space {
         if (seed_id != -1) {
             sendCommand(seeds[seed_id]);
         } else {
-            cout << "[PLANNER] [ERROR] Invalid Command Requested" << endl;
+            ROS_ERROR("[PLANNER] [ERROR] Invalid Command Requested");
             Planner::finBot();
         }
     }
@@ -472,7 +437,7 @@ namespace planner_space {
         if (seed_id != -1) {
             sendCommand(seeds[seed_id]);
         } else {
-            cout << "[PLANNER] [ERROR] Invalid Command Requested" << endl;
+            ROS_ERROR("[PLANNER] [ERROR] Invalid Command Requested");
             Planner::finBot();
         }
     }
@@ -514,6 +479,8 @@ namespace planner_space {
     }
 
     bool isWalkable(state parent, state s) {
+        int flag = 1;
+        
         for (unsigned int i = 0; i < seeds[s.seed_id].seed_points.size(); i++) {
             int x, y;
             double alpha = parent.pose.z;
@@ -526,13 +493,13 @@ namespace planner_space {
             y = (int) (-tx * cos(alpha * (CV_PI / 180)) + ty * sin(alpha * (CV_PI / 180)) + parent.pose.y);
 
             if (((0 <= x) && (x < MAP_MAX)) && ((0 <= y) && (y < MAP_MAX))) {
-                return local_map[x][y] == 0;
+                local_map[x][y] == 0 ? flag *= 1 : flag *= 0;
             } else {
                 return false;
             }
         }
-
-        return true;
+        
+        return flag == 1;
     }
 
     void closePlanner() {
@@ -553,10 +520,10 @@ namespace planner_space {
 
     void Planner::loadPlanner() {
         loadSeeds();
-        cout << "[PLANNER] Seeds Loaded" << endl;
+        ROS_INFO("[PLANNER] Seeds Loaded");
 
         initBot();
-        cout << "[PLANNER] Vehicle Initiated" << endl;
+        ROS_INFO("[PLANNER] Vehicle Initiated");
     }
 
     void Planner::findPath(Triplet bot, Triplet target) {

@@ -1,9 +1,3 @@
-/*
- * Lidar Processing Node
- * Subscribes to scan published by hokuyo_node
- * 
- * */
-
 #include "LidarData.h"
 
 //#define FPS_TEST
@@ -19,7 +13,7 @@ void *lidar_thread(void *arg) {
     ROS_INFO("Lidar thread started");
 
 #ifdef FPS_TEST
-    cout << "[LIDAR] Conducting an FPS Test" << endl;
+    ROS_INFO("[LIDAR] Conducting an FPS Test");
     int iterations = 0;
     time_t start = time(0);
 #endif
@@ -29,7 +23,7 @@ void *lidar_thread(void *arg) {
         if (iterations > 100) {
             time_t finish = time(0);
             double fps = (iterations + 0.0) / (finish - start);
-            cout << "[LIDAR] FPS: " << fps << endl;
+            ROS_INFO("[LIDAR] FPS: %lf", fps);
             break;
         }
 

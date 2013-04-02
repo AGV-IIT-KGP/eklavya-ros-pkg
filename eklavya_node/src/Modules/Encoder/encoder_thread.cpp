@@ -1,5 +1,3 @@
-#include <stdio.h>
-#include "../../eklavya2.h"
 #include "encoder.h"
 
 void *encoder_thread(void *arg) {

@@ -1,9 +1,3 @@
-/*
- * GPS Processing Node
- * Subscribes to fix published by nmea_gps_driver
- * 
- * */
-
 #include "gps.h"
 
 void *gps_thread(void *arg) {

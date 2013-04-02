@@ -17,9 +17,6 @@ namespace IMUspace {
 
     class IMU {
     public:
-        static void initIMU();
-        static void getYaw(double *);
-        static void closeIMU();
         static void update_pose(const sensor_msgs::Imu&);
         static void update_yaw(const std_msgs::Float32& _yaw);
     };
