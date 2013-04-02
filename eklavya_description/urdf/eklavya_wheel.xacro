@@ -8,9 +8,6 @@
 
 	<property name="wheel_mass" value="2.63657000" /> <!-- in kg-->
 
-	
-
-
   <macro name="eklavya_wheel" params="suffix parent *origin">
     <joint name="${parent}_${suffix}_wheel_joint" type="continuous">
       <insert_block name="origin" />

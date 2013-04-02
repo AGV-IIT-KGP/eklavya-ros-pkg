@@ -142,7 +142,7 @@
                 <rightJoint>base_link_right_wheel_joint</rightJoint>
                 <wheelSeparation>${base_y_size}</wheelSeparation>
                 <wheelDiameter>${wheel_x_size}</wheelDiameter>
-                <torque>30</torque>
+                <torque>20</torque>
                 <interface:position name="position_iface_0"/>
                 <robotNamespace>/</robotNamespace>
                 <topicName>cmd_vel</topicName>
