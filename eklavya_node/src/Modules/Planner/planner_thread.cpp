@@ -72,19 +72,19 @@ void *planner_thread(void *arg) {
         pthread_mutex_unlock(&target_location_mutex);
 #endif
 
-        pthread_mutex_lock(&map_mutex);
+        pthread_mutex_lock(&cam_input_mutex);
         for (int i = 0; i < MAP_MAX; i++) {
             for (int j = 0; j < MAP_MAX; j++) {
                 int i1 = i;
                 int j1 = MAP_MAX - 1 - j;
                 uchar* ptr = (uchar *) (map_img->imageData + j1 * map_img->widthStep);
-                ptr[3 * i1 + 0] = global_map[i][j];
-                ptr[3 * i1 + 1] = global_map[i][j];
-                ptr[3 * i1 + 2] = global_map[i][j];
-                local_map[i][j] = global_map[i][j];
+                ptr[3 * i1 + 0] = cam_input[i][j];
+                ptr[3 * i1 + 1] = cam_input[i][j];
+                ptr[3 * i1 + 2] = cam_input[i][j];
+                local_map[i][j] = cam_input[i][j];
             }
         }
-        pthread_mutex_unlock(&map_mutex);
+        pthread_mutex_unlock(&cam_input_mutex);
 
         cvShowImage("[PLANNER] Map", map_img);
         cvWaitKey(WAIT_TIME);

@@ -9,7 +9,7 @@
 
 #define PID_MODE 0
 
-//#define SIMCTL
+#define SIMCTL
 #define SIM_SEEDS
 //#define DEBUG
 #define SHOW_PATH

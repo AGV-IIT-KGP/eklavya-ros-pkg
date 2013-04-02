@@ -184,12 +184,13 @@ void populateLanes(IplImage *img) {
     int i, j, index, k;
     pthread_mutex_lock(&cam_input_mutex);
     for (i = 0; i < img->height; i++) {
-        uchar *data = (uchar *) (img->imageData + i * img->widthStep);
-        for (j = 0; j < img->width; j++) {
-            for (k = 0; k < scale; k++)
-                cam_input[(int) (min((0.5 * MAP_MAX) + (scale * (j - img->width / 2)) + k)) ] [(int) (img->height - (i) + (0.1 * MAP_MAX)) ] = (data[j] == 255) ? 255 : 0;
+        uchar *data = (uchar *) (img->imageData + (MAP_MAX - i - 1) * img->widthStep);
+        for (j = 0; j < img->width; j++) 
+        {
+                cam_input[j][i]=data[j];
         }
     }
+    
     pthread_mutex_unlock(&cam_input_mutex);
 
 }
@@ -259,7 +260,7 @@ void LaneDetection::markLane(const sensor_msgs::ImageConstPtr& image) {
     //getDestinationPosition(warp_img);
 
   
-    //populateLanes(warp_img);
+    populateLanes(warp_img);
 
     //Release warp_img and input frame and lane.
     cvReleaseImage(&warp_img);
