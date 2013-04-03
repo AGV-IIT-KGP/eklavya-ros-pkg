@@ -161,4 +161,3 @@ void LidarData::update_map(const sensor_msgs::LaserScan& scan) {
 
 LidarData::~LidarData() {
 }
-

@@ -50,7 +50,11 @@ LINK_DIRECTORIES("/usr/local/lib/")
 option (USE_IMU "Use IMU" ON) 
 option (USE_LIDAR "Use Lidar" ON) 
 option (USE_LANE "Use Lane" ON) 
+<<<<<<< HEAD
 option (USE_FUSION "Use Fusion" ON)
+=======
+option (USE_FUSION "Use Merge" ON)
+>>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
 option (USE_GPS "Use GPS" ON)
 option (USE_ENCODER "Use Encoder" ON)
 option (USE_EKF "Use EKF" ON)
@@ -110,7 +114,11 @@ endif ()
 
 if (USE_NAVIGATION)
 include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/Navigation/")
+<<<<<<< HEAD
 rosbuild_add_library(NavigationLib src/Modules/Navigation/igvc_basic_strategy.cpp src/Modules/Navigation/navigation.cpp  src/Modules/Navigation/follow_nose_strategy.cpp src/Modules/Navigation/track_way_point_strategy.cpp src/Modules/Navigation/navigation_thread.cpp)
+=======
+rosbuild_add_library(NavigationLib src/Modules/Navigation/navigation.cpp                                    src/Modules/Navigation/follow_nose_strategy.cpp src/Modules/Navigation/track_way_point_strategy.cpp                                    src/Modules/Navigation/navigation_thread.cpp)
+>>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
 target_link_libraries(LidarLib ${OpenCV_LIBS})
 endif ()
 

@@ -62,7 +62,6 @@ void createMutex() {
 
     pthread_mutex_trylock(&lidar_map_mutex);
     pthread_mutex_unlock(&lidar_map_mutex);
-
     pthread_mutex_trylock(&global_map_mutex);
     pthread_mutex_unlock(&global_map_mutex);
 
@@ -189,6 +188,6 @@ int main(int argc, char *argv[]) {
 
     ROS_INFO("Eklavya Exiting");
     fin();
-    
+
     return 0;
 }

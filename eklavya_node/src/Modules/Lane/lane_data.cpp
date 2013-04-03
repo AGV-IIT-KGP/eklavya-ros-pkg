@@ -89,7 +89,7 @@ void LaneDetection::initializeLaneVariables(IplImage *input_frame) {
         cvNamedWindow("view_orig", 0);
     }
 
-    cvCreateTrackbar("B Max", "Control Box", &maxvalue_B, 255, NULL);
+cvCreateTrackbar("B Max", "Control Box", &maxvalue_B, 255, NULL);
     cvCreateTrackbar("G Max", "Control Box", &maxvalue_G, 255, NULL);
     cvCreateTrackbar("R Max", "Control Box", &maxvalue_R, 255, NULL);
     cvCreateTrackbar("B Min", "Control Box", &minvalue_B, 255, NULL);
@@ -232,7 +232,6 @@ void LaneDetection::markLane(const sensor_msgs::ImageConstPtr& image) {
     }
     if (choice == 0) {
         //TODO : reduce the kernel size and copy it to the lane
-
         lane = gray_hough_frame;
     }
     if (choice == 2) {

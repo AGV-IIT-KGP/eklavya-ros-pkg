@@ -36,4 +36,3 @@ namespace navigation_space {
         return bot_location;
     }
 }
-

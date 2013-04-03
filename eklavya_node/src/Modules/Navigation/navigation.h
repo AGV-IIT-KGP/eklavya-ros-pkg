@@ -6,7 +6,7 @@
 namespace navigation_space {
 
     void truncate(double xt, double yt, int *xtt, int *ytt);
-    
+
     class FollowNoseStrategy {
     public:
         static void calibrateReferenceHeading(double, int);

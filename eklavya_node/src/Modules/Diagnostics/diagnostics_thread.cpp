@@ -57,4 +57,3 @@ void *diagnostics_thread(void *arg) {
 
     return NULL;
 }
-

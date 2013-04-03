@@ -368,6 +368,7 @@ namespace planner_space {
             '0' + left_vel % 10,
             '0' + right_vel / 10,
             '0' + right_vel % 10, '/0'};
+
         p->sendArray(arr, 5);
         usleep(100);
 #endif  
