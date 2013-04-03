@@ -25,5 +25,7 @@ private:
 
 };
 
+using namespace cvb;
+
 #endif	/* LIDARDATA_H */
 

@@ -89,7 +89,7 @@ void *planner_thread(void *arg) {
         cvWaitKey(WAIT_TIME);
 
         planner_space::Planner::findPath(my_bot_location, my_target_location);
-    
+
         loop_rate.sleep();
     }
 
