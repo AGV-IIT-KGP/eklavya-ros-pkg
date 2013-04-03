@@ -49,11 +49,8 @@ LINK_DIRECTORIES("/usr/local/lib/")
 #Options
 option (USE_IMU "Use IMU" ON) 
 option (USE_LIDAR "Use Lidar" ON) 
-<<<<<<< HEAD
-=======
 option (USE_LANE "Use Lane" ON) 
-option (USE_FUSION "Use Merge" ON)
->>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
+option (USE_FUSION "Use Fusion" ON)
 option (USE_GPS "Use GPS" ON)
 option (USE_ENCODER "Use Encoder" ON)
 option (USE_EKF "Use EKF" ON)
@@ -76,8 +73,6 @@ rosbuild_add_library(LidarLib src/Modules/Lidar/LidarData.cpp src/Modules/Lidar/
 target_link_libraries(LidarLib ${OpenCV_LIBS})
 endif ()
 
-<<<<<<< HEAD
-=======
 if (USE_LANE)
 include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/Lane")
 rosbuild_add_library(LaneLib src/Modules/Lane/lane_data.cpp src/Modules/Lane/lane_thread.cpp)
@@ -85,10 +80,9 @@ endif ()
 
 if (USE_FUSION)
 include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/Fusion")
-rosbuild_add_library(FusionLib src/Modules/Fusion/merge.cpp src/Modules/Fusion/merge_thread.cpp)
+rosbuild_add_library(FusionLib src/Modules/Fusion/fusion.cpp src/Modules/Fusion/fusion_thread.cpp)
 endif ()
 
->>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
 if (USE_GPS)
 include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/GPS/")
 #rosbuild_add_library(GPSLib src/Modules/GPS/GPS.cpp src/Modules/GPS/gps_thread.cpp)
@@ -116,7 +110,6 @@ endif ()
 
 if (USE_NAVIGATION)
 include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/Navigation/")
-rosbuild_add_library(NavigationLib src/Modules/Navigation/navigation.cpp                                    src/Modules/Navigation/follow_nose_strategy.cpp src/Modules/Navigation/track_way_point_strategy.cpp                                    src/Modules/Navigation/navigation_thread.cpp)
 target_link_libraries(LidarLib ${OpenCV_LIBS})
 endif ()
 
@@ -158,13 +151,9 @@ target_link_libraries(cvblob ${OpenCV_LIBS})
 ##cvBlob end
 
 rosbuild_add_executable(${PROJECT_NAME} src/eklavya2.cpp)
-<<<<<<< HEAD
-target_link_libraries (${PROJECT_NAME} IMULib LidarLib GPSLib EncoderLib EKFLib SLAMLib PlannerLib NavigationLib DiagnosticsLib SerialPortLinuxLib)
-=======
 target_link_libraries (${PROJECT_NAME} IMULib LidarLib LaneLib FusionLib GPSLib EncoderLib EKFLib SLAMLib PlannerLib NavigationLib DiagnosticsLib SerialPortLinuxLib)
->>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
 
-#target_link_libraries (${PROJECT_NAME}  ${EXTRA_LIBS})
-target_link_libraries( ${PROJECT_NAME} ${OpenCV_LIBS} )
-target_link_libraries( ${PROJECT_NAME} ${MRPT_LIBS} )
-target_link_libraries( ${PROJECT_NAME} cvblob)
+#target_link_libraries(${PROJECT_NAME} ${EXTRA_LIBS})
+target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
+target_link_libraries(${PROJECT_NAME} ${MRPT_LIBS})
+target_link_libraries(${PROJECT_NAME} cvblob)

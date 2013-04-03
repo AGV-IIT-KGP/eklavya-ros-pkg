@@ -41,10 +41,14 @@
 
   <macro name="eklavya_castor_support_link_mesh">
 <<<<<<< HEAD
+<<<<<<< HEAD
     <origin xyz="0 0 0" rpy="0 0 ${M_PI}" />
 =======
     <origin xyz="0 0 0" rpy="0 0 0" />
 >>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
+=======
+    <origin xyz="0 0 0" rpy="0 0 ${M_PI}" />
+>>>>>>> addObstacle
     <geometry>
       <mesh filename="package://eklavya_description/meshes/wheelhub.dae"/>  
      <!--  <box size="0.14715 0.12074 0.12065" /> -->
@@ -54,10 +58,14 @@
   </macro>
   <macro name="eklavya_castor_wheel_link_mesh">
 <<<<<<< HEAD
+<<<<<<< HEAD
 	  <origin xyz="0 0 0" rpy="1.570796327 0 0" />
 =======
 	  <origin xyz="0 0 0" rpy="${M_PI/2} 0 0" />
 >>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
+=======
+	  <origin xyz="0 0 0" rpy="1.570796327 0 0" />
+>>>>>>> addObstacle
     <!--<origin xyz="0 0 0" rpy="0 0 0" /> -->
     <geometry>
       <mesh filename="package://eklavya_description/meshes/castorWheel.dae" />   
@@ -67,10 +75,14 @@
   </macro>
  <macro name="eklavya_wheel_mesh" params="suffix">
 <<<<<<< HEAD
+<<<<<<< HEAD
     <origin xyz="0 0 0" rpy="1.570796327 0 0" />
 =======
     <origin xyz="0 0 0" rpy="${M_PI/2} 0 0" />
 >>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
+=======
+    <origin xyz="0 0 0" rpy="1.570796327 0 0" />
+>>>>>>> addObstacle
     <geometry>
       <mesh filename="package://eklavya_description/meshes/wheel.dae" /> 
     <!-- <cylinder radius="${wheel_x_size/2}" length="${wheel_z_size}" />-->
@@ -122,10 +134,14 @@
     <leftJoint>base_link_left_wheel_joint</leftJoint>
     <rightJoint>base_link_right_wheel_joint</rightJoint>
 <<<<<<< HEAD
+<<<<<<< HEAD
     <wheelSeparation>${base_y_size}</wheelSeparation>
 =======
     <wheelSeparation>${base_y_origin_to_wheel_origin*2}</wheelSeparation>
 >>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
+=======
+    <wheelSeparation>${base_y_size}</wheelSeparation>
+>>>>>>> addObstacle
     <wheelDiameter>${wheel_x_size/2}</wheelDiameter>
     <torque>30</torque>
     <interface:position name="position_iface_0"/>
@@ -157,14 +173,16 @@
                 <leftJoint>base_link_left_wheel_joint</leftJoint>
                 <rightJoint>base_link_right_wheel_joint</rightJoint>
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> addObstacle
                 <wheelSeparation>${base_y_size}</wheelSeparation>
                 <wheelDiameter>${wheel_x_size}</wheelDiameter>
-                <torque>30</torque>
-=======
-                <wheelSeparation>${base_y_origin_to_wheel_origin*2}</wheelSeparation>
-                <wheelDiameter>${wheel_x_size}</wheelDiameter>
                 <torque>20</torque>
+<<<<<<< HEAD
 >>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
+=======
+>>>>>>> addObstacle
                 <interface:position name="position_iface_0"/>
                 <robotNamespace>/</robotNamespace>
                 <topicName>cmd_vel</topicName>

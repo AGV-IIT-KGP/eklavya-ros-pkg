@@ -23,12 +23,9 @@ enum Strategies {
     TrackWayPoint,
     HectorSLAM,
     LaserTestOnly,
-<<<<<<< HEAD
-    PlannerTestOnly
-=======
     PlannerTestOnly,
-Fusion
->>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
+    FusionTestOnly,
+    IGVCBasic
 };
 
 typedef struct Triplet {
@@ -58,13 +55,9 @@ typedef struct Odom {
 extern Pose pose; // Shared by IMU, EKF
 extern LatLong lat_long; // Shared by GPS, EKF
 extern Odom odom; // Shared by Encoder, EKF
-<<<<<<< HEAD
-extern unsigned char global_map[MAP_MAX][MAP_MAX]; // Shared by Lidar, Planner
-=======
-extern unsigned char g_laser_scan[MAP_MAX][MAP_MAX]; // Shared by Lidar, Planner
-extern unsigned char cam_input[MAP_MAX][MAP_MAX]; // Used by Camera
+extern unsigned char lidar_map[MAP_MAX][MAP_MAX]; // Shared by Lidar, Planner
+extern unsigned char camera_map[MAP_MAX][MAP_MAX]; // Used by Camera
 extern unsigned char global_map[MAP_MAX][MAP_MAX];
->>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
 extern Triplet bot_location; // Shared by EKF, Planner
 extern Triplet target_location; // Shared by EKF, Planner
 extern std::vector<Triplet> path;
@@ -75,25 +68,16 @@ extern int strategy;
 extern pthread_mutex_t pose_mutex;
 extern pthread_mutex_t lat_long_mutex;
 extern pthread_mutex_t odom_mutex;
-extern pthread_mutex_t map_mutex;
-<<<<<<< HEAD
-extern pthread_mutex_t bot_location_mutex;
-extern pthread_mutex_t target_location_mutex;
-extern pthread_mutex_t path_mutex;
-
-void *imu_thread(void *arg);
-void *lidar_thread(void *arg);
-=======
+extern pthread_mutex_t lidar_map_mutex;
 extern pthread_mutex_t global_map_mutex;
 extern pthread_mutex_t bot_location_mutex;
 extern pthread_mutex_t target_location_mutex;
 extern pthread_mutex_t path_mutex;
-extern pthread_mutex_t cam_input_mutex;
+extern pthread_mutex_t camera_map_mutex;
 
 void *imu_thread(void *arg);
 void *lidar_thread(void *arg);
 void *lane_thread(void *arg);
->>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
 void *gps_thread(void *arg);
 void *encoder_thread(void *arg);
 void *ekf_thread(void *arg);
@@ -101,10 +85,7 @@ void *slam_thread(void *arg);
 void *navigation_thread(void *arg);
 void *planner_thread(void *arg);
 void *diagnostics_thread(void *arg);
-<<<<<<< HEAD
-=======
-void *merge_thread(void *arg);
->>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
+void *fusion_thread(void *arg);
 
 using namespace std;
 

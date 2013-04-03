@@ -368,7 +368,6 @@ namespace planner_space {
             '0' + left_vel % 10,
             '0' + right_vel / 10,
             '0' + right_vel % 10, '/0'};
-        cout << arr << endl;
 
         p->sendArray(arr, 5);
         usleep(100);
@@ -480,7 +479,7 @@ namespace planner_space {
 
     bool isWalkable(state parent, state s) {
         int flag = 1;
-        
+
         for (unsigned int i = 0; i < seeds[s.seed_id].seed_points.size(); i++) {
             int x, y;
             double alpha = parent.pose.z;
@@ -498,7 +497,7 @@ namespace planner_space {
                 return false;
             }
         }
-        
+
         return flag == 1;
     }
 

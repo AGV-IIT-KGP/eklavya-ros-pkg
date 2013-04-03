@@ -2,7 +2,7 @@
 
 namespace navigation_space {
 
-    Triplet navigation_space::TrackWayPointStrategy::getTargetLocation(double x1, double y1, double heading) {
+    Triplet navigation_space::IGVCBasicStrategy::getTargetLocation(double x1, double y1, double heading) {
         heading *= (3.142 / 180.0);
 
         double alpha = -heading;
@@ -28,7 +28,7 @@ namespace navigation_space {
         return target_location;
     }
 
-    Triplet navigation_space::TrackWayPointStrategy::getBotLocation() {
+    Triplet navigation_space::IGVCBasicStrategy::getBotLocation() {
         Triplet bot_location;
         bot_location.x = 0.5 * MAP_MAX;
         bot_location.y = 0.1 * MAP_MAX;
@@ -36,3 +36,4 @@ namespace navigation_space {
         return bot_location;
     }
 }
+

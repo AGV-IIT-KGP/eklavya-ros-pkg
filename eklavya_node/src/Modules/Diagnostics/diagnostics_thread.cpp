@@ -29,9 +29,9 @@ void *diagnostics_thread(void *arg) {
         //diagnostics_space::Diagnostics::printOdom();
         //pthread_mutex_unlock(&odom_mutex);
 
-        pthread_mutex_lock(&map_mutex);
+        pthread_mutex_lock(&lidar_map_mutex);
         diagnostics_space::Diagnostics::plotMap();
-        pthread_mutex_unlock(&map_mutex);
+        pthread_mutex_unlock(&lidar_map_mutex);
 
         //pthread_mutex_lock(&bot_location_mutex);
         //diagnostics_space::Diagnostics::printBotLocation();
@@ -57,4 +57,3 @@ void *diagnostics_thread(void *arg) {
 
     return NULL;
 }
-

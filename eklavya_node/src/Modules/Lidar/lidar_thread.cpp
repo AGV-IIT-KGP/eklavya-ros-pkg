@@ -7,7 +7,7 @@ char **laser_scan;
 void *lidar_thread(void *arg) {
     ros::NodeHandle lidar_node;
 
-    ros::Subscriber sub = lidar_node.subscribe("scan", 5, LidarData::update_map);
+    ros::Subscriber sub = lidar_node.subscribe("scan", 2, LidarData::update_map);
     ros::Rate loop_rate(LOOP_RATE);
 
     ROS_INFO("Lidar thread started");

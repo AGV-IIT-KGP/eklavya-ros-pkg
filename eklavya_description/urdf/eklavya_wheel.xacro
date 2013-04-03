@@ -7,6 +7,7 @@
     <include filename="$(find eklavya_description)/urdf/params.xacro"/>
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	<property name="wheel_mass" value="2.63657000" /> <!-- in kg-->
 
 	
@@ -15,6 +16,10 @@
 	<property name="wheel_mass" value="2.6" /> <!-- in kg-->
 >>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
 
+=======
+	<property name="wheel_mass" value="2.63657000" /> <!-- in kg-->
+
+>>>>>>> addObstacle
   <macro name="eklavya_wheel" params="suffix parent *origin">
     <joint name="${parent}_${suffix}_wheel_joint" type="continuous">
       <insert_block name="origin" />
@@ -49,10 +54,14 @@
       <joint name="${parent}_${suffix}_wheel_joint" />
       <mechanicalReduction>1.0</mechanicalReduction>
 <<<<<<< HEAD
+<<<<<<< HEAD
       <motorTorqueConstant>1</motorTorqueConstant>
 =======
        <!-- <motorTorqueConstant>1</motorTorqueConstant>-->
 >>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
+=======
+      <motorTorqueConstant>1</motorTorqueConstant>
+>>>>>>> addObstacle
     </transmission>
   </macro>
 </robot>

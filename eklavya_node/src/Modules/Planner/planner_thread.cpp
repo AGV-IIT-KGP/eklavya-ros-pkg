@@ -71,11 +71,7 @@ void *planner_thread(void *arg) {
         pthread_mutex_unlock(&target_location_mutex);
 #endif
 
-<<<<<<< HEAD
-        pthread_mutex_lock(&map_mutex);
-=======
         pthread_mutex_lock(&global_map_mutex);
->>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
         for (int i = 0; i < MAP_MAX; i++) {
             for (int j = 0; j < MAP_MAX; j++) {
                 int i1 = i;
@@ -87,21 +83,13 @@ void *planner_thread(void *arg) {
                 local_map[i][j] = global_map[i][j];
             }
         }
-<<<<<<< HEAD
-        pthread_mutex_unlock(&map_mutex);
-=======
         pthread_mutex_unlock(&global_map_mutex);
->>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
 
         cvShowImage("[PLANNER] Map", map_img);
         cvWaitKey(WAIT_TIME);
 
         planner_space::Planner::findPath(my_bot_location, my_target_location);
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
         loop_rate.sleep();
     }
 

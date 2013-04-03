@@ -35,12 +35,17 @@
       <origin xyz="${origin}" />
       <inertia ixx="${0.0833333 * mass * (3 * radius * radius + length * length)}" ixy="0.0" ixz="0.0" 
 <<<<<<< HEAD
+<<<<<<< HEAD
         iyy="${0.0833333 * mass * (3 * radius * radius + length * length)}" iyz="0.0" 
         izz="${0.5 * mass * radius * radius}" />
 =======
         iyy="${0.5 * mass * radius * radius}" iyz="0.0" 
         izz="${0.0833333 * mass * (3 * radius * radius + length * length)}" />
 >>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
+=======
+        iyy="${0.5 * mass * radius * radius}" iyz="0.0" 
+        izz="${0.0833333 * mass * (3 * radius * radius + length * length)}" />
+>>>>>>> addObstacle
     </inertial>
   </macro>
   

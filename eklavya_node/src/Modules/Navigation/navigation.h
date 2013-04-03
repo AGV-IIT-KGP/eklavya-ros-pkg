@@ -5,6 +5,8 @@
 
 namespace navigation_space {
 
+    void truncate(double xt, double yt, int *xtt, int *ytt);
+
     class FollowNoseStrategy {
     public:
         static void calibrateReferenceHeading(double, int);
@@ -13,6 +15,12 @@ namespace navigation_space {
     };
 
     class TrackWayPointStrategy {
+    public:
+        static Triplet getTargetLocation(double latitude, double longitude, double heading);
+        static Triplet getBotLocation();
+    };
+
+    class IGVCBasicStrategy {
     public:
         static Triplet getTargetLocation(double latitude, double longitude, double heading);
         static Triplet getBotLocation();
