@@ -15,7 +15,7 @@
     <param name="max_ang" value="  1.57" />
   </node>
 
-  <node if="$(arg VectorNav)" pkg="eklavya_pose" type="eklavya_pose" name="eklavya_pose" output="screen"/>
+  <node if="$(arg VectorNav)" pkg="eklavya_pose" type="eklavya_pose" name="eklavya_pose" output="screen" cwd="node"/>
 
   <node if="$(arg Sparkfun_Yaw)" pkg="yaw_pub" type="yaw_publisher" name="yaw_publisher" />
 
