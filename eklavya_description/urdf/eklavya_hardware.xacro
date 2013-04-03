@@ -10,12 +10,12 @@
  
  <macro name="caster_support_hinge" params="suffix parent">
 	<joint name="${parent}_caster_support_hinge_${suffix}_joint" type="continuous">
-      <origin rpy="0 0 0" xyz="${base_x_size/2-0.5} 0 ${caster_support_hinge_z_offset}"/> 
+      <origin  rpy="0 0 ${M_PI}" xyz="${-base_x_size/2 +wheelhub_x_size/2} 0 ${castor_x_size/2 -wheel_x_size/2 -base_z_origin_to_caster_wheel_origin}"/> 
       <parent link="${parent}" />
       <child link="${parent}_caster_support_hinge_${suffix}_link"/>
 
       <axis xyz="0 0 1" />
-      <anchor xyz="0 0 ${M_PI}" />
+      <anchor xyz="0.01 0 0" />
       <limit effort="100" velocity="100" k_velocity="0" />
       <joint_properties damping="0.0" friction="0.0" />
     </joint>
@@ -29,7 +29,7 @@
     <link name="${parent}_caster_support_hinge_${suffix}_link">
       <inertial>
         <mass value="1"/>
-        <origin xyz="0 0 0" />
+        <origin xyz="0 0 0"/>
         <inertia ixx="0.00375" ixy="0.0" ixz="0.0"
           iyy="0.00375" iyz="0.0"
           izz="0.00375" />
@@ -46,7 +46,7 @@
 <macro name="caster_wheel" params="suffix parent">
 	  
 	 <joint name="${parent}_caster_wheel_${suffix}_joint" type="continuous">
-      <origin rpy="0 0 0" xyz="${base_x_origin_to_caster_wheel_origin} ${base_y_origin_to_caster_wheel_origin} ${base_z_origin_to_caster_wheel_origin } " />
+      <origin rpy="0 0 0" xyz="${base_x_origin_to_caster_wheel_origin} ${base_y_origin_to_caster_wheel_origin} ${base_z_origin_to_caster_wheel_origin} " />
       <parent link="${parent}_caster_support_hinge_${suffix}_link" />
       <child link="${parent}_caster_wheel_${suffix}_link" />
 

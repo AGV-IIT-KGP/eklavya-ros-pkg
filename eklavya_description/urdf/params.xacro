@@ -35,7 +35,7 @@
 	<property name="wheelhub_x_size" value="0.15000000" /> 
 	<property name="wheelhub_y_size" value="0.12000000" />
 	<property name="wheelhub_z_size" value="0.12000000" />
-	<property name="caster_support_hinge_z_offset" value="0.05325" /> <!-- 0.06275 0.05325 .058-->
+	<property name="caster_support_hinge_z_offset" value="0.0325" /> <!-- 0.06275 0.05325 .058-->
 	 
 
 </robot>
