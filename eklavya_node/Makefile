@@ -135,6 +135,19 @@ EncoderLib/fast:
 .PHONY : EncoderLib/fast
 
 #=============================================================================
+# Target rules for targets named FusionLib
+
+# Build rule for target.
+FusionLib: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 FusionLib
+.PHONY : FusionLib
+
+# fast build rule for target.
+FusionLib/fast:
+	$(MAKE) -f CMakeFiles/FusionLib.dir/build.make CMakeFiles/FusionLib.dir/build
+.PHONY : FusionLib/fast
+
+#=============================================================================
 # Target rules for targets named GPSLib
 
 # Build rule for target.
@@ -610,6 +623,36 @@ src/Modules/Encoder/encoder_thread.s:
 .PHONY : src/Modules/Encoder/encoder_thread.s
 
 # target to build an object file
+src/Modules/Fusion/merge.o:
+	$(MAKE) -f CMakeFiles/FusionLib.dir/build.make CMakeFiles/FusionLib.dir/src/Modules/Fusion/merge.o
+.PHONY : src/Modules/Fusion/merge.o
+
+# target to preprocess a source file
+src/Modules/Fusion/merge.i:
+	$(MAKE) -f CMakeFiles/FusionLib.dir/build.make CMakeFiles/FusionLib.dir/src/Modules/Fusion/merge.i
+.PHONY : src/Modules/Fusion/merge.i
+
+# target to generate assembly for a file
+src/Modules/Fusion/merge.s:
+	$(MAKE) -f CMakeFiles/FusionLib.dir/build.make CMakeFiles/FusionLib.dir/src/Modules/Fusion/merge.s
+.PHONY : src/Modules/Fusion/merge.s
+
+# target to build an object file
+src/Modules/Fusion/merge_thread.o:
+	$(MAKE) -f CMakeFiles/FusionLib.dir/build.make CMakeFiles/FusionLib.dir/src/Modules/Fusion/merge_thread.o
+.PHONY : src/Modules/Fusion/merge_thread.o
+
+# target to preprocess a source file
+src/Modules/Fusion/merge_thread.i:
+	$(MAKE) -f CMakeFiles/FusionLib.dir/build.make CMakeFiles/FusionLib.dir/src/Modules/Fusion/merge_thread.i
+.PHONY : src/Modules/Fusion/merge_thread.i
+
+# target to generate assembly for a file
+src/Modules/Fusion/merge_thread.s:
+	$(MAKE) -f CMakeFiles/FusionLib.dir/build.make CMakeFiles/FusionLib.dir/src/Modules/Fusion/merge_thread.s
+.PHONY : src/Modules/Fusion/merge_thread.s
+
+# target to build an object file
 src/Modules/GPS/gps.o:
 	$(MAKE) -f CMakeFiles/GPSLib.dir/build.make CMakeFiles/GPSLib.dir/src/Modules/GPS/gps.o
 .PHONY : src/Modules/GPS/gps.o
@@ -891,6 +934,7 @@ help:
 	@echo "... DiagnosticsLib"
 	@echo "... EKFLib"
 	@echo "... EncoderLib"
+	@echo "... FusionLib"
 	@echo "... GPSLib"
 	@echo "... IMULib"
 	@echo "... LaneLib"
@@ -948,6 +992,12 @@ help:
 	@echo "... src/Modules/Encoder/encoder_thread.o"
 	@echo "... src/Modules/Encoder/encoder_thread.i"
 	@echo "... src/Modules/Encoder/encoder_thread.s"
+	@echo "... src/Modules/Fusion/merge.o"
+	@echo "... src/Modules/Fusion/merge.i"
+	@echo "... src/Modules/Fusion/merge.s"
+	@echo "... src/Modules/Fusion/merge_thread.o"
+	@echo "... src/Modules/Fusion/merge_thread.i"
+	@echo "... src/Modules/Fusion/merge_thread.s"
 	@echo "... src/Modules/GPS/gps.o"
 	@echo "... src/Modules/GPS/gps.i"
 	@echo "... src/Modules/GPS/gps.s"

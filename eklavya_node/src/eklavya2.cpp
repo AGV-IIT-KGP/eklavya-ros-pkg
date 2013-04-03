@@ -39,7 +39,7 @@ pthread_mutex_t bot_location_mutex;
 pthread_mutex_t target_location_mutex;
 pthread_mutex_t path_mutex;
 pthread_mutex_t cam_input_mutex;
-
+pthread_mutex_t global_map_mutex;
 void createMutex() {
     pthread_mutex_init(&pose_mutex, NULL);
     pthread_mutex_init(&lat_long_mutex, NULL);
@@ -61,6 +61,9 @@ void createMutex() {
 
     pthread_mutex_trylock(&map_mutex);
     pthread_mutex_unlock(&map_mutex);
+    
+    pthread_mutex_trylock(&global_map_mutex);
+    pthread_mutex_unlock(&global_map_mutex);
 
     pthread_mutex_trylock(&bot_location_mutex);
     pthread_mutex_unlock(&bot_location_mutex);
@@ -86,7 +89,7 @@ void startThread(pthread_t *thread_id, pthread_attr_t *thread_attr, void *(*thre
 
 void startThreads() {
     pthread_attr_t attr;
-    pthread_t imu_id, lidar_id,lane_id,  gps_id, slam_id, navigation_id, planner_id, diagnostics_id;
+    pthread_t imu_id,merge_id, lidar_id,lane_id,  gps_id, slam_id, navigation_id, planner_id, diagnostics_id;
 
     pthread_attr_init(&attr);
     pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
@@ -123,13 +126,21 @@ void startThreads() {
         case PlannerTestOnly:
             //            startThread(&lidar_id, &attr, &lidar_thread);
             startThread(&lane_id, &attr, &lane_thread);
+              startThread(&lidar_id, &attr, &lidar_thread);
+          
             startThread(&navigation_id, &attr, &navigation_thread);
+             startThread(&merge_id, &attr, &merge_thread);
+            
             startThread(&planner_id, &attr, &planner_thread);
+            startThread(&imu_id, &attr, &imu_thread);
+            startThread(&gps_id, &attr, &gps_thread);
+            
+            //startThread(&lidar_id, &attr, &lidar_thread);
             break;
 
 	case Fusion:
             startThread(&lane_id, &attr, &lane_thread);
-//            startThread(&merge_id, &attr, &merge_thread);
+         //   startThread(&merge_id, &attr, &merge_thread);
             break;
     }
 

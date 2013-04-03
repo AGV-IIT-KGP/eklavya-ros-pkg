@@ -68,6 +68,7 @@ extern pthread_mutex_t pose_mutex;
 extern pthread_mutex_t lat_long_mutex;
 extern pthread_mutex_t odom_mutex;
 extern pthread_mutex_t map_mutex;
+extern pthread_mutex_t global_map_mutex;
 extern pthread_mutex_t bot_location_mutex;
 extern pthread_mutex_t target_location_mutex;
 extern pthread_mutex_t path_mutex;
@@ -83,6 +84,7 @@ void *slam_thread(void *arg);
 void *navigation_thread(void *arg);
 void *planner_thread(void *arg);
 void *diagnostics_thread(void *arg);
+void *merge_thread(void *arg);
 
 using namespace std;
 

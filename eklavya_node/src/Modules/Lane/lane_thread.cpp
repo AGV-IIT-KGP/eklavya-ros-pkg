@@ -17,7 +17,7 @@ void *lane_thread(void *arg) {
   
   LaneDetection lane_d;
   image_transport::ImageTransport it(lane_node);
-  image_transport::Subscriber sub = it.subscribe("camera/image", 2, &LaneDetection::markLane, &lane_d);
+  image_transport::Subscriber sub = it.subscribe("camera/image", 5, &LaneDetection::markLane, &lane_d);
   ros::Rate loop_rate(10);
   
   
