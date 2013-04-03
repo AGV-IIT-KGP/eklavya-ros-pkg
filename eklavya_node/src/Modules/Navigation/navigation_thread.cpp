@@ -66,7 +66,11 @@ void *navigation_thread(void *arg) {
             {
                 pthread_mutex_lock(&target_location_mutex);
                 my_target_location.x = target_location.x = 500;
+<<<<<<< HEAD
                 my_target_location.y = target_location.y = 900;
+=======
+                my_target_location.y = target_location.y = 990;
+>>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
                 my_target_location.z = target_location.z = 90;
                 pthread_mutex_unlock(&target_location_mutex);
 

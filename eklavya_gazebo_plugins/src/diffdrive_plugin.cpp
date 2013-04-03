@@ -353,7 +353,13 @@ void DiffDrivePlugin::write_position_data()
   new_pose.pos.x = odomPose[0];
   new_pose.pos.y = odomPose[1];
   new_pose.rot.SetFromEuler(math::Vector3(0,0,odomPose[2]));
+<<<<<<< HEAD
 
+=======
+  //printf("\nnew_pose.pos.x %lf ",new_pose.pos.x);
+ // printf("new_pose.pos.y %lf ",new_pose.pos.y);
+  //printf("new_pose.pos.rot %lf \n",odomPose[2]);
+>>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
   this->parent->SetWorldPose( new_pose );
 }
 

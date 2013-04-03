@@ -25,7 +25,11 @@
 	<property name="base_y_origin_to_wheel_origin" value="0.220" />
 	<property name="base_z_origin_to_wheel_origin" value="0" />
 	
+<<<<<<< HEAD
 	<property name="base_x_origin_to_caster_wheel_origin" value="-0.068" />
+=======
+	<property name="base_x_origin_to_caster_wheel_origin" value="0.068" />
+>>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
 	<property name="base_y_origin_to_caster_wheel_origin" value="0.0" />
 	<property name="base_z_origin_to_caster_wheel_origin" value="-0.085" />
 	<property name="castor_x_size" value="0.16000000" /> 
@@ -35,7 +39,14 @@
 	<property name="wheelhub_x_size" value="0.15000000" /> 
 	<property name="wheelhub_y_size" value="0.12000000" />
 	<property name="wheelhub_z_size" value="0.12000000" />
+<<<<<<< HEAD
 	<property name="caster_support_hinge_z_offset" value="0.05325" /> <!-- 0.06275 0.05325 .058-->
 	 
 
+=======
+	<property name="caster_support_hinge_z_offset" value="0.0325" /> <!-- 0.06275 0.05325 .058-->
+	
+	<property name="cam_pole" value="0.22" />
+    <property name="cam_angle" value="${M_PI/8}" />
+>>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
 </robot>

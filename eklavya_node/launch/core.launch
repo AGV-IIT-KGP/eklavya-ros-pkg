@@ -1,7 +1,11 @@
 <?xml version="1.0"?>
 
 <launch>
+<<<<<<< HEAD
   <node pkg="eklavya_node" type="eklavya_node" name="eklavya_node" args="1" output="screen" cwd="node">
+=======
+  <node pkg="eklavya_node" type="eklavya_node" name="eklavya_node" args="4" output="screen" cwd="node">
+>>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
     <param name="obstacle_radius" value="8" />
   </node>
 </launch>

@@ -5,8 +5,13 @@
  *  1: Blob filter
  */
 
+<<<<<<< HEAD
 #define FILTER 0
 #define DEBUG 1
+=======
+#define FILTER 1
+#define DEBUG 0
+>>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
 
 #define CENTERX 500
 #define CENTERY 100
@@ -48,7 +53,11 @@ void LidarData::createCircle(int x, int y) {
             for (int j = -RADIUS; j < RADIUS; j++) {
                 if ((y + j >= 0) && (y + j <= MAP_MAX)) {
                     if (i * i + j * j <= RADIUS * RADIUS) {
+<<<<<<< HEAD
                         global_map[x + i][y + j] = 255;
+=======
+                        g_laser_scan[x + i][y + j] = 255;
+>>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
                     }
                 }
             }
@@ -61,7 +70,11 @@ void LidarData::update_map(const sensor_msgs::LaserScan& scan) {
     //TODO: Fusion needs to be implemented in the STRATEGY module
 
     //initialize variables
+<<<<<<< HEAD
     int minblob_lidar = 200;
+=======
+    int minblob_lidar = 250;
+>>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
     IplImage *img, *nblobs, *nblobs1, *labelImg;
     img = cvCreateImage(cvSize(MAP_MAX, MAP_MAX), 8, 1);
     cvSet(img, cvScalar(0));
@@ -89,7 +102,11 @@ void LidarData::update_map(const sensor_msgs::LaserScan& scan) {
 
             if (x >= 0 && y >= 0 && (int) x < MAP_MAX && (int) y < MAP_MAX) {
                 int x2 = (x);
+<<<<<<< HEAD
                 int y2 = (MAP_MAX - y - 1);
+=======
+                int y2 = (MAP_MAX - y - 20 - 1);
+>>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
 
                 ptr = (uchar *) (img->imageData + y2 * img->widthStep);
                 ptr[x2] = 255;
@@ -155,7 +172,11 @@ void LidarData::update_map(const sensor_msgs::LaserScan& scan) {
     pthread_mutex_lock(&map_mutex);
     for (int i = 0; i < MAP_MAX; i++) {
         for (int j = 0; j < MAP_MAX; j++) {
+<<<<<<< HEAD
             global_map[i][j] = IMGDATA(img, MAP_MAX - j - 1, i, 0);
+=======
+           g_laser_scan[i][j] = IMGDATA(img, MAP_MAX - j - 1, i, 0);
+>>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
         }
     }
     pthread_mutex_unlock(&map_mutex);

@@ -21,7 +21,11 @@
             </inertial>
             
             <visual>
+<<<<<<< HEAD
                 <origin xyz="0.0 0.0 0.0" rpy="${M_PI/2} 0 ${M_PI/2}" />
+=======
+                <origin xyz="0 0 0" rpy="${M_PI/2} 0 ${M_PI/2}" />
+>>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
                 <geometry>
                     <mesh filename="package://eklavya_description/meshes/collada/hokuyo_urg.dae"/>
                 </geometry>
@@ -29,7 +33,11 @@
             </visual>
             
             <collision>
+<<<<<<< HEAD
                 <origin xyz="0.0 0.0 0.0" rpy="${M_PI/2} 0 ${M_PI/2}" />
+=======
+                <origin xyz="0 0 0" rpy="${M_PI/2} 0 ${M_PI/2}" />
+>>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
                 <geometry>
                     <mesh filename="package://eklavya_description/meshes/collada/hokuyo_urg.dae"/>
                 </geometry>

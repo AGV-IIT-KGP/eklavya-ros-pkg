@@ -40,7 +40,11 @@
 
 
   <macro name="eklavya_castor_support_link_mesh">
+<<<<<<< HEAD
     <origin xyz="0 0 0" rpy="0 0 ${M_PI}" />
+=======
+    <origin xyz="0 0 0" rpy="0 0 0" />
+>>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
     <geometry>
       <mesh filename="package://eklavya_description/meshes/wheelhub.dae"/>  
      <!--  <box size="0.14715 0.12074 0.12065" /> -->
@@ -49,7 +53,11 @@
      <material name="Blue"/>
   </macro>
   <macro name="eklavya_castor_wheel_link_mesh">
+<<<<<<< HEAD
 	  <origin xyz="0 0 0" rpy="1.570796327 0 0" />
+=======
+	  <origin xyz="0 0 0" rpy="${M_PI/2} 0 0" />
+>>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
     <!--<origin xyz="0 0 0" rpy="0 0 0" /> -->
     <geometry>
       <mesh filename="package://eklavya_description/meshes/castorWheel.dae" />   
@@ -58,7 +66,11 @@
      
   </macro>
  <macro name="eklavya_wheel_mesh" params="suffix">
+<<<<<<< HEAD
     <origin xyz="0 0 0" rpy="1.570796327 0 0" />
+=======
+    <origin xyz="0 0 0" rpy="${M_PI/2} 0 0" />
+>>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
     <geometry>
       <mesh filename="package://eklavya_description/meshes/wheel.dae" /> 
     <!-- <cylinder radius="${wheel_x_size/2}" length="${wheel_z_size}" />-->
@@ -109,7 +121,11 @@
     <updateRate>100.0</updateRate>
     <leftJoint>base_link_left_wheel_joint</leftJoint>
     <rightJoint>base_link_right_wheel_joint</rightJoint>
+<<<<<<< HEAD
     <wheelSeparation>${base_y_size}</wheelSeparation>
+=======
+    <wheelSeparation>${base_y_origin_to_wheel_origin*2}</wheelSeparation>
+>>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
     <wheelDiameter>${wheel_x_size/2}</wheelDiameter>
     <torque>30</torque>
     <interface:position name="position_iface_0"/>
@@ -140,9 +156,15 @@
                 <updateRate>100.0</updateRate>
                 <leftJoint>base_link_left_wheel_joint</leftJoint>
                 <rightJoint>base_link_right_wheel_joint</rightJoint>
+<<<<<<< HEAD
                 <wheelSeparation>${base_y_size}</wheelSeparation>
                 <wheelDiameter>${wheel_x_size}</wheelDiameter>
                 <torque>30</torque>
+=======
+                <wheelSeparation>${base_y_origin_to_wheel_origin*2}</wheelSeparation>
+                <wheelDiameter>${wheel_x_size}</wheelDiameter>
+                <torque>20</torque>
+>>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
                 <interface:position name="position_iface_0"/>
                 <robotNamespace>/</robotNamespace>
                 <topicName>cmd_vel</topicName>

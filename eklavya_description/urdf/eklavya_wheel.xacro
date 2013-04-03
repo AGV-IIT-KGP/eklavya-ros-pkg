@@ -6,10 +6,14 @@
   xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface">
     <include filename="$(find eklavya_description)/urdf/params.xacro"/>
 
+<<<<<<< HEAD
 	<property name="wheel_mass" value="2.63657000" /> <!-- in kg-->
 
 	
 
+=======
+	<property name="wheel_mass" value="2.6" /> <!-- in kg-->
+>>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
 
   <macro name="eklavya_wheel" params="suffix parent *origin">
     <joint name="${parent}_${suffix}_wheel_joint" type="continuous">
@@ -44,7 +48,11 @@
       <actuator name="${parent}_${suffix}_wheel_motor" />
       <joint name="${parent}_${suffix}_wheel_joint" />
       <mechanicalReduction>1.0</mechanicalReduction>
+<<<<<<< HEAD
       <motorTorqueConstant>1</motorTorqueConstant>
+=======
+       <!-- <motorTorqueConstant>1</motorTorqueConstant>-->
+>>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
     </transmission>
   </macro>
 </robot>

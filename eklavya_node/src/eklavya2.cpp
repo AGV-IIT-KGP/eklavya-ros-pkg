@@ -6,6 +6,10 @@
 #include "Modules/GPS/gps.h"
 #include "Modules/IMU/IMU.h"
 #include "Modules/Lidar/LidarData.h"
+<<<<<<< HEAD
+=======
+#include "Modules/Lane/lane_data.h"
+>>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
 #include "Modules/Navigation/navigation.h"
 #include "Modules/Planner/planner.h"
 #include "Modules/SLAM/slam.h"
@@ -18,7 +22,14 @@ using namespace cv;
 Pose pose; // Shared by IMU, EKF
 LatLong lat_long; // Shared by GPS, EKF
 Odom odom; // Shared by Encoder, EKF
+<<<<<<< HEAD
 unsigned char global_map[MAP_MAX][MAP_MAX]; // Shared by Lidar, Planner
+=======
+unsigned char g_laser_scan[MAP_MAX][MAP_MAX]; // Shared by Lidar, Planner
+unsigned char cam_input[MAP_MAX][MAP_MAX]; // by Camera for lane
+unsigned char global_map[MAP_MAX][MAP_MAX]; // by Camera for lane
+
+>>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
 Triplet bot_location; // Shared by EKF, Planner
 Triplet target_location; // Shared by EKF, Planner
 vector<Triplet> path;
@@ -34,7 +45,12 @@ pthread_mutex_t map_mutex;
 pthread_mutex_t bot_location_mutex;
 pthread_mutex_t target_location_mutex;
 pthread_mutex_t path_mutex;
+<<<<<<< HEAD
 
+=======
+pthread_mutex_t cam_input_mutex;
+pthread_mutex_t global_map_mutex;
+>>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
 void createMutex() {
     pthread_mutex_init(&pose_mutex, NULL);
     pthread_mutex_init(&lat_long_mutex, NULL);
@@ -43,6 +59,10 @@ void createMutex() {
     pthread_mutex_init(&bot_location_mutex, NULL);
     pthread_mutex_init(&target_location_mutex, NULL);
     pthread_mutex_init(&path_mutex, NULL);
+<<<<<<< HEAD
+=======
+    pthread_mutex_init(&cam_input_mutex, NULL);
+>>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
 
     pthread_mutex_trylock(&pose_mutex);
     pthread_mutex_unlock(&pose_mutex);
@@ -55,6 +75,12 @@ void createMutex() {
 
     pthread_mutex_trylock(&map_mutex);
     pthread_mutex_unlock(&map_mutex);
+<<<<<<< HEAD
+=======
+    
+    pthread_mutex_trylock(&global_map_mutex);
+    pthread_mutex_unlock(&global_map_mutex);
+>>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
 
     pthread_mutex_trylock(&bot_location_mutex);
     pthread_mutex_unlock(&bot_location_mutex);
@@ -64,6 +90,12 @@ void createMutex() {
 
     pthread_mutex_trylock(&path_mutex);
     pthread_mutex_unlock(&path_mutex);
+<<<<<<< HEAD
+=======
+
+ pthread_mutex_trylock(&cam_input_mutex);
+    pthread_mutex_unlock(&cam_input_mutex);
+>>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
 }
 
 void startThread(pthread_t *thread_id, pthread_attr_t *thread_attr, void *(*thread_name) (void *)) {
@@ -77,7 +109,11 @@ void startThread(pthread_t *thread_id, pthread_attr_t *thread_attr, void *(*thre
 
 void startThreads() {
     pthread_attr_t attr;
+<<<<<<< HEAD
     pthread_t imu_id, lidar_id, gps_id, slam_id, navigation_id, planner_id, diagnostics_id;
+=======
+    pthread_t imu_id,merge_id, lidar_id,lane_id,  gps_id, slam_id, navigation_id, planner_id, diagnostics_id;
+>>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
 
     pthread_attr_init(&attr);
     pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
@@ -113,8 +149,27 @@ void startThreads() {
 
         case PlannerTestOnly:
             //            startThread(&lidar_id, &attr, &lidar_thread);
+<<<<<<< HEAD
             startThread(&navigation_id, &attr, &navigation_thread);
             startThread(&planner_id, &attr, &planner_thread);
+=======
+            startThread(&lane_id, &attr, &lane_thread);
+              startThread(&lidar_id, &attr, &lidar_thread);
+          
+            startThread(&navigation_id, &attr, &navigation_thread);
+             startThread(&merge_id, &attr, &merge_thread);
+            
+            startThread(&planner_id, &attr, &planner_thread);
+            startThread(&imu_id, &attr, &imu_thread);
+            startThread(&gps_id, &attr, &gps_thread);
+            
+            //startThread(&lidar_id, &attr, &lidar_thread);
+            break;
+
+	case Fusion:
+            startThread(&lane_id, &attr, &lane_thread);
+         //   startThread(&merge_id, &attr, &merge_thread);
+>>>>>>> 5b6c52d7db233097e1f897db6dcb4b9a52417cae
             break;
     }
 
