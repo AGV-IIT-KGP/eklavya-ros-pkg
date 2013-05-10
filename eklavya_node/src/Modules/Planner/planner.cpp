@@ -197,11 +197,12 @@ namespace planner_space {
 
         brake.vl = brake.vr = 0;
 
-        addObstacleP(data_img, 500, 300, 30);
-        //        addObstacleP(data_img, 100 + rand() % 600, 100 + rand() % 600, 10);
-        //        addObstacleP(data_img, 100 + rand() % 600, 100 + rand() % 600, 10);
-        //        addObstacleP(data_img, 100 + rand() % 600, 100 + rand() % 600, 10);
-        //        addObstacleP(data_img, 100 + rand() % 600, 100 + rand() % 600, 10);
+//        addObstacleP(data_img, 500, 500, 2);
+//                addObstacleP(data_img, 100 + rand() % 600, 100 + rand() % 600, 10);
+//                addObstacleP(data_img, 100 + rand() % 600, 100 + rand() % 600, 10);
+//                addObstacleP(data_img, 100 + rand() % 600, 100 + rand() % 600, 10);
+//                addObstacleP(data_img, 100 + rand() % 600, 100 + rand() % 600, 10);
+//                addObstacleP(data_img, 100 + rand() % 600, 100 + rand() % 600, 10);
 
         Mat img;
 
@@ -374,8 +375,10 @@ namespace planner_space {
 
 //                    neighbor.g_obs = tentative_g_obs_score;
                     neighbor.h_obs = obs_consistent;
-                    neighbor.g_obs *= neighbor.h_dist / (2 * vdt_max + vdt_goal);
-                    neighbor.h_obs *= neighbor.h_dist / (2 * vdt_max + vdt_goal);
+                    double scaling_factor = 1 * neighbor.h_dist / (2 * vdt_max + vdt_goal);
+                    //double scaling_factor = 1;
+                    neighbor.g_obs *= scaling_factor;
+                    neighbor.h_obs *= scaling_factor;
                     neighbor.depth = current.depth + 1;
 
                     //next condition is always true

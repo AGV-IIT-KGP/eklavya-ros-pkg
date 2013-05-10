@@ -86,6 +86,7 @@ void *navigation_thread(void *arg) {
                 break;
             }
 
+            case FusionTestOnly:
             case PlannerTestOnly:
             {
                 pthread_mutex_lock(&target_location_mutex);

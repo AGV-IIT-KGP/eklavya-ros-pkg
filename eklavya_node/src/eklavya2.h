@@ -22,7 +22,7 @@
 
 enum Strategies {
     FollowNose = 0,
-    TrackWayPoint =1,
+    TrackWayPoint = 1,
     HectorSLAM =2,
     LaserTestOnly =3,
     PlannerTestOnly =4 ,
