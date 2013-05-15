@@ -126,7 +126,7 @@ void LaneDetection::initializeLaneVariables(IplImage *input_frame) {
     cvCreateTrackbar("Low Canny Threshold", "Control Box", &low_threshold, 2000, NULL);
     
     //Destination variables
-    int widthInCM = 100, h1 = 2, h2 = 75; //width and height of the lane. width:widthoflane/scale;
+    int widthInCM = 100, h1 = 220, h2 = 295; //width and height of the lane. width:widthoflane/scale;
     
     srcQuad[0].x = (float) 134; //src Top left
     srcQuad[0].y = (float) 166;
@@ -194,8 +194,8 @@ int min(int value) {
 void populateLanes(IplImage *img) {
     int i, j;
     pthread_mutex_lock(&camera_map_mutex);
-    for (i = 130; i < img->height; i++) {
-        uchar *data = (uchar *) (img->imageData + (MAP_MAX - i + 129) * img->widthStep);
+    for (i = 0; i < img->height; i++) {
+        uchar *data = (uchar *) (img->imageData + (MAP_MAX - i) * img->widthStep);
         for (j = 0; j < img->width; j++) {
             camera_map[j][i] = data[j];
         }

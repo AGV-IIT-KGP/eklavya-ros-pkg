@@ -102,6 +102,9 @@ namespace planner_space {
                 cv::imshow("[PLANNER] Map", data_img);
                 cvWaitKey(0);
 #endif
+                
+                cv::imshow("[PLANNER] Map", data_img);
+                cvWaitKey(30);
                 closePlanner();
 
                 return cmdvel;

@@ -91,6 +91,7 @@ void *planner_thread(void *arg) {
         pthread_mutex_unlock(&global_map_mutex);
 
         ol_overflow = 0;
+        //cout<<my_target_location.y<<endl;
         cmdvel = planner_space::Planner::findPathDT(my_bot_location, my_target_location, map_img);
         if (ol_overflow == 1) {
             ol_overflow = 0;
@@ -105,4 +106,3 @@ void *planner_thread(void *arg) {
 
     return NULL;
 }
-
