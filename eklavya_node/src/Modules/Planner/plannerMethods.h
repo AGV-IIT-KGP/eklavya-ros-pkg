@@ -23,7 +23,7 @@
  */
 
 #ifdef SIM_SEEDS
-#define SEEDS_FILE "../src/Modules/Planner/seeds2.txt"
+#define SEEDS_FILE "../src/Modules/Planner/seeds7.txt"
 #else
 #define SEEDS_FILE "../src/Modules/Planner/seeds1.txt"
 #endif
