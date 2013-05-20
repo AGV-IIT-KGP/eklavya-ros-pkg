@@ -10,7 +10,8 @@
 #define SIMCTL
 #define SIM_SEEDS
 //#define DEBUG
-#define SHOW_PATH
+//#define SHOW_PATH
+//#define FLEX
 
 /**
  * Seed Files: 
@@ -23,7 +24,7 @@
  */
 
 #ifdef SIM_SEEDS
-#define SEEDS_FILE "../src/Modules/Planner/seeds7.txt"
+#define SEEDS_FILE "../src/Modules/Planner/seeds2.txt"
 #else
 #define SEEDS_FILE "../src/Modules/Planner/seeds1.txt"
 #endif
@@ -32,6 +33,7 @@
 #define UNASSIGNED 3
 #define VMAX 70
 #define MAX_ITER 10000
+#define MIN_RAD 55
 
 using namespace std;
 
@@ -314,11 +316,23 @@ namespace planner_space {
         switch (PID_MODE) {
             case 0:
             {
-                double vavg = 45;
-                double aggression = 1;
-                s.k = s.k < 1 ? s.k / aggression : s.k * aggression;
-                left_vel = (int) 2 * vavg * s.k / (1 + s.k);
-                right_vel = (int) (2 * vavg - left_vel);
+                if (left_velocity == right_velocity) {
+                    double vavg = 70;
+                    left_vel = right_vel = vavg;
+                } else if (s.k == 1.258574 || s.k == 0.794550) {
+                    double vavg = 45;
+                    double aggression = 1.5;
+                    s.k = s.k < 1 ? s.k / aggression : s.k * aggression;
+                    left_vel = (int) 2 * vavg * s.k / (1 + s.k);
+                    right_vel = (int) (2 * vavg - left_vel);
+                } else if (s.k == 1.352941 || s.k == 0.739130) {
+                    double vavg = 20;
+                    double aggression = 2;
+                    s.k = s.k < 1 ? s.k / aggression : s.k * aggression;
+                    left_vel = (int) 2 * vavg * s.k / (1 + s.k);
+                    right_vel = (int) (2 * vavg - left_vel);
+                }
+                
                 break;
             }
             case 1:
@@ -407,7 +421,7 @@ namespace planner_space {
         right_vel = right_vel > 80 ? 80 : right_vel;
         left_vel = left_vel < 0 ? 0 : left_vel;
         right_vel = right_vel < 0 ? 0 : right_vel;
-        
+
         double scale = 100;
         double w = 0.55000000;
         cmdvel.linear.x = (left_vel + right_vel) / (2 * scale);
@@ -447,12 +461,42 @@ namespace planner_space {
         cvWaitKey(0);
 #endif
 
+#ifdef FLEX
+        int path_length = path.size() > 5 ? 5 : path.size();
+        double path_slope = 0;
+        for (int i = 0; i < path_length - 1; i++) {
+            double point_slope;
+            double denom = path[i + 1].x - path[i].x;
+            denom = denom == 0 ? 0.0000001 : denom;
+            point_slope = (path[i + 1].y - path[i].y) / (denom);
+            path_slope += point_slope;
+        }
+        path_slope /= path_length;
+
+        seed final_seed;
+        final_seed.vl = final_seed.vr = 10;
+        
+        double radius_of_curvature;
+        if (path_slope > 0) {
+            // LEFT
+            radius_of_curvature = MIN_RAD + path_slope;
+            final_seed.k = (2 * radius_of_curvature + MIN_RAD) / (2 * radius_of_curvature - MIN_RAD);
+        } else {
+            // RIGHT
+            radius_of_curvature = MIN_RAD - path_slope;
+            final_seed.k = (2 * radius_of_curvature - MIN_RAD) / (2 * radius_of_curvature + MIN_RAD);
+        }
+
+        cmdvel = sendCommand(final_seed);
+#else
         if (seed_id != -1) {
             cmdvel = sendCommand(seeds[seed_id]);
         } else {
             ROS_ERROR("[PLANNER] Invalid Command Requested");
             Planner::finBot();
         }
+#endif
+
         return cmdvel;
     }
 
