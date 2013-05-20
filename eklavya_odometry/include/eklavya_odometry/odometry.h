@@ -6,6 +6,9 @@
 #include <tf/tf.h>
 #include <tf/transform_broadcaster.h>
 
+#define wheel_radius_meter 0.125
+#define PI 3.1415926535
+
 namespace odometry_space {
 	
 	class OdometryFactory {
@@ -23,6 +26,7 @@ namespace odometry_space {
 		geometry_msgs::Quaternion quaternion;
 		
 		double wheel_separation;
+    double scaling_factor;
 
 		double position_x;
 		double position_y;
