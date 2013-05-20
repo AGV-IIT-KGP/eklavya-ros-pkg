@@ -103,9 +103,8 @@ void startThreads() {
         case FollowNose: // Follow a straight line while avoiding obstacles
             startThread(&imu_id, &attr, &imu_thread);
             startThread(&lidar_id, &attr, &lidar_thread);
-		startThread(&lane_id, &attr, &lane_thread);
-                        
-		startThread(&fusion_id, &attr, &fusion_thread);
+            startThread(&lane_id, &attr, &lane_thread);
+            startThread(&fusion_id, &attr, &fusion_thread);
             startThread(&navigation_id, &attr, &navigation_thread);
             startThread(&planner_id, &attr, &planner_thread);
             break;
@@ -114,25 +113,26 @@ void startThreads() {
             startThread(&imu_id, &attr, &imu_thread);
             startThread(&gps_id, &attr, &gps_thread);
             startThread(&lidar_id, &attr, &lidar_thread);
+            startThread(&lane_id, &attr, &lane_thread);
+            startThread(&fusion_id, &attr, &fusion_thread);
             startThread(&navigation_id, &attr, &navigation_thread);
             startThread(&planner_id, &attr, &planner_thread);
             break;
 
         case HectorSLAM:
             startThread(&imu_id, &attr, &imu_thread);
-            //startThread(&lidar_id, &attr, &lidar_thread);
-            //startThread(&slam_id, &attr, &slam_thread);
+            startThread(&lidar_id, &attr, &lidar_thread);
+            startThread(&slam_id, &attr, &slam_thread);
             break;
 
         case LaserTestOnly:
-            startThread(&lidar_id, &attr, &lidar_thread);
             startThread(&lane_id, &attr, &lane_thread);
-            //startThread(&fusion_id, &attr, &fusion_thread);
             startThread(&fusion_id, &attr, &fusion_thread);
+            startThread(&navigation_id, &attr, &navigation_thread);
             startThread(&planner_id, &attr, &planner_thread);
             break;
 
-        case PlannerTestOnly:    
+        case PlannerTestOnly:
             startThread(&navigation_id, &attr, &navigation_thread);
             startThread(&planner_id, &attr, &planner_thread);
             break;
@@ -146,10 +146,10 @@ void startThreads() {
             break;
 
         case IGVCBasic:
-            startThread(&lane_id, &attr, &lane_thread);
-            startThread(&lidar_id, &attr, &lidar_thread);
             startThread(&imu_id, &attr, &imu_thread);
             startThread(&gps_id, &attr, &gps_thread);
+            startThread(&lane_id, &attr, &lane_thread);
+            startThread(&lidar_id, &attr, &lidar_thread);
             startThread(&fusion_id, &attr, &fusion_thread);
             startThread(&navigation_id, &attr, &navigation_thread);
             startThread(&planner_id, &attr, &planner_thread);
