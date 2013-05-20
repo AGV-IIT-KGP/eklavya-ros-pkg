@@ -15,10 +15,10 @@ void *planner_thread(void *arg) {
     ros::NodeHandle nh;
     ros::Publisher vel_pub;
 
-    vel_pub = nh.advertise<geometry_msgs::Twist>("cmd_vel", 1);
+    vel_pub = nh.advertise<geometry_msgs::Twist > ("cmd_vel", 1);
 
     cvNamedWindow("[PLANNER] Map", 0);
-    
+
     //initializing local map
     local_map = new char*[MAP_MAX];
     for (int i = 0; i < MAP_MAX; i++) {
@@ -84,14 +84,13 @@ void *planner_thread(void *arg) {
         pthread_mutex_lock(&global_map_mutex);
         for (int i = 0; i < MAP_MAX; i++) {
             for (int j = 0; j < MAP_MAX; j++) {
-                map_img.at<uchar>(MAP_MAX - 1 - j, i) = global_map[i][j];
+                map_img.at<uchar > (MAP_MAX - 1 - j, i) = global_map[i][j];
                 local_map[i][j] = global_map[i][j];
             }
         }
         pthread_mutex_unlock(&global_map_mutex);
 
         ol_overflow = 0;
-        //cout<<my_target_location.y<<endl;
         cmdvel = planner_space::Planner::findPathDT(my_bot_location, my_target_location, map_img);
         if (ol_overflow == 1) {
             ol_overflow = 0;
