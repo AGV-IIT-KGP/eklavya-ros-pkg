@@ -7,7 +7,6 @@
 using namespace std;
 
 int main(int argc, char **argv) {
-    
     encoder_space::Encoder encoder(argc, argv);
     encoder_space::EncoderData encoder_data;
     
@@ -25,6 +24,9 @@ int main(int argc, char **argv) {
         /* Fetch data from Shaft Encoder and load it in local vars */
         encoder_data = encoder.fetchEncoderData();
         
+        ROS_INFO("before waitForService");
+        ros::service::waitForService("motor_speed");
+        ROS_INFO("after waitForService");
         /* Generate message using data */
         message.left_count = encoder_data.leftCount;
         message.right_count = encoder_data.rightCount;
