@@ -102,7 +102,7 @@ namespace planner_space {
                 cv::imshow("[PLANNER] Map", data_img);
                 cvWaitKey(0);
 #endif
-                
+
                 cv::imshow("[PLANNER] Map", data_img);
                 cvWaitKey(30);
                 closePlanner();
@@ -200,12 +200,12 @@ namespace planner_space {
 
         brake.vl = brake.vr = 0;
 
-//        addObstacleP(data_img, 500, 500, 2);
-//                addObstacleP(data_img, 100 + rand() % 600, 100 + rand() % 600, 10);
-//                addObstacleP(data_img, 100 + rand() % 600, 100 + rand() % 600, 10);
-//                addObstacleP(data_img, 100 + rand() % 600, 100 + rand() % 600, 10);
-//                addObstacleP(data_img, 100 + rand() % 600, 100 + rand() % 600, 10);
-//                addObstacleP(data_img, 100 + rand() % 600, 100 + rand() % 600, 10);
+        //        addObstacleP(data_img, 500, 500, 2);
+        //                addObstacleP(data_img, 100 + rand() % 600, 100 + rand() % 600, 10);
+        //                addObstacleP(data_img, 100 + rand() % 600, 100 + rand() % 600, 10);
+        //                addObstacleP(data_img, 100 + rand() % 600, 100 + rand() % 600, 10);
+        //                addObstacleP(data_img, 100 + rand() % 600, 100 + rand() % 600, 10);
+        //                addObstacleP(data_img, 100 + rand() % 600, 100 + rand() % 600, 10);
 
         Mat img;
 
@@ -242,7 +242,7 @@ namespace planner_space {
         for (int i = 0; i < dist.rows; i++) {
             for (int j = 0; j < dist.cols; j++) {
                 if (i < 20 || i > 980 || j < 20 || j > 980) {
-                    huhu.at<uchar>(i, j) = 255;
+                    huhu.at<uchar > (i, j) = 255;
                 }
             }
         }
@@ -369,14 +369,14 @@ namespace planner_space {
                 neighbor.g_obs = vdt_neighbor;
                 double tentative_g_obs_score = (neighbor.g_obs + current.g_obs * current.depth) / (current.depth + 1);
                 //                double tentative_g_obs_score = (neighbor.g_obs + current.g_obs) / 2;
-                
+
                 if (!((open_map.find(neighbor.pose) != open_map.end()) &&
                         (open_map[neighbor.pose].membership == OPEN))) {
                     came_from[neighbor. pose] = current;
                     neighbor.g_dist = tentative_g_dist_score;
                     neighbor.h_dist = dist_consistent;
 
-//                    neighbor.g_obs = tentative_g_obs_score;
+                    //                    neighbor.g_obs = tentative_g_obs_score;
                     neighbor.h_obs = obs_consistent;
                     double scaling_factor = 1 * neighbor.h_dist / (2 * vdt_max + vdt_goal);
                     //double scaling_factor = 1;
