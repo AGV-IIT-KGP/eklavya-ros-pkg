@@ -19,8 +19,8 @@ extern IplImage *show_img4;
 class LaneDetection {
 public:
     void markLane(const sensor_msgs::ImageConstPtr& image);
-    IplImage* colorBasedLaneDetection(IplImage* frame_in, int k);
-    void applyHoughTransform(IplImage* img, IplImage *dst, int vote, int length, int merge);
+    IplImage* colorBasedLaneDetection(IplImage* frame_in);
+    IplImage* applyHoughTransform(IplImage* img);
     IplImage* joinResult(IplImage* color_gray, IplImage* hough_gray);
     void initializeLaneVariables(IplImage *img);
 };
