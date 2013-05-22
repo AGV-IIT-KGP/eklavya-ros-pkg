@@ -4,6 +4,25 @@
 using namespace cv;
 namespace planner_space {
 
+    geometry_msgs::Twist kTurn() {
+        seed reverse;
+        double max = 30;
+        switch (last_cmd) {
+            case LEFT_CMD:
+                // Take reverse right turn
+                reverse.vl = -max;
+                reverse.vr = 0;
+                break;
+            case RIGHT_CMD:
+                // Take reverse left turn
+                reverse.vl = 0;
+                reverse.vr = -max;
+                break;
+        }
+
+        return sendCommand(reverse);
+    }
+    
     void Planner::loadPlanner() {
         loadSeeds();
         ROS_INFO("[PLANNER] Seeds Loaded");
@@ -39,7 +58,22 @@ namespace planner_space {
         map<Triplet, state, PoseCompare> came_from;
 
         brake.vl = brake.vr = 0;
-
+        //	leftZeroTurn.vl=-15;leftZeroTurn.vr=15;
+        //	rightZeroTurn.vl=15;rightZeroTurn.vr=-15;
+        //
+        //	if(target.y<100)
+        //	{
+        //		if(target.x<500)
+        //		{
+        //		precmdvel=sendCommand(leftZeroTurn);
+        //		return precmdvel;
+        //		}
+        //		if(target.x>=500)
+        //		{
+        //		precmdvel=sendCommand(rightZeroTurn);
+        //		return precmdvel;
+        //		}
+        //	}
         if (isEqual(start, goal)) {
             ROS_INFO("[PLANNER] Target Reached");
             Planner::finBot();
@@ -76,6 +110,7 @@ namespace planner_space {
 
             if (isEqual(current, goal)) {
                 cmdvel = reconstructPath(came_from, current, data_img);
+                last_cmd = cmdvel.angular.z > 0 ? LEFT_CMD : RIGHT_CMD;
 
 #ifdef DEBUG
                 ROS_INFO("[PLANNER] Path Found");
@@ -90,12 +125,13 @@ namespace planner_space {
                 cv::imshow("[PLANNER] Map", data_img);
                 cvWaitKey(WAIT_TIME);
                 closePlanner();
-
+                //		precmdvel=cmdvel;
                 return cmdvel;
             }
 
             if (onTarget(current, goal)) {
                 cmdvel = reconstructPath(came_from, current, data_img);
+                last_cmd = cmdvel.angular.z > 0 ? LEFT_CMD : RIGHT_CMD;
 
 #ifdef DEBUG
                 ROS_INFO("[PLANNER] Path Found");
@@ -106,7 +142,7 @@ namespace planner_space {
                 cv::imshow("[PLANNER] Map", data_img);
                 cvWaitKey(30);
                 closePlanner();
-
+                //		precmdvel=cmdvel;
                 return cmdvel;
             }
 
@@ -168,7 +204,8 @@ namespace planner_space {
 
         ROS_ERROR("[PLANNER] No Path Found");
         closePlanner();
-        Planner::finBot();
+        cmdvel = kTurn();
+
         return cmdvel;
     }
 
@@ -200,12 +237,23 @@ namespace planner_space {
 
         brake.vl = brake.vr = 0;
 
-        //        addObstacleP(data_img, 500, 500, 2);
-        //                addObstacleP(data_img, 100 + rand() % 600, 100 + rand() % 600, 10);
-        //                addObstacleP(data_img, 100 + rand() % 600, 100 + rand() % 600, 10);
-        //                addObstacleP(data_img, 100 + rand() % 600, 100 + rand() % 600, 10);
-        //                addObstacleP(data_img, 100 + rand() % 600, 100 + rand() % 600, 10);
-        //                addObstacleP(data_img, 100 + rand() % 600, 100 + rand() % 600, 10);
+        //        addObstacleP(data_img, 450, 500, 30);
+        //        addObstacleP(data_img, 460, 500, 30);
+        //        addObstacleP(data_img, 470, 500, 30);
+        //        addObstacleP(data_img, 480, 500, 30);
+        //        addObstacleP(data_img, 490, 500, 30);
+        //        addObstacleP(data_img, 500, 500, 30);
+        //        addObstacleP(data_img, 510, 500, 30);
+        //        addObstacleP(data_img, 520, 500, 30);
+        //        addObstacleP(data_img, 530, 500, 30);
+        //        addObstacleP(data_img, 540, 500, 30);
+        //        addObstacleP(data_img, 550, 500, 30);
+        //
+        //        addObstacleP(data_img, 100 + rand() % 600, 100 + rand() % 600, 10);
+        //        addObstacleP(data_img, 100 + rand() % 600, 100 + rand() % 600, 10);
+        //        addObstacleP(data_img, 100 + rand() % 600, 100 + rand() % 600, 10);
+        //        addObstacleP(data_img, 100 + rand() % 600, 100 + rand() % 600, 10);
+        //        addObstacleP(data_img, 100 + rand() % 600, 100 + rand() % 600, 10);
 
         Mat img;
 
@@ -300,7 +348,8 @@ namespace planner_space {
 
             if (isEqual(current, goal)) {
                 cmdvel = reconstructPath(came_from, current, data_img);
-
+                last_cmd = cmdvel.angular.z > 0 ? LEFT_CMD : RIGHT_CMD;
+                
 #ifdef DEBUG
                 ROS_INFO("[PLANNER] Path Found");
 
@@ -318,7 +367,8 @@ namespace planner_space {
 
             if (onTarget(current, goal)) {
                 cmdvel = reconstructPath(came_from, current, data_img);
-
+                last_cmd = cmdvel.angular.z > 0 ? LEFT_CMD : RIGHT_CMD;
+                
 #ifdef DEBUG
                 ROS_INFO("[PLANNER] Path Found");
                 cv::imshow("[PLANNER] Map", data_img);
@@ -406,7 +456,8 @@ namespace planner_space {
 
         ROS_ERROR("[PLANNER] No Path Found");
         closePlanner();
-        Planner::finBot();
+        cmdvel = kTurn();
+
         return cmdvel;
     }
 
