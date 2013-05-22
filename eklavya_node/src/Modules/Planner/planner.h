@@ -14,10 +14,14 @@
 #include <time.h>
 //using namespace cv;
 //#define MATDATA(img,x,y,n) img.at<cv::Vec3b>(x,y)[n]
+#define LEFT_CMD 0
+#define RIGHT_CMD 1
 
 extern char** local_map;
 extern cv::Mat map_img;
 extern int ol_overflow;
+//extern geometry_msgs::Twist precmdvel;
+extern int last_cmd;
 
 namespace planner_space {
 

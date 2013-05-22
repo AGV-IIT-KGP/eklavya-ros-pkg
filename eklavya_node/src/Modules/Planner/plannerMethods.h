@@ -10,7 +10,7 @@
 #define SIMCTL
 #define SIM_SEEDS
 //#define DEBUG
-//#define SHOW_PATH
+#define SHOW_PATH
 //#define FLEX
 
 /**
@@ -119,7 +119,7 @@ namespace planner_space {
     pthread_mutex_t controllerMutex;
     volatile double targetCurvature = 1;
     seed brake;
-
+    seed leftZeroTurn, rightZeroTurn;
     /// ------------------------------------------------------------- ///
 
     void mouseHandler(int event, int x, int y, int flags, void* param) {
@@ -304,106 +304,108 @@ namespace planner_space {
         float right_velocity = s.vr;
 
         if ((left_velocity == 0) && (right_velocity == 0)) {
-
-#ifndef SIMCTL
-            p->sendChar(' ');
-            usleep(100);
-#endif
-
             return cmdvel;
-        }
+        } else if ((left_velocity >= 0) && (right_velocity >= 0)) {
+            switch (PID_MODE) {
+                case 0:
+                {
+                    if (left_velocity == right_velocity) {
+                        double vavg = 70;
+                        left_vel = right_vel = vavg;
+			printf("straight seed\n");
+                    } else if (s.k == 1.258574 || s.k == 0.794550) {
+                        double vavg = 45;
+                        double aggression = 1;
+                        s.k = s.k < 1 ? s.k / aggression : s.k * aggression;
+                        left_vel = (int) 2 * vavg * s.k / (1 + s.k);
+                        right_vel = (int) (2 * vavg - left_vel);
+			printf("soft seed\n");
+                    } else if (s.k == 1.352941 || s.k == 0.739130) {
+                        double vavg = 20;
+                        double aggression = 1.5;
+                        s.k = s.k < 1 ? s.k / aggression : s.k * aggression;
+                        left_vel = (int) 2 * vavg * s.k / (1 + s.k);
+                        right_vel = (int) (2 * vavg - left_vel);
+			printf("hard seed\n");
+                    }
 
-        switch (PID_MODE) {
-            case 0:
-            {
-                if (left_velocity == right_velocity) {
-                    double vavg = 70;
-                    left_vel = right_vel = vavg;
-                } else if (s.k == 1.258574 || s.k == 0.794550) {
-                    double vavg = 45;
-                    double aggression = 1.5;
-                    s.k = s.k < 1 ? s.k / aggression : s.k * aggression;
-                    left_vel = (int) 2 * vavg * s.k / (1 + s.k);
-                    right_vel = (int) (2 * vavg - left_vel);
-                } else if (s.k == 1.352941 || s.k == 0.739130) {
-                    double vavg = 20;
-                    double aggression = 2;
-                    s.k = s.k < 1 ? s.k / aggression : s.k * aggression;
-                    left_vel = (int) 2 * vavg * s.k / (1 + s.k);
-                    right_vel = (int) (2 * vavg - left_vel);
+                    break;
                 }
-                
-                break;
+                case 1:
+                {
+                    double myTargetCurvature = 5.0 * ((double) (left_velocity - right_velocity)) / (left_velocity + right_velocity);
+                    static double myYaw = 0.5;
+                    static double previousYaw = 1;
+                    static double errorSum = 0;
+                    static double previousError;
+                    double Kp = 6.4, Kd = 0.01, Ki = 0.0001;
+                    left_vel = 0;
+                    right_vel = 0;
+                    int mode = 4;
+
+                    double error = (myTargetCurvature - (myYaw - previousYaw) / 0.37);
+                    errorSum += error;
+
+                    if (s.k > 1.35) {
+                        mode = 2;
+                    } else if (s.k > 1.25) {
+                        mode = 3;
+                    } else if (s.k > 0.99) {
+                        mode = 4;
+                    } else if (s.k > 0.79) {
+                        mode = 5;
+                    } else if (s.k > 0.73) {
+                        mode = 6;
+                    } else {
+                        mode = 4;
+                    }
+
+                    int hashSpeedLeft[9] = {23, 30, 35, 38, 40, 42, 45, 50, 57};
+                    int hashSpeedRight[9] = {57, 50, 45, 42, 40, 38, 35, 30, 23};
+
+                    previousYaw = myYaw;
+
+                    pthread_mutex_lock(&pose_mutex);
+                    myYaw = pose.orientation.z;
+                    pthread_mutex_unlock(&pose_mutex);
+
+                    mode += (int) (Kp * error + Ki * errorSum + Kd * (error - previousError));
+
+                    if (mode < 0) {
+                        mode = 0;
+                    }
+                    if (mode > 8) {
+                        mode = 8;
+                    }
+
+                    left_vel = hashSpeedLeft[mode];
+                    right_vel = hashSpeedRight[mode];
+
+                    ROS_INFO("[PID] %lf, %lf, %lf, %lf, %d, %d",
+                            myTargetCurvature,
+                            (myYaw - previousYaw) / 0.37,
+                            left_velocity,
+                            right_velocity,
+                            left_vel,
+                            right_vel);
+
+                    break;
+                }
+                case 2:
+                {
+                    pthread_mutex_lock(&controllerMutex);
+                    targetCurvature = 5.0 * ((double) (s.k - 1.0)) / (s.k + 1.0);
+                    ROS_INFO("Updated : %lf, k = %lf, left = %lf, right = %lf", targetCurvature, s.k, s.vl, s.vr);
+                    pthread_mutex_unlock(&controllerMutex);
+
+                    break;
+                }
             }
-            case 1:
-            {
-                double myTargetCurvature = 5.0 * ((double) (left_velocity - right_velocity)) / (left_velocity + right_velocity);
-                static double myYaw = 0.5;
-                static double previousYaw = 1;
-                static double errorSum = 0;
-                static double previousError;
-                double Kp = 6.4, Kd = 0.01, Ki = 0.0001;
-                left_vel = 0;
-                right_vel = 0;
-                int mode = 4;
-
-                double error = (myTargetCurvature - (myYaw - previousYaw) / 0.37);
-                errorSum += error;
-
-                if (s.k > 1.35) {
-                    mode = 2;
-                } else if (s.k > 1.25) {
-                    mode = 3;
-                } else if (s.k > 0.99) {
-                    mode = 4;
-                } else if (s.k > 0.79) {
-                    mode = 5;
-                } else if (s.k > 0.73) {
-                    mode = 6;
-                } else {
-                    mode = 4;
-                }
-
-                int hashSpeedLeft[9] = {23, 30, 35, 38, 40, 42, 45, 50, 57};
-                int hashSpeedRight[9] = {57, 50, 45, 42, 40, 38, 35, 30, 23};
-
-                previousYaw = myYaw;
-
-                pthread_mutex_lock(&pose_mutex);
-                myYaw = pose.orientation.z;
-                pthread_mutex_unlock(&pose_mutex);
-
-                mode += (int) (Kp * error + Ki * errorSum + Kd * (error - previousError));
-
-                if (mode < 0) {
-                    mode = 0;
-                }
-                if (mode > 8) {
-                    mode = 8;
-                }
-
-                left_vel = hashSpeedLeft[mode];
-                right_vel = hashSpeedRight[mode];
-
-                ROS_INFO("[PID] %lf, %lf, %lf, %lf, %d, %d",
-                        myTargetCurvature,
-                        (myYaw - previousYaw) / 0.37,
-                        left_velocity,
-                        right_velocity,
-                        left_vel,
-                        right_vel);
-
-                break;
-            }
-            case 2:
-            {
-                pthread_mutex_lock(&controllerMutex);
-                targetCurvature = 5.0 * ((double) (s.k - 1.0)) / (s.k + 1.0);
-                ROS_INFO("Updated : %lf, k = %lf, left = %lf, right = %lf", targetCurvature, s.k, s.vl, s.vr);
-                pthread_mutex_unlock(&controllerMutex);
-
-                break;
-            }
+        } else {
+            ROS_INFO("REVERSING");
+            
+            left_vel = left_velocity;
+            right_vel = right_velocity;
         }
 
 #ifndef SIMCTL
@@ -419,8 +421,19 @@ namespace planner_space {
 
         left_vel = left_vel > 80 ? 80 : left_vel;
         right_vel = right_vel > 80 ? 80 : right_vel;
-        left_vel = left_vel < 0 ? 0 : left_vel;
-        right_vel = right_vel < 0 ? 0 : right_vel;
+        left_vel = left_vel < -80 ? -80 : left_vel;
+        right_vel = right_vel < -80 ? -80 : right_vel;
+
+        //	if(s.vl==-30&&s.vr==30)
+        //	{
+        //	left_vel=-30;
+        //	right_vel=30;
+        //	}
+        //	if(s.vl==30&&s.vr==-30)
+        //	{
+        //	left_vel=30;
+        //	right_vel=-30;
+        //	}
 
         double scale = 100;
         double w = 0.55000000;
@@ -431,6 +444,7 @@ namespace planner_space {
         cmdvel.angular.y = 0;
         cmdvel.angular.z = (left_vel - right_vel) / (w * scale);
 
+//        std::cout << "linear: " << cmdvel.linear.x << " angular: " << cmdvel.angular.z << std::endl;
         ROS_INFO("[Planner] Command : (%d, %d)", left_vel, right_vel);
         return cmdvel;
     }
@@ -475,7 +489,7 @@ namespace planner_space {
 
         seed final_seed;
         final_seed.vl = final_seed.vr = 10;
-        
+
         double radius_of_curvature;
         if (path_slope > 0) {
             // LEFT

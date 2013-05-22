@@ -7,11 +7,18 @@ char **local_map;
 //IplImage *map_img;
 
 int ol_overflow;
+//geometry_msgs::Twist precmdvel;
+int last_cmd;
 
 void *planner_thread(void *arg) {
     Triplet my_bot_location;
     Triplet my_target_location;
-
+    //     precmdvel.linear.x = 0;
+    //        precmdvel.linear.y = 0;
+    //        precmdvel.linear.z = 0;
+    //        precmdvel.angular.x = 0;
+    //        precmdvel.angular.y = 0;
+    //        precmdvel.angular.z = 0;
     ros::NodeHandle nh;
     ros::Publisher vel_pub;
 
@@ -40,6 +47,7 @@ void *planner_thread(void *arg) {
 
     ros::Rate loop_rate(LOOP_RATE);
     geometry_msgs::Twist cmdvel;
+    last_cmd = LEFT_CMD;
 
     while (ros::ok()) {
         cv::Mat map_img(MAP_MAX, MAP_MAX, CV_8UC1, cv::Scalar(0));
@@ -96,6 +104,7 @@ void *planner_thread(void *arg) {
             ol_overflow = 0;
             cmdvel = planner_space::Planner::findPath(my_bot_location, my_target_location, map_img);
         }
+        
         vel_pub.publish(cmdvel);
 
         loop_rate.sleep();
