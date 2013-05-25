@@ -6,7 +6,7 @@
 #include <tf/tf.h>
 #include <tf/transform_broadcaster.h>
 
-#define wheel_radius_meter 0.125
+#define wheel_radius_meter 0.1016
 #define PI 3.1415926535
 
 namespace odometry_space {
