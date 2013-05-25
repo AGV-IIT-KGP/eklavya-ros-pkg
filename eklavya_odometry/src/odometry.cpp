@@ -21,7 +21,7 @@ namespace odometry_space {
                 twist_covariance_matrix[i] = 0;
             }
         }
-        wheel_separation = 0.55;
+        wheel_separation = 0.45;
         scaling_factor = (wheel_radius_meter / 60.0) * 2.0 * PI;
     }
 
@@ -42,6 +42,7 @@ namespace odometry_space {
 
         position_x += velocity_x * sin(yaw) * duration.toSec();
         position_y += velocity_x * cos(yaw) * duration.toSec();
+        std::cout<<"position)_y "<<position_y<<" velocity_x "<<velocity_x<<" duration "<<duration.toSec()<<" cos(yaw) "<<cos(yaw)<<std::endl;
         yaw += yaw_rate * duration.toSec();
 
         quaternion = tf::createQuaternionMsgFromYaw(yaw);
