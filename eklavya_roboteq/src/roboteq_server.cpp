@@ -82,8 +82,8 @@ bool getSpeed(eklavya_roboteq::GetSpeed::Request &req, eklavya_roboteq::GetSpeed
         }
     }
 
-    res.left_speed = (left_speed*86.0)/1000.0;
-    res.right_speed = (right_speed*86.0)/1000.0;
+    res.left_speed = (left_speed*86.0)/4377.0;//RPM of left motor
+    res.right_speed = (right_speed*86.0)/4377.0;//RPM of right motor
     ROS_INFO("speed uthaya: Left motor speed = %ld, Right motor speed = %ld", (long int) left_speed, (long int) right_speed);
     
     return true;
