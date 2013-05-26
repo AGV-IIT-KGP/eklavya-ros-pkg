@@ -23,11 +23,12 @@
 enum Strategies {
     FollowNose = 0,
     TrackWayPoint = 1,
-    HectorSLAM =2,
-    LaserTestOnly =3,
-    PlannerTestOnly =4 ,
-    FusionTestOnly =5,
-    IGVCBasic =6
+    HectorSLAM = 2,
+    LaserTestOnly = 3,
+    PlannerTestOnly = 4,
+    FusionTestOnly = 5,
+    IGVCBasic = 6,
+    JAUSTest = 7
 };
 
 typedef struct Triplet {
@@ -77,17 +78,18 @@ extern pthread_mutex_t target_location_mutex;
 extern pthread_mutex_t path_mutex;
 extern pthread_mutex_t camera_map_mutex;
 
-void *imu_thread(void *arg);
-void *lidar_thread(void *arg);
-void *lane_thread(void *arg);
-void *gps_thread(void *arg);
+void *diagnostics_thread(void *arg);
 void *encoder_thread(void *arg);
 void *ekf_thread(void *arg);
-void *slam_thread(void *arg);
+void *fusion_thread(void *arg);
+void *jaus_thread(void* arg);
+void *gps_thread(void *arg);
+void *imu_thread(void *arg);
+void *lane_thread(void *arg);
+void *lidar_thread(void *arg);
 void *navigation_thread(void *arg);
 void *planner_thread(void *arg);
-void *diagnostics_thread(void *arg);
-void *fusion_thread(void *arg);
+void *slam_thread(void *arg);
 
 using namespace std;
 
