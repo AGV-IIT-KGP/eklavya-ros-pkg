@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8)
 include($ENV{ROS_ROOT}/core/rosbuild/rosbuild.cmake)
 
 # Set the build type.  Options are:
@@ -23,6 +23,7 @@ rosbuild_init()
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 #set the default path for built libraries to the "lib" directory
 set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "/usr/local/src/libraries")
 
 #uncomment if you have defined messages
 #rosbuild_genmsg()
@@ -46,6 +47,25 @@ LINK_DIRECTORIES(${MRPT_DIR}/lib/otherlibs)
 LINK_DIRECTORIES(${MRPT_SOURCE_DIR}/lib/otherlibs)
 LINK_DIRECTORIES("/usr/local/lib/")
 
+## JAUS
+find_package(ACTIVE REQUIRED)
+LINK_DIRECTORIES("/usr/local/lib/active")
+include_directories("/usr/local/include/active")
+
+ACTIVE_ADD_SUBDIRECTORY(CxUtils ./libcxutils)
+ACTIVE_ADD_SUBDIRECTORY(TinyXML ./libtinyxml)
+ACTIVE_ADD_SUBDIRECTORY(JAUS ./libjaus)
+
+set(DEPENDENCIES
+		${CxUtils_DEPENDENCY}
+		${TinyXML_DEPENDENCY}
+		${LIB_PREFIX}jauscore
+		${LIB_PREFIX}jausmobility
+		${LIB_PREFIX}jausextras)
+
+set(EXT_LIBS ${DEPENDENCIES})
+## JAUS DONE
+
 #Options
 option (USE_IMU "Use IMU" ON) 
 option (USE_LIDAR "Use Lidar" ON) 
@@ -58,6 +78,7 @@ option (USE_SLAM "Use SLAM" ON)
 option (USE_NAVIGATION "Use Navigation" ON)
 option (USE_PLANNER "Use Planner" ON)
 option (USE_SERIAL_PORT "Use SerialPortLinux" ON) 
+option (USE_JAUS "Use JAUS" ON)
 option (USE_DIAGNOSTICS "Use Diagnostics" ON)
 
 include_directories ("${PROJECT_SOURCE_DIR}/src/")
@@ -133,6 +154,14 @@ rosbuild_add_library(SerialPortLinuxLib src/Utils/SerialPortLinux/serial_lnx.cpp
 target_link_libraries(SerialPortLinuxLib ${OpenCV_LIBS})
 endif ()
 
+if (USE_JAUS) 
+include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/JAUS/")
+rosbuild_add_library(JAUSLib src/Modules/JAUS/jaus_thread.cpp)
+target_link_libraries(JAUSLib ${CMAKE_REQUIRED_LIBRARIES})
+target_link_libraries(JAUSLib ${EXT_LIBS})
+add_dependencies(JAUSLib ${DEPENDENCIES})
+endif ()
+
 ##cvBlob
 include_directories ("${PROJECT_SOURCE_DIR}/src/ExternalLib/cvBlob/")
 set(cvBlob_CVBLOB  ${PROJECT_SOURCE_DIR}/src/ExternalLib/cvBlob/cvblob.cpp
@@ -152,7 +181,7 @@ target_link_libraries(cvblob ${OpenCV_LIBS})
 ##cvBlob end
 
 rosbuild_add_executable(${PROJECT_NAME} src/eklavya2.cpp)
-target_link_libraries (${PROJECT_NAME} IMULib LidarLib LaneLib FusionLib GPSLib EncoderLib EKFLib SLAMLib PlannerLib NavigationLib DiagnosticsLib SerialPortLinuxLib)
+target_link_libraries (${PROJECT_NAME} DiagnosticsLib EncoderLib EKFLib FusionLib GPSLib IMULib JAUSLib LaneLib LidarLib NavigationLib PlannerLib SerialPortLinuxLib SLAMLib)
 
 #target_link_libraries(${PROJECT_NAME} ${EXTRA_LIBS})
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
