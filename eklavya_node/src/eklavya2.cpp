@@ -1,13 +1,14 @@
 #include "eklavya2.h"
 
 #include "Modules/Diagnostics/diagnostics.h"
-#include "Modules/EKF/ekf.h"
 #include "Modules/Encoder/encoder.h"
+#include "Modules/EKF/ekf.h"
+#include "Modules/Fusion/fusion.h"
 #include "Modules/GPS/gps.h"
 #include "Modules/IMU/IMU.h"
-#include "Modules/Lidar/LidarData.h"
+#include "Modules/JAUS/jaus.h"
 #include "Modules/Lane/lane_data.h"
-#include "Modules/Fusion/fusion.h"
+#include "Modules/Lidar/LidarData.h"
 #include "Modules/Navigation/navigation.h"
 #include "Modules/Planner/planner.h"
 #include "Modules/SLAM/slam.h"
@@ -24,7 +25,6 @@ Odom odom; // Shared by Encoder, EKF
 unsigned char lidar_map[MAP_MAX][MAP_MAX]; // Shared by Lidar, Planner
 unsigned char camera_map[MAP_MAX][MAP_MAX]; // by Camera for lane
 unsigned char global_map[MAP_MAX][MAP_MAX]; // merged without dilate
-
 
 Triplet bot_location; // Shared by EKF, Planner
 Triplet target_location; // Shared by EKF, Planner
@@ -92,7 +92,7 @@ void startThread(pthread_t *thread_id, pthread_attr_t *thread_attr, void *(*thre
 
 void startThreads() {
     pthread_attr_t attr;
-    pthread_t imu_id, fusion_id, lidar_id, lane_id, gps_id, slam_id, navigation_id, planner_id, diagnostics_id;
+    pthread_t imu_id, fusion_id, lidar_id, lane_id, gps_id, slam_id, navigation_id, planner_id, diagnostics_id, jaus_id;
 
     pthread_attr_init(&attr);
     pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
@@ -153,6 +153,10 @@ void startThreads() {
             startThread(&fusion_id, &attr, &fusion_thread);
             startThread(&navigation_id, &attr, &navigation_thread);
             startThread(&planner_id, &attr, &planner_thread);
+            break;
+
+        case JAUSTest:
+            startThread(&jaus_id, &attr, &jaus_thread);
             break;
     }
 
