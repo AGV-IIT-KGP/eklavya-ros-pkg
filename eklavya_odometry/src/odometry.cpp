@@ -21,7 +21,7 @@ namespace odometry_space {
                 twist_covariance_matrix[i] = 0;
             }
         }
-        wheel_separation = 0.45;
+        wheel_separation = 0.44;
         scaling_factor = (wheel_radius_meter / 60.0) * 2.0 * PI;
     }
 
