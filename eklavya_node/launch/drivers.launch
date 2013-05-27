@@ -1,14 +1,15 @@
 <?xml version="1.0"?>
 
 <launch>
-  <arg name="Hokuyo" value="1" />
-  <arg name="VectorNav" value="1" />
-  <arg name="Sparkfun_Yaw" value="1" />
+  <arg name="Hokuyo" value="0" />
+  <arg name="VectorNav" value="0" />
+  <arg name="Sparkfun_Yaw" value="0" />
   <arg name="Sparkfun_Quaternion" value="0" />
   <arg name="Atmega" value="0" />
   <arg name="USB_GPS" value="0" />
-  <arg name="Logitech" value="1" />
-  <arg name="Roboteq" value="1" />
+  <arg name="Logitech" value="0" />
+  <arg name="Roboteq" value="0" />
+  <arg name="Flag" value="1" />
 
   <node if="$(arg Hokuyo)" pkg="hokuyo_node" type="hokuyo_node" name="hokuyo_node" >
     <param name="port" value="/dev/serial/by-id/usb-Hokuyo_Data_Flex_for_USB_URG-Series_USB_Driver-if00" />
@@ -33,6 +34,7 @@
   <node if="$(arg Atmega)" pkg="eklavya_bringup" type="diffdrive_robot_controller" name="bot_controller" />
   
   <node if="$(arg Logitech)" pkg="camera_node" type="camera_pub" name="camera_pub" />
+  <node if="$(arg Flag)" pkg="flag_camera_node" type="flag_camera_pub" name="flag_camera_pub" />
   
   <node if="$(arg Roboteq)" pkg="eklavya_roboteq" type="server" name="server" respawn="true"/>
   

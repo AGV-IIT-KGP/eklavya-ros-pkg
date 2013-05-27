@@ -27,7 +27,8 @@ enum Strategies {
     LaserTestOnly =3,
     PlannerTestOnly =4 ,
     FusionTestOnly =5,
-    IGVCBasic =6
+    IGVCBasic =6,
+    IGVCAdvance =7
 };
 
 typedef struct Triplet {
@@ -88,7 +89,7 @@ void *navigation_thread(void *arg);
 void *planner_thread(void *arg);
 void *diagnostics_thread(void *arg);
 void *fusion_thread(void *arg);
-
+void *flag_thread(void *arg);
 using namespace std;
 
 #endif

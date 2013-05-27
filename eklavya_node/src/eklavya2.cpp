@@ -11,7 +11,7 @@
 #include "Modules/Navigation/navigation.h"
 #include "Modules/Planner/planner.h"
 #include "Modules/SLAM/slam.h"
-
+#include "Modules/Flag/flag_data.h"
 //#define DIAG
 
 using namespace cv;
@@ -92,7 +92,7 @@ void startThread(pthread_t *thread_id, pthread_attr_t *thread_attr, void *(*thre
 
 void startThreads() {
     pthread_attr_t attr;
-    pthread_t imu_id, fusion_id, lidar_id, lane_id, gps_id, slam_id, navigation_id, planner_id, diagnostics_id;
+    pthread_t imu_id, flag_id,fusion_id, lidar_id, lane_id, gps_id, slam_id, navigation_id, planner_id, diagnostics_id;
 
     pthread_attr_init(&attr);
     pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
@@ -138,11 +138,11 @@ void startThreads() {
             break;
 
         case FusionTestOnly:
-            startThread(&lane_id, &attr, &lane_thread);
-            startThread(&lidar_id, &attr, &lidar_thread);
-            startThread(&fusion_id, &attr, &fusion_thread);
-            startThread(&navigation_id, &attr, &navigation_thread);
-            startThread(&planner_id, &attr, &planner_thread);
+            startThread(&flag_id, &attr, &flag_thread);
+            // startThread(&lidar_id, &attr, &lidar_thread);
+            // startThread(&fusion_id, &attr, &fusion_thread);
+            // startThread(&navigation_id, &attr, &navigation_thread);
+            // startThread(&planner_id, &attr, &planner_thread);
             break;
 
         case IGVCBasic:
@@ -154,6 +154,17 @@ void startThreads() {
             startThread(&navigation_id, &attr, &navigation_thread);
             startThread(&planner_id, &attr, &planner_thread);
             break;
+
+         case IGVCAdvance:
+            startThread(&imu_id, &attr, &imu_thread);
+            startThread(&gps_id, &attr, &slam_thread);
+            startThread(&lane_id, &attr, &lane_thread);
+            startThread(&lidar_id, &attr, &lidar_thread);
+            startThread(&fusion_id, &attr, &fusion_thread);
+            startThread(&navigation_id, &attr, &navigation_thread);
+            startThread(&planner_id, &attr, &planner_thread);
+            break;
+
     }
 
 #ifdef DIAG  

@@ -7,7 +7,7 @@ namespace slam_space {
 
     class Hector {
     public:
-        static void foo();
+        //static void updatePose(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr _pose);
     };
 }
 

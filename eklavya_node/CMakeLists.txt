@@ -53,6 +53,7 @@ option (USE_LANE "Use Lane" ON)
 option (USE_FUSION "Use Fusion" ON)
 option (USE_GPS "Use GPS" ON)
 option (USE_ENCODER "Use Encoder" ON)
+option (USE_FLAG "Use FLAG" ON)
 option (USE_EKF "Use EKF" ON)
 option (USE_SLAM "Use SLAM" ON)
 option (USE_NAVIGATION "Use Navigation" ON)
@@ -133,14 +134,34 @@ rosbuild_add_library(SerialPortLinuxLib src/Utils/SerialPortLinux/serial_lnx.cpp
 target_link_libraries(SerialPortLinuxLib ${OpenCV_LIBS})
 endif ()
 
+if (USE_FLAG)
+include_directories ("${PROJECT_SOURCE_DIR}/src/Modules/Flag/")
+rosbuild_add_library(FlagLib src/Modules/Flag/flag_data.cpp src/Modules/Flag/flag_thread.cpp)
+target_link_libraries(FlagLib ${OpenCV_LIBS})
+endif ()
+
 ##cvBlob
 include_directories ("${PROJECT_SOURCE_DIR}/src/ExternalLib/cvBlob/")
-set(cvBlob_CVBLOB  ${PROJECT_SOURCE_DIR}/src/ExternalLib/cvBlob/cvblob.cpp
-                   ${PROJECT_SOURCE_DIR}/src/ExternalLib/cvBlob/cvlabel.cpp
+set(cvBlob_CVBLOB  ${PROJECT_SOURCE_DIR}/src/ExternalLib/cvBlob/blob.cpp
+                   ${PROJECT_SOURCE_DIR}/src/ExternalLib/cvBlob/blob.h
+		   ${PROJECT_SOURCE_DIR}/src/ExternalLib/cvBlob/BlobContour.cpp
+		   ${PROJECT_SOURCE_DIR}/src/ExternalLib/cvBlob/BlobContour.h
+		   ${PROJECT_SOURCE_DIR}/src/ExternalLib/cvBlob/BlobLibraryConfiguration.h
+		   ${PROJECT_SOURCE_DIR}/src/ExternalLib/cvBlob/BlobOperators.cpp
+		   ${PROJECT_SOURCE_DIR}/src/ExternalLib/cvBlob/BlobOperators.h
+		   ${PROJECT_SOURCE_DIR}/src/ExternalLib/cvBlob/BlobProperties.cpp
+		   ${PROJECT_SOURCE_DIR}/src/ExternalLib/cvBlob/BlobProperties.h
+		   ${PROJECT_SOURCE_DIR}/src/ExternalLib/cvBlob/BlobResult.cpp
+		   ${PROJECT_SOURCE_DIR}/src/ExternalLib/cvBlob/BlobResult.h
+		   ${PROJECT_SOURCE_DIR}/src/ExternalLib/cvBlob/ComponentLabeling.cpp
+		   ${PROJECT_SOURCE_DIR}/src/ExternalLib/cvBlob/ComponentLabeling.h
+		   ${PROJECT_SOURCE_DIR}/src/ExternalLib/cvBlob/cvcolor.cpp
+		   ${PROJECT_SOURCE_DIR}/src/ExternalLib/cvBlob/cvblob.cpp
+           ${PROJECT_SOURCE_DIR}/src/ExternalLib/cvBlob/cvlabel.cpp
 		   ${PROJECT_SOURCE_DIR}/src/ExternalLib/cvBlob/cvaux.cpp
 		   ${PROJECT_SOURCE_DIR}/src/ExternalLib/cvBlob/cvcontour.cpp
 		   ${PROJECT_SOURCE_DIR}/src/ExternalLib/cvBlob/cvtrack.cpp
-		   ${PROJECT_SOURCE_DIR}/src/ExternalLib/cvBlob/cvcolor.cpp
+
 )
 
 set_source_files_properties(${cvBlob_SRC}
@@ -152,7 +173,7 @@ target_link_libraries(cvblob ${OpenCV_LIBS})
 ##cvBlob end
 
 rosbuild_add_executable(${PROJECT_NAME} src/eklavya2.cpp)
-target_link_libraries (${PROJECT_NAME} IMULib LidarLib LaneLib FusionLib GPSLib EncoderLib EKFLib SLAMLib PlannerLib NavigationLib DiagnosticsLib SerialPortLinuxLib)
+target_link_libraries (${PROJECT_NAME} IMULib LidarLib LaneLib FusionLib GPSLib EncoderLib EKFLib SLAMLib FlagLib PlannerLib NavigationLib DiagnosticsLib SerialPortLinuxLib)
 
 #target_link_libraries(${PROJECT_NAME} ${EXTRA_LIBS})
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
