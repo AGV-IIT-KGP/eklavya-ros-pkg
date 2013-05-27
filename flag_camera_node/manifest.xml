@@ -1,0 +1,21 @@
+<package>
+  <description brief="flag_camera_node">
+
+     flag_camera_node
+
+  </description>
+  <author>Satya Prakash</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/flag_camera_node</url>
+  <depend package="roscpp"/>
+  <depend package="rospy"/>
+  <depend package="std_msgs"/>
+  <depend package="opencv2"/>
+  <depend package="image_transport"/>
+  <depend package="cv_bridge"/>
+  <depend package="sensor_msgs"/>
+
+</package>
+
+
