@@ -8,12 +8,12 @@ namespace planner_space {
         seed reverse;
         double max = 30;
         switch (last_cmd) {
-            case LEFT_CMD:
+            case RIGHT_CMD:
                 // Take reverse right turn
                 reverse.vl = -max;
                 reverse.vr = 0;
                 break;
-            case RIGHT_CMD:
+            case LEFT_CMD:
                 // Take reverse left turn
                 reverse.vl = 0;
                 reverse.vr = -max;
@@ -121,9 +121,11 @@ namespace planner_space {
 #endif
                 //                Mat hoho;
                 //                resize(data_img, hoho, cvSize(400, 400));
+#ifdef SHOW_PATH
 
                 cv::imshow("[PLANNER] Map", data_img);
                 cvWaitKey(WAIT_TIME);
+#endif
                 closePlanner();
                 //		precmdvel=cmdvel;
                 return cmdvel;
@@ -139,8 +141,11 @@ namespace planner_space {
                 cvWaitKey(0);
 #endif
 
+#ifdef SHOW_PATH
+
                 cv::imshow("[PLANNER] Map", data_img);
-                cvWaitKey(30);
+                cvWaitKey(WAIT_TIME);
+#endif
                 closePlanner();
                 //		precmdvel=cmdvel;
                 return cmdvel;
@@ -227,6 +232,7 @@ namespace planner_space {
         goal.g_obs = 0;
         goal.h_obs = 0;
 
+        double DtThresh=100;
         vector<state> open_list;
         open_list.insert(open_list.begin(), start);
         map<Triplet, open_map_element, PoseCompare> open_map;
@@ -273,15 +279,31 @@ namespace planner_space {
 
         dilate(img, img, 5);
         distanceTransform(img, dist, CV_DIST_L2, 5);
-        normalize(dist, dist, 0.0, 1.0, NORM_MINMAX);
+          for (int i = 0; i < img.rows; i++) {
+            for (int j = 0; j < img.cols; j++) {
+                if (dist.at<float>(i,j)>DtThresh) {
+                    dist.at<float>(i,j)=DtThresh;
+                }
+            }
+        }
 
-        GaussianBlur(dist, dist, cvSize(3, 3), 3);
-        Laplacian(dist, dist, CV_32F, 1, 1, 0, BORDER_DEFAULT);
+        Mat dist1=dist.clone();
+        normalize(dist1, dist1, 0.0, 1.0, NORM_MINMAX);
+        GaussianBlur(dist1, dist1, cvSize(3, 3), 3);
+        Laplacian(dist1, dist1, CV_32F, 1, 1, 0, BORDER_DEFAULT);
 
         double minVal, maxVal;
-        minMaxLoc(dist, &minVal, &maxVal);
+        minMaxLoc(dist1, &minVal, &maxVal);
         Mat normImage;
         dist.convertTo(normImage, CV_8U, 255.0 / (maxVal - minVal), -minVal * 255.0 / (maxVal - minVal));
+          for (int i = 0; i < img.rows; i++) {
+            for (int j = 0; j < img.cols; j++) {
+                if (dist.at<float>(i,j)==DtThresh) {
+                    normImage.at<uchar>(i,j)=0;
+                }
+            }
+        }
+        //imshow("haha",normImage);
 
         Mat huhu;
         threshold(normImage, huhu, 90, 255, THRESH_BINARY);
@@ -339,6 +361,7 @@ namespace planner_space {
             cvWaitKey(0);
 #endif
 
+
             if ((open_map.find(current.pose) != open_map.end()) &&
                     (open_map[current.pose].membership == CLOSED)) {
                 pop_heap(open_list.begin(), open_list.end(), StateCompareDT());
@@ -358,8 +381,11 @@ namespace planner_space {
                 cvWaitKey(0);
 #endif
 
+#ifdef SHOW_PATH
+
                 cv::imshow("[PLANNER] Map", data_img);
                 cvWaitKey(WAIT_TIME);
+#endif
                 closePlanner();
 
                 return cmdvel;
@@ -375,8 +401,11 @@ namespace planner_space {
                 cvWaitKey(0);
 #endif
 
+#ifdef SHOW_PATH
+
                 cv::imshow("[PLANNER] Map", data_img);
                 cvWaitKey(WAIT_TIME);
+#endif
                 closePlanner();
 
                 return cmdvel;
@@ -396,7 +425,7 @@ namespace planner_space {
                 state neighbor = neighbors[i];
 
 #ifdef DEBUG
-                plotPoint(grayImg, neighbor.pose);
+                plotPoint(img, neighbor.pose);
 #endif
 
                 if (!(((neighbor.pose.x >= 0) && (neighbor.pose.x < MAP_MAX)) &&

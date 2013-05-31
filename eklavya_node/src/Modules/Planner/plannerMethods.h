@@ -10,7 +10,7 @@
 #define SIMCTL
 #define SIM_SEEDS
 //#define DEBUG
-#define SHOW_PATH
+//#define SHOW_PATH
 //#define FLEX
 
 /**
@@ -314,7 +314,7 @@ namespace planner_space {
                         left_vel = right_vel = vavg;
 			printf("straight seed\n");
                     } else if (s.k == 1.258574 || s.k == 0.794550) {
-                        double vavg = 45;
+                        double vavg = 70;
                         double aggression = 1;
                         s.k = s.k < 1 ? s.k / aggression : s.k * aggression;
                         left_vel = (int) 2 * vavg * s.k / (1 + s.k);
