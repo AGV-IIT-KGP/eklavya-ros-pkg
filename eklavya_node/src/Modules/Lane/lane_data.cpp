@@ -5,7 +5,7 @@
 using namespace cvb;
 
 #define DEBUG 0
-#define EXPANSION 55
+#define EXPANSION 70
 
 sensor_msgs::CvBridge bridge;
 static int iter = 0;
