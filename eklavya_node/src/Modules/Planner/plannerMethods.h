@@ -239,6 +239,13 @@ namespace planner_space {
         return error < 35;
     }
 
+    bool targetReached(state a, state b) {
+        double error = sqrt((a.pose.x - b.pose.x) * (a.pose.x - b.pose.x) +
+                (a.pose.y - b.pose.y) * (a.pose.y - b.pose.y));
+
+        return error < 250;
+    }
+    
     void plotPoint(cv::Mat inputImgP, Triplet pose) {
         int x = pose.x;
         int y = MAP_MAX - pose.y - 1;
@@ -314,7 +321,7 @@ namespace planner_space {
                         left_vel = right_vel = vavg;
 			printf("straight seed\n");
                     } else if (s.k == 1.258574 || s.k == 0.794550) {
-                        double vavg = 60;
+                        double vavg = 50;
                         double aggression = 1;
                         s.k = s.k < 1 ? s.k / aggression : s.k * aggression;
                         left_vel = (int) 2 * vavg * s.k / (1 + s.k);

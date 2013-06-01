@@ -335,7 +335,7 @@ namespace planner_space {
             }
         }
 
-        if (isEqual(start, goal)) {
+        if (targetReached(start, goal)) {
             ROS_INFO("[PLANNER] Target Reached");
             Planner::finBot();
             return cmdvel;

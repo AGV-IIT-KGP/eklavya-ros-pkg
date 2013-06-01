@@ -104,7 +104,7 @@ void *planner_thread(void *arg) {
        // my_bot_location.y = 100;
        // my_bot_location.z = 90;
         ol_overflow = 0;
-        cmdvel = planner_space::Planner::findPathDT(my_bot_location, my_target_location, map_img);
+        cmdvel = planner_space::Planner::findPath(my_bot_location, my_target_location, map_img);
         if (ol_overflow == 1) {
             ol_overflow = 0;
             cmdvel = planner_space::Planner::findPath(my_bot_location, my_target_location, map_img);
