@@ -5,7 +5,7 @@
 using namespace cvb;
 
 #define DEBUG 0
-#define EXPANSION 70
+#define EXPANSION 60
 
 sensor_msgs::CvBridge bridge;
 static int iter = 0;
@@ -152,18 +152,18 @@ void LaneDetection::markLane(const sensor_msgs::ImageConstPtr& image) {
     //Finding Hough Lines
     filter_img = applyHoughTransform(filter_img);
     //Displaying hough lanes
-    if(DEBUG)
-    {
-        cvShowImage("Hough Image", filter_img);
-        cvWaitKey(WAIT_TIME);
-    }
+//    if(DEBUG)
+//    {
+//        cvShowImage("Hough Image", filter_img);
+//        cvWaitKey(WAIT_TIME);
+//    }
     //Inverse Perspective Transform
     cvWarpPerspective(filter_img, warp_img, warp_matrix, CV_INTER_LINEAR | CV_WARP_INVERSE_MAP | CV_WARP_FILL_OUTLIERS);
     //Displaying Lane Map
-//    if (DEBUG) {
-//        cvShowImage("Lane Map", warp_img);
-//        cvWaitKey(WAIT_TIME);
-//    }
+    if (DEBUG) {
+        cvShowImage("Lane Map", warp_img);
+        cvWaitKey(WAIT_TIME);
+    }
     cvDilate(warp_img, warp_img, ker1, EXPANSION);
     populateLanes(warp_img);
 }
