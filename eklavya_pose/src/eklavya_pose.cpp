@@ -18,7 +18,7 @@
 #include <mrpt/topography/data_types.h>
 
 #define PI 3.141
-#define ERROR_THRESHOLD 2
+#define ERROR_THRESHOLD 2.5
 #define _GPS_PUBLISHER_BUFFER 10
 #define _IMU_PUBLISHER_BUFFER 10
 #define _POSE_PUBLISHER_BUFFER 10
@@ -187,10 +187,10 @@ int main(int argc, char** argv) {
         /// POSE.ORIENTATION : Orientation of the bot
 
         //Pose data
-//        error=sqrt( p.x*p.x+p.y*p.y);
-//        if(error<ERROR_THRESHOLD){
-//            current_target=(current_target+1)%NO_OF_TARGETS;
-//        }
+        error=sqrt( p.x*p.x+p.y*p.y);
+        if(error<ERROR_THRESHOLD){
+            current_target=(current_target+1)%NO_OF_TARGETS;
+        }
         
         
         ros::spinOnce();
