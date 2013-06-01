@@ -10,7 +10,7 @@
 #define SIMCTL
 #define SIM_SEEDS
 //#define DEBUG
-//#define SHOW_PATH
+#define SHOW_PATH
 //#define FLEX
 
 /**
@@ -33,7 +33,7 @@
 #define UNASSIGNED 3
 #define VMAX 70
 #define MAX_ITER 10000
-#define MIN_RAD 55
+#define MIN_RAD 70
 
 using namespace std;
 
@@ -310,11 +310,11 @@ namespace planner_space {
                 case 0:
                 {
                     if (left_velocity == right_velocity) {
-                        double vavg = 70;
+                        double vavg = 80;
                         left_vel = right_vel = vavg;
 			printf("straight seed\n");
                     } else if (s.k == 1.258574 || s.k == 0.794550) {
-                        double vavg = 70;
+                        double vavg = 60;
                         double aggression = 1;
                         s.k = s.k < 1 ? s.k / aggression : s.k * aggression;
                         left_vel = (int) 2 * vavg * s.k / (1 + s.k);
