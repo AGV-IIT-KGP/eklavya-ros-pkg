@@ -189,7 +189,8 @@ int main(int argc, char** argv) {
         //Pose data
         error=sqrt( p.x*p.x+p.y*p.y);
         if(error<ERROR_THRESHOLD){
-            current_target=(current_target+1)%NO_OF_TARGETS;
+//            current_target=(current_target+1)%NO_OF_TARGETS;
+            break;
         }
         
         
