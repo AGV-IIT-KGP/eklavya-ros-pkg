@@ -13,7 +13,7 @@
 #define CENTERY 100
 #define HOKUYO_SCALE 100
 #define RADIUS 30
-#define EXPAND_ITER 50
+#define EXPAND_ITER 60
 #define intensity(img,i,j,n) *(uchar*)(img->imageData + img->widthStep*i + j*img->nChannels + n) 
 #define IMGDATA(image,i,j,k) (((uchar *)image->imageData)[(i)*(image->widthStep) + (j)*(image->nChannels) + (k)])
 #define IMGDATAG(image,i,j) (((uchar *)image->imageData)[(i)*(image->widthStep) + (j)])
